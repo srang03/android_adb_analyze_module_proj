@@ -1,0 +1,197 @@
+VibratorManagerService:
+  VibrationSettings:
+    vibrateOn = true
+    keyboardVibrationOn = true, default: true
+    vibrateInputDevices = false
+    batterySaverMode = false
+    ringerMode = vibrate
+    onWirelessCharger = false
+    processStateCache size = 62
+    VibrationIntensities:
+      UNKNOWN = MEDIUM, default: MEDIUM
+      ALARM = HIGH, default: HIGH
+      TOUCH = MEDIUM, default: MEDIUM
+      MEDIA = MEDIUM, default: MEDIUM
+      RINGTONE = MEDIUM, default: MEDIUM
+      PHYSICAL_EMULATION = MEDIUM, default: MEDIUM
+      NOTIFICATION = MEDIUM, default: MEDIUM
+      HARDWARE_FEEDBACK = MEDIUM, default: MEDIUM
+      COMMUNICATION_REQUEST = MEDIUM, default: MEDIUM
+      ACCESSIBILITY = MEDIUM, default: MEDIUM
+    VibrationConfig:
+      ignoreVibrationsOnWirelessCharger = false
+      hapticChannelMaxAmplitude = 0.0
+      rampStepDurationMs = 5
+      rampDownDurationMs = 0
+      requestVibrationParamsForUsages = [ALARM, RINGTONE, NOTIFICATION, COMMUNICATION_REQUEST]
+      requestVibrationParamsTimeoutMs = 50
+  
+  VibrationScaler:
+    defaultVibrationAmplitude = 255
+    ScaleLevels:
+      VERY_LOW = ScaleLevel{factor=0.6}
+      LOW = ScaleLevel{factor=0.8}
+      NONE = ScaleLevel{factor=1.0}
+      HIGH = ScaleLevel{factor=1.2}
+      VERY_HIGH = ScaleLevel{factor=1.4}
+    AdaptiveHapticsScales:
+  
+  Vibrators:
+    Vibrator (id=0):
+      isVibrating = false
+      isUnderExternalControl = false
+      currentAmplitude = 0.0
+      vibratorInfoLoadSuccessful = true
+      vibratorStateListener size = 1
+      VibratorInfo:
+        id = 0
+        capabilities = [COMPOSE_EFFECTS, AMPLITUDE_CONTROL, EXTERNAL_CONTROL, EXTERNAL_AMPLITUDE_CONTROL]
+        capabilitiesFlags = 111100
+        supportedEffects = [CLICK, DOUBLE_CLICK, TICK, HEAVY_CLICK]
+        supportedPrimitives = [CLICK(20ms), THUD(300ms), SPIN(130ms), QUICK_RISE(150ms), SLOW_RISE(500ms), QUICK_FALL(100ms), TICK(20ms), LOW_TICK(20ms)]
+        supportedBraking = []
+        primitiveDelayMax = 1000
+        compositionSizeMax = 10
+        pwlePrimitiveDurationMax = 0
+        pwleSizeMax = 0
+        q-factor = NaN
+        frequencyProfile = FrequencyProfile{mFrequencyRange=null, mMinFrequency=NaN, mResonantFrequency=NaN, mFrequencyResolution=NaN, mMaxAmplitudes count=0}
+  
+  CurrentVibration:
+    null
+  
+  NextVibration:
+    null
+  
+  CurrentExternalVibration:
+    null
+  
+  
+  Recent vibrations:
+    ALARM:
+      09-02 18:39:04.684 |   effect |             finished | duration:   971ms | start: 18:39:04.685 | end: 18:39:05.655 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: ALARM | com.google.android.cellbroadcastreceiver (uid=10329, deviceId=0) | reason: null | played: [Step=0ms(amplitude=0.00),Step=350ms(amplitude=-1.00),Step=250ms(amplitude=0.00),Step=350ms(amplitude=-1.00)] | original: null
+      09-04 08:12:39.921 |   effect |             finished | duration:   972ms | start: 08:12:39.923 | end: 08:12:40.894 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: ALARM | com.google.android.cellbroadcastreceiver (uid=10329, deviceId=0) | reason: null | played: [Step=0ms(amplitude=0.00),Step=350ms(amplitude=-1.00),Step=250ms(amplitude=0.00),Step=350ms(amplitude=-1.00)] | original: null
+      09-05 09:30:54.853 |   effect |             finished | duration:   964ms | start: 09:30:54.854 | end: 09:30:55.817 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: ALARM | com.google.android.cellbroadcastreceiver (uid=10329, deviceId=0) | reason: null | played: [Step=0ms(amplitude=0.00),Step=350ms(amplitude=-1.00),Step=250ms(amplitude=0.00),Step=350ms(amplitude=-1.00)] | original: null
+      09-05 17:47:35.763 |   effect |    cancelled_by_user | duration:   954ms | start: 17:47:35.764 | end: 17:47:36.717 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: ALARM | com.google.android.cellbroadcastreceiver (uid=10329, deviceId=0) | reason: null | played: [Step=0ms(amplitude=0.00),Step=350ms(amplitude=-1.00),Step=250ms(amplitude=0.00),Step=350ms(amplitude=-1.00)] | original: null
+      09-06 09:31:43.425 |   effect |    cancelled_by_user | duration:   956ms | start: 09:31:43.426 | end: 09:31:44.382 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: ALARM | com.google.android.cellbroadcastreceiver (uid=10329, deviceId=0) | reason: null | played: [Step=0ms(amplitude=0.00),Step=350ms(amplitude=-1.00),Step=250ms(amplitude=0.00),Step=350ms(amplitude=-1.00)] | original: null
+      09-06 16:26:03.563 |   effect |    cancelled_by_user | duration:   954ms | start: 16:26:03.565 | end: 16:26:04.518 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: ALARM | com.google.android.cellbroadcastreceiver (uid=10329, deviceId=0) | reason: null | played: [Step=0ms(amplitude=0.00),Step=350ms(amplitude=-1.00),Step=250ms(amplitude=0.00),Step=350ms(amplitude=-1.00)] | original: null
+      09-07 09:30:56.166 |   effect |    cancelled_by_user | duration:   955ms | start: 09:30:56.167 | end: 09:30:57.121 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: ALARM | com.google.android.cellbroadcastreceiver (uid=10329, deviceId=0) | reason: null | played: [Step=0ms(amplitude=0.00),Step=350ms(amplitude=-1.00),Step=250ms(amplitude=0.00),Step=350ms(amplitude=-1.00)] | original: null
+    
+    TOUCH:
+      09-06 19:54:55.587 |   effect |             finished | duration:   133ms | start: 19:54:55.589 | end: 19:54:55.720 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-06 19:54:56.960 |   effect |             finished | duration:   136ms | start: 19:54:56.962 | end: 19:54:57.095 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-06 19:55:03.648 |   effect |             finished | duration:   245ms | start: 19:55:03.651 | end: 19:55:03.893 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.android.settings (uid=1000, deviceId=0) | reason: performHapticFeedback(constant=50051): View#performHapticFeedback | played: SemHaptic: mType=50051, mMagnitude=-1 | original: null
+      09-06 19:55:13.417 |   effect |             finished | duration:   131ms | start: 19:55:13.418 | end: 19:55:13.549 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-07 05:53:22.432 |   effect |             finished | duration:   580ms | start: 05:53:22.434 | end: 05:53:23.012 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.android.systemui (uid=10048, deviceId=0) | reason: null | played: SemHaptic: mType=50031, mMagnitude=-1 | original: null
+      09-07 18:21:54.483 |   effect |             finished | duration:   321ms | start: 18:21:54.487 | end: 18:21:54.804 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.android.systemui (uid=10048, deviceId=0) | reason: null | played: SemHaptic: mType=50135, mMagnitude=-1 | original: null
+      09-07 18:24:08.858 |   effect |             finished | duration:   133ms | start: 18:24:08.860 | end: 18:24:08.991 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-07 18:26:50.002 |   effect |             finished | duration:   122ms | start: 18:26:50.003 | end: 18:26:50.123 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50062, mMagnitude=-1 | original: null
+      09-07 18:26:56.534 |   effect |             finished | duration:   132ms | start: 18:26:56.535 | end: 18:26:56.666 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-07 18:26:58.034 |   effect |             finished | duration:   113ms | start: 18:26:58.037 | end: 18:26:58.147 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.launcher (uid=10162, deviceId=0) | reason: null | played: SemHaptic: mType=50065, mMagnitude=-1 | original: null
+      09-07 18:27:07.610 |   effect |             finished | duration:   133ms | start: 18:27:07.613 | end: 18:27:07.744 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-07 18:27:31.525 |   effect |             finished | duration:   602ms | start: 18:27:31.526 | end: 18:27:32.127 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-07 18:27:44.258 |   effect |             finished | duration:   133ms | start: 18:27:44.260 | end: 18:27:44.392 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-07 18:27:45.254 |   effect |             finished | duration:   113ms | start: 18:27:45.255 | end: 18:27:45.366 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.launcher (uid=10162, deviceId=0) | reason: null | played: SemHaptic: mType=50065, mMagnitude=-1 | original: null
+      09-07 18:28:12.791 |   effect |             finished | duration:   602ms | start: 18:28:12.791 | end: 18:28:13.392 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-07 18:28:31.976 |   effect |             finished | duration:   134ms | start: 18:28:31.977 | end: 18:28:32.111 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-07 18:29:13.550 |   effect |             finished | duration:   603ms | start: 18:29:13.551 | end: 18:29:14.153 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-07 18:29:22.116 |   effect |             finished | duration:   133ms | start: 18:29:22.118 | end: 18:29:22.249 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-07 18:29:48.406 |   effect |             finished | duration:   132ms | start: 18:29:48.408 | end: 18:29:48.538 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-07 18:31:00.005 |   effect |             finished | duration:   134ms | start: 18:31:00.007 | end: 18:31:00.138 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+    
+    RINGTONE:
+      09-05 16:45:11.521 |   effect |             finished | duration:   782ms | start: 16:45:11.528 | end: 16:45:12.303 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: RINGTONE | android (uid=1000, deviceId=0) | reason: Notification (com.android.systemui) (RingerMode) | played: SemHaptic: mType=50032, mMagnitude=-1 | original: null
+    
+    NOTIFICATION:
+      09-06 04:59:20.312 |   effect |             finished | duration:  1105ms | start: 04:59:20.315 | end: 04:59:21.417 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: NOTIFICATION | android (uid=1000, deviceId=0) | reason: Notification (com.sec.android.daemonapp 10235) (Delayed) | played: SemHaptic: mType=50034, mMagnitude=-1 | original: null
+      09-06 09:14:35.690 |   effect |             finished | duration:  1111ms | start: 09:14:35.694 | end: 09:14:36.800 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: NOTIFICATION | android (uid=1000, deviceId=0) | reason: Notification (com.sec.android.daemonapp 10235) (Delayed) | played: SemHaptic: mType=50034, mMagnitude=-1 | original: null
+      09-06 14:15:31.690 |   effect |             finished | duration:  1125ms | start: 14:15:31.711 | end: 14:15:32.815 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: NOTIFICATION | android (uid=1000, deviceId=0) | reason: Notification (com.sec.android.daemonapp 10235) (Delayed) | played: SemHaptic: mType=50034, mMagnitude=-1 | original: null
+      09-06 19:54:51.608 |   effect |             finished | duration:  1105ms | start: 19:54:51.611 | end: 19:54:52.713 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: NOTIFICATION | android (uid=1000, deviceId=0) | reason: Notification (com.sec.android.daemonapp 10235) (Delayed) | played: SemHaptic: mType=50034, mMagnitude=-1 | original: null
+      09-06 19:56:38.563 |   effect |             finished | duration:  1107ms | start: 19:56:38.566 | end: 19:56:39.670 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: NOTIFICATION | android (uid=1000, deviceId=0) | reason: Notification (android 1000) (Delayed) | played: SemHaptic: mType=50034, mMagnitude=-1 | original: null
+      09-07 00:40:17.135 |   effect |             finished | duration:  1108ms | start: 00:40:17.139 | end: 00:40:18.244 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: NOTIFICATION | android (uid=1000, deviceId=0) | reason: Notification (com.sec.android.daemonapp 10235) (Delayed) | played: SemHaptic: mType=50034, mMagnitude=-1 | original: null
+      09-07 09:09:46.274 |   effect |             finished | duration:  1116ms | start: 09:09:46.279 | end: 09:09:47.390 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: NOTIFICATION | android (uid=1000, deviceId=0) | reason: Notification (com.samsung.android.forest 1000) (Delayed) | played: SemHaptic: mType=50034, mMagnitude=-1 | original: null
+    
+  
+  
+  Aggregated vibration history:
+    TOUCH:
+      09-04 15:11:02.174 |   effect |             finished | duration:   132ms | start: 15:11:02.175 | end: 15:11:02.306 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:11:02.842 |   effect |             finished | duration:   111ms | start: 15:11:02.843 | end: 15:11:02.953 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.launcher (uid=10162, deviceId=0) | reason: null | played: SemHaptic: mType=50065, mMagnitude=-1 | original: null
+      09-04 15:11:20.979 |   effect |             finished | duration:   122ms | start: 15:11:20.980 | end: 15:11:21.101 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:11:21.215 |   effect |             finished | duration:   602ms | start: 15:11:21.216 | end: 15:11:21.817 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:11:25.173 |   effect |             finished | duration:   132ms | start: 15:11:25.174 | end: 15:11:25.305 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:11:40.692 |   effect |             finished | duration:   123ms | start: 15:11:40.693 | end: 15:11:40.815 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:11:40.972 |   effect |             finished | duration:   602ms | start: 15:11:40.973 | end: 15:11:41.574 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:11:44.555 |   effect |             finished | duration:   133ms | start: 15:11:44.556 | end: 15:11:44.688 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:11:45.367 |   effect |             finished | duration:   112ms | start: 15:11:45.369 | end: 15:11:45.479 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.launcher (uid=10162, deviceId=0) | reason: null | played: SemHaptic: mType=50065, mMagnitude=-1 | original: null
+      09-04 15:11:57.037 |   effect |             finished | duration:   122ms | start: 15:11:57.038 | end: 15:11:57.159 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:11:57.275 |   effect |             finished | duration:   603ms | start: 15:11:57.275 | end: 15:11:57.877 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:12:04.406 |   effect |             finished | duration:   133ms | start: 15:12:04.407 | end: 15:12:04.539 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:12:05.319 |   effect |             finished | duration:   111ms | start: 15:12:05.320 | end: 15:12:05.430 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.launcher (uid=10162, deviceId=0) | reason: null | played: SemHaptic: mType=50065, mMagnitude=-1 | original: null
+      09-04 15:12:13.346 |   effect |             finished | duration:   122ms | start: 15:12:13.347 | end: 15:12:13.468 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:12:13.576 |   effect |             finished | duration:   601ms | start: 15:12:13.576 | end: 15:12:14.177 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:12:19.381 |   effect |             finished | duration:   132ms | start: 15:12:19.382 | end: 15:12:19.514 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:12:20.262 |   effect |             finished | duration:   114ms | start: 15:12:20.264 | end: 15:12:20.375 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.launcher (uid=10162, deviceId=0) | reason: null | played: SemHaptic: mType=50065, mMagnitude=-1 | original: null
+      09-04 15:12:40.651 |   effect |             finished | duration:   122ms | start: 15:12:40.652 | end: 15:12:40.773 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:12:40.997 |   effect |             finished | duration:   603ms | start: 15:12:40.998 | end: 15:12:41.600 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:12:50.463 |   effect |             finished | duration:   136ms | start: 15:12:50.465 | end: 15:12:50.599 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:13:20.914 |   effect |             finished | duration:   124ms | start: 15:13:20.917 | end: 15:13:21.038 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:13:21.212 |   effect |             finished | duration:   603ms | start: 15:13:21.214 | end: 15:13:21.815 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:13:30.274 |   effect |             finished | duration:   134ms | start: 15:13:30.274 | end: 15:13:30.408 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:13:50.587 |   effect |             finished | duration:   122ms | start: 15:13:50.588 | end: 15:13:50.709 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:13:50.886 |   effect |             finished | duration:   602ms | start: 15:13:50.887 | end: 15:13:51.488 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:13:55.333 |   effect |             finished | duration:   133ms | start: 15:13:55.335 | end: 15:13:55.466 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:14:04.890 |   effect |             finished | duration:   132ms | start: 15:14:04.891 | end: 15:14:05.022 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:14:05.673 |   effect |             finished | duration:   112ms | start: 15:14:05.674 | end: 15:14:05.786 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.launcher (uid=10162, deviceId=0) | reason: null | played: SemHaptic: mType=50065, mMagnitude=-1 | original: null
+      09-04 15:15:30.702 |   effect |             finished | duration:   122ms | start: 15:15:30.704 | end: 15:15:30.824 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:30.942 |   effect |             finished | duration:   604ms | start: 15:15:30.943 | end: 15:15:31.546 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:31.671 |   effect |             finished | duration:   122ms | start: 15:15:31.672 | end: 15:15:31.793 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:31.907 |   effect |             finished | duration:   602ms | start: 15:15:31.908 | end: 15:15:32.509 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:32.529 |   effect |             finished | duration:   125ms | start: 15:15:32.531 | end: 15:15:32.653 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:32.772 |   effect |             finished | duration:   602ms | start: 15:15:32.773 | end: 15:15:33.374 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:33.502 |   effect |             finished | duration:   122ms | start: 15:15:33.503 | end: 15:15:33.625 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:33.747 |   effect |             finished | duration:   603ms | start: 15:15:33.748 | end: 15:15:34.349 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:34.483 |   effect |             finished | duration:   122ms | start: 15:15:34.484 | end: 15:15:34.605 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:34.706 |   effect |             finished | duration:   601ms | start: 15:15:34.707 | end: 15:15:35.307 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:35.409 |   effect |             finished | duration:   124ms | start: 15:15:35.411 | end: 15:15:35.533 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:35.633 |   effect |             finished | duration:   602ms | start: 15:15:35.634 | end: 15:15:36.236 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:36.415 |   effect |             finished | duration:   121ms | start: 15:15:36.416 | end: 15:15:36.536 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:36.638 |   effect |             finished | duration:   601ms | start: 15:15:36.639 | end: 15:15:37.240 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:37.522 |   effect |             finished | duration:   122ms | start: 15:15:37.523 | end: 15:15:37.645 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:37.771 |   effect |             finished | duration:   602ms | start: 15:15:37.771 | end: 15:15:38.372 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:38.638 |   effect |             finished | duration:   122ms | start: 15:15:38.639 | end: 15:15:38.759 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:38.866 |   effect |             finished | duration:   601ms | start: 15:15:38.866 | end: 15:15:39.467 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:39.619 |   effect |             finished | duration:   122ms | start: 15:15:39.620 | end: 15:15:39.741 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      09-04 15:15:39.870 |   effect |             finished | duration:   601ms | start: 15:15:39.871 | end: 15:15:40.472 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50072, mMagnitude=-1 | original: null
+      09-04 15:15:50.127 |   effect |             finished | duration:   134ms | start: 15:15:50.129 | end: 15:15:50.261 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | android (uid=1000, deviceId=0) | reason: Virtual Key - Press | played: SemHaptic: mType=50038, mMagnitude=-1 | original: null
+      09-04 15:15:50.839 |   effect |             finished | duration:   112ms | start: 15:15:50.841 | end: 15:15:50.951 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.launcher (uid=10162, deviceId=0) | reason: null | played: SemHaptic: mType=50065, mMagnitude=-1 | original: null
+    
+  
+  
+  VibratorControlService:
+    isVibratorControllerRegistered = false
+    hasPendingVibrationParamsRequest = false
+    
+    Vibration parameters update history:
+  
+  Vibrator information
+    Motor type : MOTOR_LINEAR_INDEX (5)
+    Motor group : SEM_SUPPORTED_VIBRATION_TYPE_D
+      prebakedHapticPattern : true
+      hapticEngine : true
+      enhancedSamsungHapticPattern : false
+      intensityControl : true
+      indexWideBand : false
+    SUPPORT_ACH : true
+  
+  VibrationSettings information
+    mIsHapticSupported = true
+    mIsEnableIntensity = true
+    mCallMagnitude = 10000
+    mNotiMagnitude = 10000
+    mTouchMagnitude = 4000
+    mMediaMagnitude = 10000
+    mForceMagnitude = 10000
+    LEVEL_TO_MAGNITUDE = [0, 2000, 4000, 6000, 8000, 10000]
+    LEVEL_TO_TOUCH_MAGNITUDE = [0, 3000, 4000, 6000, 8000, 10000]
+  

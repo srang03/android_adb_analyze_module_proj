@@ -1,0 +1,272 @@
+﻿C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests\bin\Debug\net9.0\AndroidAdbAnalyze.Analysis.Tests.dll(.NETCoreApp,Version=v9.0)??????뚯뒪???ㅽ뻾
+VSTest 踰꾩쟾 17.14.1 (x64)
+
+?뚯뒪???ㅽ뻾???쒖옉?섎뒗 以묒엯?덈떎. ?좎떆 湲곕떎??二쇱꽭??..
+吏?뺣맂 ?⑦꽩怨??쇱튂??珥??뚯뒪???뚯씪 ?섎뒗 1媛쒖엯?덈떎.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.9)
+[xUnit.net 00:00:00.07]   Discovering: AndroidAdbAnalyze.Analysis.Tests
+[xUnit.net 00:00:00.13]   Discovered:  AndroidAdbAnalyze.Analysis.Tests
+[xUnit.net 00:00:00.14]   Starting:    AndroidAdbAnalyze.Analysis.Tests
+     Warning:
+     The component "Fluent Assertions" is governed by the rules defined in the Xceed License Agreement and
+     the Xceed Fluent Assertions Community License. You may use Fluent Assertions free of charge for
+     non-commercial use only. An active subscription is required to use Fluent Assertions for commercial use.
+     Please contact Xceed Sales mailto:sales@xceed.com to acquire a subscription at a very low cost.
+     A paid commercial license supports the development and continued increasing support of
+     Fluent Assertions users under both commercial and community licenses. Help us
+     keep Fluent Assertions at the forefront of unit testing.
+     For more information, visit https://xceed.com/products/unit-testing/fluent-assertions/
+dotnet : [xUnit.net 00:00:00.94]     AndroidAdbAnalyze.Analysis.Tests.Integration.EndToEndAnalysisTests.Sample4_SilentC
+amera_IsDetected [FAIL]
+위치 C:\Users\성우\AppData\Local\Temp\ps-script-df478168-f318-41c9-aa49-eadd7fa13270.ps1:7 문자:62
++ ... ysis.Tests; dotnet test --filter "Sample4_SilentCamera_IsDetected" -- ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...Detected [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[xUnit.net 00:00:00.94]       Expected silentCameraCaptures not to be empty because 臾댁쓬 移대찓??珥ъ쁺???먯??섏뼱????
+[xUnit.net 00:00:00.94]       Stack Trace:
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.LateBoundTestFramework.Throw(String message)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.AssertionScope.AddPreFormattedFailure(String formattedFailureMessage)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.AssertionChain.FailWith(String message, Object[] args)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.GivenSelector`1.FailWith(String message, Object[] args)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.GivenSelector`1.FailWith(String message)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Collections.GenericCollectionAssertions`3.<NotBeEmpty>b__56_0(AssertionChain chain)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.AssertionChain.WithExpectation(String message, Action`1 chain, Object[] args)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Execution.AssertionChain.WithExpectation(String message, Action`1 chain)
+[xUnit.net 00:00:00.94]            at FluentAssertions.Collections.GenericCollectionAssertions`3.NotBeEmpty(String because, Object[] becauseArgs)
+[xUnit.net 00:00:00.94]         C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests\Integration\EndToEndAnalysisTests.cs(702,0): at AndroidAdbAnalyze.Analysis.Tests.Integration.EndToEndAnalysisTests.Sample4_SilentCamera_IsDetected()
+[xUnit.net 00:00:00.94]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.94]       Output:
+[xUnit.net 00:00:00.94]         Current Dir: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests\bin\Debug\net9.0
+[xUnit.net 00:00:00.94]         Project Root: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule
+[xUnit.net 00:00:00.94]         Sample Logs: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\..\sample_logs
+[xUnit.net 00:00:00.94]         Parser Configs: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule\Configs
+[xUnit.net 00:00:00.94]         ??Parsed audio.log: 22 events
+[xUnit.net 00:00:00.94]         ??Parsed media_camera_worker.log: 23 events
+[xUnit.net 00:00:00.94]         ??Parsed media_camera.log: 22 events
+[xUnit.net 00:00:00.95]         ??Parsed media_metrics.log: 106 events
+[xUnit.net 00:00:00.95]         ??Parsed usagestats.log: 313 events
+[xUnit.net 00:00:00.95]         ??Parsed vibrator_manager.log: 71 events
+[xUnit.net 00:00:00.95]         ??Parsed activity.log: 35 events
+[xUnit.net 00:00:00.95]         ?뱤 Total events from 4李??섑뵆: 592
+[xUnit.net 00:00:00.95]         ?뱷 Top 20 Event Types:
+[xUnit.net 00:00:00.95]           - ACTIVITY_LIFECYCLE: 269媛?
+[xUnit.net 00:00:00.95]           - VIBRATION_EVENT: 71媛?
+[xUnit.net 00:00:00.95]           - AUDIO_TRACK: 67媛?
+[xUnit.net 00:00:00.95]           - MEDIA_EXTRACTOR: 39媛?
+[xUnit.net 00:00:00.95]           - CAMERA_ACTIVITY_REFRESH: 24媛?
+[xUnit.net 00:00:00.95]           - CAMERA_CONNECT: 22媛?
+[xUnit.net 00:00:00.95]           - CAMERA_DISCONNECT: 22媛?
+[xUnit.net 00:00:00.95]           - FOREGROUND_SERVICE: 18媛?
+[xUnit.net 00:00:00.95]           - STANDBY_BUCKET_CHANGED: 12媛?
+[xUnit.net 00:00:00.95]           - NOTIFICATION: 10媛?
+[xUnit.net 00:00:00.95]           - PLAYER_RELEASED: 9媛?
+[xUnit.net 00:00:00.95]           - PLAYER_EVENT: 7媛?
+[xUnit.net 00:00:00.95]           - PLAYER_CREATED: 6媛?
+[xUnit.net 00:00:00.95]           - URI_PERMISSION_GRANT: 6媛?
+[xUnit.net 00:00:00.95]           - URI_PERMISSION_REVOKE: 3媛?
+[xUnit.net 00:00:00.95]           - SCREEN_STATE: 2媛?
+[xUnit.net 00:00:00.95]           - KEYGUARD: 2媛?
+[xUnit.net 00:00:00.95]           - SILENT_CAMERA_CAPTURE: 2媛?
+[xUnit.net 00:00:00.95]           - MEDIA_INSERT_START: 1媛?
+[xUnit.net 00:00:00.95]         
+?뵇 DATABASE/MEDIA_INSERT 愿???대깽?? 1媛?
+[xUnit.net 00:00:00.95]           ??낅퀎 遺꾪룷:
+[xUnit.net 00:00:00.95]             - MEDIA_INSERT_START: 1媛?
+[xUnit.net 00:00:00.95]         
+  理쒓렐 5媛??섑뵆:
+[xUnit.net 00:00:00.95]             - MEDIA_INSERT_START at 13:47:46.856
+[xUnit.net 00:00:00.95]         
+?렏 移대찓???대깽??遺꾩꽍:
+[xUnit.net 00:00:00.95]           CAMERA_CONNECT: 22媛?
+[xUnit.net 00:00:00.95]           CAMERA_DISCONNECT: 22媛?
+[xUnit.net 00:00:00.95]           遺덇퇏?? 0媛?
+[xUnit.net 00:00:00.95]         
+=== ?뵇 SILENT_CAMERA_CAPTURE ?대깽??遺꾩꽍 ===
+[xUnit.net 00:00:00.95]         ?뚯떛??SILENT_CAMERA_CAPTURE ?대깽?? 2媛?
+[xUnit.net 00:00:00.95]         
+  Event ID: 5a426458-2dec-4823-8315-e0844e12e08d
+[xUnit.net 00:00:00.95]           Timestamp: 2025-10-06 13:58:30.717
+[xUnit.net 00:00:00.95]           PackageName: com.peace.SilentCamera
+[xUnit.net 00:00:00.95]           SourceFile: NULL
+[xUnit.net 00:00:00.95]           SourceSection: activities
+[xUnit.net 00:00:00.95]           Attributes: 8媛?
+[xUnit.net 00:00:00.95]             - timestamp: 10-06 22:58:30.717
+[xUnit.net 00:00:00.95]             - mode: Min
+[xUnit.net 00:00:00.95]             - refreshRate: 60
+[xUnit.net 00:00:00.95]             - package: com.peace.SilentCamera
+[xUnit.net 00:00:00.95]             - activity: com.peace.SilentCamera.CameraActivity
+[xUnit.net 00:00:00.95]             - windowId: df80827
+[xUnit.net 00:00:00.95]             - toastTimestamp: 10-06 22:58:29.261
+[xUnit.net 00:00:00.95]             - captureType: silent_camera
+[xUnit.net 00:00:00.95]         
+  Event ID: a6304c7f-3d80-4b98-a7b8-36f54da83682
+[xUnit.net 00:00:00.95]           Timestamp: 2025-10-06 13:58:30.718
+[xUnit.net 00:00:00.95]           PackageName: com.peace.SilentCamera
+[xUnit.net 00:00:00.95]           SourceFile: NULL
+[xUnit.net 00:00:00.95]           SourceSection: activities
+[xUnit.net 00:00:00.95]           Attributes: 8媛?
+[xUnit.net 00:00:00.95]             - timestamp: 10-06 22:58:30.718
+[xUnit.net 00:00:00.95]             - mode: Max
+[xUnit.net 00:00:00.95]             - refreshRate: 60
+[xUnit.net 00:00:00.95]             - package: com.peace.SilentCamera
+[xUnit.net 00:00:00.95]             - activity: com.peace.SilentCamera.CameraActivity
+[xUnit.net 00:00:00.95]             - windowId: df80827
+[xUnit.net 00:00:00.95]             - toastTimestamp: 10-06 22:58:29.261
+[xUnit.net 00:00:00.95]             - captureType: silent_camera
+[xUnit.net 00:00:00.95]         
+=== ?벝 臾댁쓬 移대찓???몄뀡 遺꾩꽍 ===
+[xUnit.net 00:00:00.95]         臾댁쓬 移대찓???몄뀡: 2媛?(?덉긽: 2媛?
+[xUnit.net 00:00:00.95]         
+  ?벀 ?몄뀡 ee8cbb16-ff95-4fd8-a788-4bc82c46b0d3:
+[xUnit.net 00:00:00.95]              ?쒓컙: 2025-10-06 13:57:37.000 ~ 2025-10-06 13:57:43.000
+[xUnit.net 00:00:00.95]              Confidence: 100%
+[xUnit.net 00:00:00.95]              Captures: 0媛?
+[xUnit.net 00:00:00.95]              SourceLogs: camera_events, last_24_hours, activities
+[xUnit.net 00:00:00.95]              ?몄뀡 ???대깽?? 11媛?
+[xUnit.net 00:00:00.95]              ?좑툘 SILENT_CAMERA_CAPTURE in session: 0媛?
+[xUnit.net 00:00:00.95]         
+  ?벀 ?몄뀡 e0e860c9-82cb-4e52-9775-d0405a9ccd1f:
+[xUnit.net 00:00:00.95]              ?쒓컙: 2025-10-06 13:58:22.000 ~ 2025-10-06 13:58:33.000
+[xUnit.net 00:00:00.95]              Confidence: 100%
+[xUnit.net 00:00:00.95]              Captures: 0媛?
+[xUnit.net 00:00:00.95]              SourceLogs: camera_events, activities, last_24_hours
+[xUnit.net 00:00:00.95]              ?몄뀡 ???대깽?? 12媛?
+[xUnit.net 00:00:00.95]              ?좑툘 SILENT_CAMERA_CAPTURE in session: 2媛?
+[xUnit.net 00:00:00.95]                - 13:58:30.717 (EventId: 5a426458-2dec-4823-8315-e0844e12e08d)
+[xUnit.net 00:00:00.95]                - 13:58:30.718 (EventId: a6304c7f-3d80-4b98-a7b8-36f54da83682)
+[xUnit.net 00:00:00.95]         
+=== ?벜 臾댁쓬 移대찓??珥ъ쁺 寃곌낵 ===
+[xUnit.net 00:00:00.95]         臾댁쓬 移대찓??珥ъ쁺: 0媛?(?덉긽: 1媛?
+[xUnit.net 00:00:00.95]   Finished:    AndroidAdbAnalyze.Analysis.Tests
+  ?ㅽ뙣 AndroidAdbAnalyze.Analysis.Tests.Integration.EndToEndAnalysisTests.Sample4_SilentCamera_IsDetected [757 ms]
+  ?ㅻ쪟 硫붿떆吏:
+   Expected silentCameraCaptures not to be empty because 臾댁쓬 移대찓??珥ъ쁺???먯??섏뼱????
+  ?ㅽ깮 異붿쟻:
+     at FluentAssertions.Execution.LateBoundTestFramework.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.AddPreFormattedFailure(String formattedFailureMessage)
+   at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+   at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+   at FluentAssertions.Execution.AssertionChain.FailWith(String message, Object[] args)
+   at FluentAssertions.Execution.GivenSelector`1.FailWith(String message, Object[] args)
+   at FluentAssertions.Execution.GivenSelector`1.FailWith(String message)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.<NotBeEmpty>b__56_0(AssertionChain chain)
+   at FluentAssertions.Execution.AssertionChain.WithExpectation(String message, Action`1 chain, Object[] args)
+   at FluentAssertions.Execution.AssertionChain.WithExpectation(String message, Action`1 chain)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.NotBeEmpty(String because, Object[] becauseArgs)
+   at AndroidAdbAnalyze.Analysis.Tests.Integration.EndToEndAnalysisTests.Sample4_SilentCamera_IsDetected() in C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests\Integration\EndToEndAnalysisTests.cs:line 702
+--- End of stack trace from previous location ---
+  ?쒖? 異쒕젰 硫붿떆吏:
+ Current Dir: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests\bin\Debug\net9.0
+ Project Root: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule
+ Sample Logs: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\..\sample_logs
+ Parser Configs: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule\Configs
+ ??Parsed audio.log: 22 events
+ ??Parsed media_camera_worker.log: 23 events
+ ??Parsed media_camera.log: 22 events
+ ??Parsed media_metrics.log: 106 events
+ ??Parsed usagestats.log: 313 events
+ ??Parsed vibrator_manager.log: 71 events
+ ??Parsed activity.log: 35 events
+ ?뱤 Total events from 4李??섑뵆: 592
+ ?뱷 Top 20 Event Types:
+   - ACTIVITY_LIFECYCLE: 269媛?
+   - VIBRATION_EVENT: 71媛?
+   - AUDIO_TRACK: 67媛?
+   - MEDIA_EXTRACTOR: 39媛?
+   - CAMERA_ACTIVITY_REFRESH: 24媛?
+   - CAMERA_CONNECT: 22媛?
+   - CAMERA_DISCONNECT: 22媛?
+   - FOREGROUND_SERVICE: 18媛?
+   - STANDBY_BUCKET_CHANGED: 12媛?
+   - NOTIFICATION: 10媛?
+   - PLAYER_RELEASED: 9媛?
+   - PLAYER_EVENT: 7媛?
+   - PLAYER_CREATED: 6媛?
+   - URI_PERMISSION_GRANT: 6媛?
+   - URI_PERMISSION_REVOKE: 3媛?
+   - SCREEN_STATE: 2媛?
+   - KEYGUARD: 2媛?
+   - SILENT_CAMERA_CAPTURE: 2媛?
+   - MEDIA_INSERT_START: 1媛?
+ 
+?뵇 DATABASE/MEDIA_INSERT 愿???대깽?? 1媛?
+   ??낅퀎 遺꾪룷:
+     - MEDIA_INSERT_START: 1媛?
+ 
+  理쒓렐 5媛??섑뵆:
+     - MEDIA_INSERT_START at 13:47:46.856
+ 
+?렏 移대찓???대깽??遺꾩꽍:
+   CAMERA_CONNECT: 22媛?
+   CAMERA_DISCONNECT: 22媛?
+   遺덇퇏?? 0媛?
+ 
+=== ?뵇 SILENT_CAMERA_CAPTURE ?대깽??遺꾩꽍 ===
+ ?뚯떛??SILENT_CAMERA_CAPTURE ?대깽?? 2媛?
+ 
+  Event ID: 5a426458-2dec-4823-8315-e0844e12e08d
+   Timestamp: 2025-10-06 13:58:30.717
+   PackageName: com.peace.SilentCamera
+   SourceFile: NULL
+   SourceSection: activities
+   Attributes: 8媛?
+     - timestamp: 10-06 22:58:30.717
+     - mode: Min
+     - refreshRate: 60
+     - package: com.peace.SilentCamera
+     - activity: com.peace.SilentCamera.CameraActivity
+     - windowId: df80827
+     - toastTimestamp: 10-06 22:58:29.261
+     - captureType: silent_camera
+ 
+  Event ID: a6304c7f-3d80-4b98-a7b8-36f54da83682
+   Timestamp: 2025-10-06 13:58:30.718
+   PackageName: com.peace.SilentCamera
+   SourceFile: NULL
+   SourceSection: activities
+   Attributes: 8媛?
+     - timestamp: 10-06 22:58:30.718
+     - mode: Max
+     - refreshRate: 60
+     - package: com.peace.SilentCamera
+     - activity: com.peace.SilentCamera.CameraActivity
+     - windowId: df80827
+     - toastTimestamp: 10-06 22:58:29.261
+     - captureType: silent_camera
+ 
+=== ?벝 臾댁쓬 移대찓???몄뀡 遺꾩꽍 ===
+ 臾댁쓬 移대찓???몄뀡: 2媛?(?덉긽: 2媛?
+ 
+  ?벀 ?몄뀡 ee8cbb16-ff95-4fd8-a788-4bc82c46b0d3:
+      ?쒓컙: 2025-10-06 13:57:37.000 ~ 2025-10-06 13:57:43.000
+      Confidence: 100%
+      Captures: 0媛?
+      SourceLogs: camera_events, last_24_hours, activities
+      ?몄뀡 ???대깽?? 11媛?
+      ?좑툘 SILENT_CAMERA_CAPTURE in session: 0媛?
+ 
+  ?벀 ?몄뀡 e0e860c9-82cb-4e52-9775-d0405a9ccd1f:
+      ?쒓컙: 2025-10-06 13:58:22.000 ~ 2025-10-06 13:58:33.000
+      Confidence: 100%
+      Captures: 0媛?
+      SourceLogs: camera_events, activities, last_24_hours
+      ?몄뀡 ???대깽?? 12媛?
+      ?좑툘 SILENT_CAMERA_CAPTURE in session: 2媛?
+        - 13:58:30.717 (EventId: 5a426458-2dec-4823-8315-e0844e12e08d)
+        - 13:58:30.718 (EventId: a6304c7f-3d80-4b98-a7b8-36f54da83682)
+ 
+=== ?벜 臾댁쓬 移대찓??珥ъ쁺 寃곌낵 ===
+ 臾댁쓬 移대찓??珥ъ쁺: 0媛?(?덉긽: 1媛?
+
+
+
+?뚯뒪???ㅽ뻾???ㅽ뙣?덉뒿?덈떎.
+珥??뚯뒪???? 1
+     ?ㅽ뙣: 1
+ 珥??쒓컙: 1.5875 珥?

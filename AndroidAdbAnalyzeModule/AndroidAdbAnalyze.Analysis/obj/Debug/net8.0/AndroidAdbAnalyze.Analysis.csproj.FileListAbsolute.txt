@@ -1,0 +1,16 @@
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\bin\Debug\net8.0\AndroidAdbAnalyze.Analysis.deps.json
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\bin\Debug\net8.0\AndroidAdbAnalyze.Analysis.dll
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\bin\Debug\net8.0\AndroidAdbAnalyze.Analysis.pdb
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\bin\Debug\net8.0\AndroidAdbAnalyzeModule.dll
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\bin\Debug\net8.0\AndroidAdbAnalyzeModule.pdb
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\bin\Debug\net8.0\AndroidAdbAnalyzeModule.xml
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\AndroidAdbAnalyze.Analysis.csproj.AssemblyReference.cache
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\AndroidAdbAnalyze.Analysis.GeneratedMSBuildEditorConfig.editorconfig
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\AndroidAdbAnalyze.Analysis.AssemblyInfoInputs.cache
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\AndroidAdbAnalyze.Analysis.AssemblyInfo.cs
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\AndroidAdbAnalyze.Analysis.csproj.CoreCompileInputs.cache
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\AndroidA.A766F4D8.Up2Date
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\AndroidAdbAnalyze.Analysis.dll
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\refint\AndroidAdbAnalyze.Analysis.dll
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\AndroidAdbAnalyze.Analysis.pdb
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\obj\Debug\net8.0\ref\AndroidAdbAnalyze.Analysis.dll

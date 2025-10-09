@@ -1,0 +1,1395 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AndroidAdbAnalyzeModule</name>
+    </assembly>
+    <members>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader">
+            <summary>
+            YAML 설정 파일 로더
+            </summary>
+        </member>
+        <member name="E:AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader.ConfigurationChanged">
+            <summary>
+            설정 변경 이벤트
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader.CurrentConfiguration">
+            <summary>
+            현재 로드된 설정
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader.#ctor(System.String,Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader})">
+            <summary>
+            YamlConfigurationLoader 생성자
+            </summary>
+            <param name="configPath">설정 파일 경로</param>
+            <param name="logger">로거 (선택사항)</param>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader.Load(System.String)">
+            <summary>
+            설정 파일 동기 로드
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader.LoadAsync(System.String)">
+            <summary>
+            설정 파일 비동기 로드
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader.Reload">
+            <summary>
+            설정 재로드
+            파싱 작업 중에는 호출 불가
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader.DeserializeYaml(System.String)">
+            <summary>
+            YAML 문자열을 LogConfiguration으로 역직렬화
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration">
+            <summary>
+            로그 파싱 설정 (YAML 파일 루트)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.ConfigSchemaVersion">
+            <summary>
+            설정 스키마 버전
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.Metadata">
+            <summary>
+            메타데이터
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.FilePatterns">
+            <summary>
+            파일 매칭 패턴
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.GlobalSettings">
+            <summary>
+            전역 파싱 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.Performance">
+            <summary>
+            성능 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.ErrorHandling">
+            <summary>
+            에러 처리 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.Sections">
+            <summary>
+            섹션 정의 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.Parsers">
+            <summary>
+            파서 정의 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.Preprocessing">
+            <summary>
+            전처리 설정 (선택사항, Phase 4에서 사용)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration.Logging">
+            <summary>
+            로깅 설정 (선택사항)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.ConfigMetadata">
+            <summary>
+            설정 메타데이터
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ConfigMetadata.LogType">
+            <summary>
+            로그 타입 (예: "adb_audio", "adb_battery")
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ConfigMetadata.SupportedVersions">
+            <summary>
+            지원하는 안드로이드 버전 목록 (예: ["11", "12", "14", "15"] 또는 ["*"] for all)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ConfigMetadata.DisplayName">
+            <summary>
+            표시 이름
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ConfigMetadata.Description">
+            <summary>
+            설명
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ConfigMetadata.Author">
+            <summary>
+            작성자 (선택사항)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ConfigMetadata.CreatedDate">
+            <summary>
+            생성일 (선택사항)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.GlobalSettings">
+            <summary>
+            전역 파싱 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.GlobalSettings.Encoding">
+            <summary>
+            파일 인코딩
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.GlobalSettings.SkipEmptyLines">
+            <summary>
+            빈 라인 스킵 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.GlobalSettings.SkipComments">
+            <summary>
+            주석 스킵 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.GlobalSettings.CommentPrefix">
+            <summary>
+            주석 접두사
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.GlobalSettings.TimeSeriesOrder">
+            <summary>
+            시계열 순서 (ascending, descending, none)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.GlobalSettings.TimestampFormat">
+            <summary>
+            타임스탬프 포맷
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.PerformanceSettings">
+            <summary>
+            성능 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.PerformanceSettings.MaxFileSizeMB">
+            <summary>
+            최대 파일 크기 (MB)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.PerformanceSettings.TimeoutSeconds">
+            <summary>
+            타임아웃 (초)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.PerformanceSettings.BufferSizeKB">
+            <summary>
+            버퍼 크기 (KB)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.PerformanceSettings.UseStreamingParser">
+            <summary>
+            스트리밍 파서 사용 여부 (추후 구현)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.PerformanceSettings.ParallelProcessing">
+            <summary>
+            병렬 처리 여부 (추후 구현)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.ErrorHandlingSettings">
+            <summary>
+            에러 처리 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ErrorHandlingSettings.OnInvalidLine">
+            <summary>
+            잘못된 라인 처리 방법 (skip, abort, log)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ErrorHandlingSettings.OnMissingTimestamp">
+            <summary>
+            타임스탬프 누락 시 처리 방법
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ErrorHandlingSettings.OnParsingError">
+            <summary>
+            파싱 에러 시 처리 방법
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ErrorHandlingSettings.ValidateSchema">
+            <summary>
+            스키마 검증 여부
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.SectionConfig">
+            <summary>
+            섹션 설정 (YAML용)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.SectionConfig.Id">
+            <summary>
+            섹션 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.SectionConfig.Name">
+            <summary>
+            섹션 이름
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.SectionConfig.Enabled">
+            <summary>
+            활성화 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.SectionConfig.StartMarker">
+            <summary>
+            시작 마커
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.SectionConfig.EndMarker">
+            <summary>
+            종료 마커
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.SectionConfig.MarkerType">
+            <summary>
+            마커 타입 (text, regex, lineNumber)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.ParserConfig">
+            <summary>
+            파서 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ParserConfig.Id">
+            <summary>
+            파서 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ParserConfig.Name">
+            <summary>
+            파서 이름
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ParserConfig.Enabled">
+            <summary>
+            활성화 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ParserConfig.TargetSections">
+            <summary>
+            대상 섹션 ID 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ParserConfig.Priority">
+            <summary>
+            우선순위 (낮을수록 먼저 실행)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.ParserConfig.LinePatterns">
+            <summary>
+            라인 패턴 목록
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.LinePatternConfig">
+            <summary>
+            라인 패턴 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LinePatternConfig.Id">
+            <summary>
+            패턴 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LinePatternConfig.Name">
+            <summary>
+            패턴 이름
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LinePatternConfig.Regex">
+            <summary>
+            정규식 패턴
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LinePatternConfig.Fields">
+            <summary>
+            필드 정의 (그룹 번호 → 필드 정의)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LinePatternConfig.EventType">
+            <summary>
+            이벤트 타입
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.FieldDefinition">
+            <summary>
+            필드 정의
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.FieldDefinition.Group">
+            <summary>
+            Regex 그룹 번호
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.FieldDefinition.Type">
+            <summary>
+            필드 타입 (datetime, int, string, hex 등)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.FieldDefinition.Format">
+            <summary>
+            포맷 (datetime용)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.PreprocessingConfig">
+            <summary>
+            전처리 설정 (Phase 4에서 구현)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Models.LoggingConfig">
+            <summary>
+            로깅 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LoggingConfig.Level">
+            <summary>
+            로그 레벨 (debug, info, warn, error)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LoggingConfig.LogParsedEvents">
+            <summary>
+            파싱된 이벤트 로깅 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LoggingConfig.LogSkippedLines">
+            <summary>
+            스킵된 라인 로깅 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Configuration.Models.LoggingConfig.LogPerformanceMetrics">
+            <summary>
+            성능 메트릭 로깅 여부
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator">
+            <summary>
+            설정 파일 검증기
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator})">
+            <summary>
+            ConfigurationValidator 생성자
+            </summary>
+            <param name="logger">로거 (선택사항)</param>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.Validate(AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration)">
+            <summary>
+            설정 검증
+            </summary>
+            <param name="config">검증할 설정</param>
+            <exception cref="T:AndroidAdbAnalyzeModule.Core.Exceptions.ConfigurationValidationException">검증 실패 시</exception>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.ValidateDeviceCompatibility(AndroidAdbAnalyzeModule.Core.Models.DeviceInfo,AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration)">
+            <summary>
+            디바이스 버전 호환성 검증
+            </summary>
+            <param name="deviceInfo">디바이스 정보</param>
+            <param name="config">로그 설정</param>
+            <exception cref="T:AndroidAdbAnalyzeModule.Core.Exceptions.ConfigurationValidationException">디바이스 버전이 지원되지 않을 경우</exception>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.ValidateSchemaVersion(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            설정 스키마 버전 검증
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.ValidateMetadata(AndroidAdbAnalyzeModule.Configuration.Models.ConfigMetadata,System.Collections.Generic.List{System.String})">
+            <summary>
+            메타데이터 검증
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.ValidateFilePatterns(System.Collections.Generic.IReadOnlyList{System.String},System.Collections.Generic.List{System.String})">
+            <summary>
+            파일 패턴 검증
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.ValidateSections(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyzeModule.Configuration.Models.SectionConfig},System.Collections.Generic.List{System.String})">
+            <summary>
+            섹션 검증
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.ValidateParsers(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyzeModule.Configuration.Models.ParserConfig},System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyzeModule.Configuration.Models.SectionConfig},System.Collections.Generic.List{System.String})">
+            <summary>
+            파서 검증
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.ValidateLinePatterns(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyzeModule.Configuration.Models.LinePatternConfig},System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            라인 패턴 검증
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.ValidateRegexPattern(System.String,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            정규식 패턴 검증
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Configuration.Validators.ConfigurationValidator.ValidatePerformanceSettings(AndroidAdbAnalyzeModule.Configuration.Models.PerformanceSettings,System.Collections.Generic.List{System.String})">
+            <summary>
+            성능 설정 검증
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes">
+            <summary>
+            로그 이벤트 타입 상수 정의
+            모든 프로젝트에서 공통으로 사용하는 이벤트 타입 문자열을 중앙에서 관리합니다.
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.CAMERA_CONNECT">
+            <summary>카메라 연결 이벤트 (세션 시작)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.CAMERA_DISCONNECT">
+            <summary>카메라 연결 해제 이벤트 (세션 종료)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.DATABASE_INSERT">
+            <summary>데이터베이스 삽입 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.DATABASE_EVENT">
+            <summary>데이터베이스 이벤트 (일반)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.MEDIA_INSERT_START">
+            <summary>미디어 삽입 시작 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.MEDIA_INSERT_END">
+            <summary>미디어 삽입 완료 이벤트 (촬영 완료 확정)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.AUDIO_TRACK">
+            <summary>오디오 트랙 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.MEDIA_EXTRACTOR">
+            <summary>미디어 추출기 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.SHUTTER_SOUND">
+            <summary>셔터 사운드 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.VIBRATION">
+            <summary>진동 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.VIBRATION_EVENT">
+            <summary>진동 이벤트 (Vibrator Manager)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.PLAYER_CREATED">
+            <summary>플레이어 생성 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.PLAYER_EVENT">
+            <summary>플레이어 이벤트 (시작/일시정지 등)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.PLAYER_RELEASED">
+            <summary>플레이어 해제 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.FOCUS_REQUESTED">
+            <summary>오디오 포커스 요청 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.FOCUS_ABANDONED">
+            <summary>오디오 포커스 해제 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.RECORDING_EVENT">
+            <summary>녹음 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.URI_PERMISSION_GRANT">
+            <summary>URI 권한 부여 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.URI_PERMISSION_REVOKE">
+            <summary>URI 권한 회수 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.ACTIVITY_LIFECYCLE">
+            <summary>Activity 생명주기 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.ACTIVITY_LAUNCH">
+            <summary>Activity 실행 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.ACTIVITY_RESUMED">
+            <summary>Activity 재개 이벤트 (usagestats)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.ACTIVITY_PAUSED">
+            <summary>Activity 일시정지 이벤트 (usagestats)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.ACTIVITY_STOPPED">
+            <summary>Activity 중지 이벤트 (usagestats)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.INTENT_DETAILS">
+            <summary>Intent 세부 정보 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.CAMERA_ACTIVITY_REFRESH">
+            <summary>카메라 Activity Refresh Rate 변경 이벤트 (무음 카메라 탐지용)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.SILENT_CAMERA_CAPTURE">
+            <summary>무음 카메라 촬영 이벤트 (SilentCamera + Toast 패턴)</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.FOREGROUND_SERVICE">
+            <summary>포그라운드 서비스 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.SYSTEM_BOOT">
+            <summary>시스템 부팅 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.DEVICE_REBOOT">
+            <summary>디바이스 재부팅 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.NOTIFICATION">
+            <summary>알림 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.SCREEN_STATE">
+            <summary>화면 상태 변경 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.KEYGUARD">
+            <summary>키가드(잠금화면) 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.STANDBY_BUCKET_CHANGED">
+            <summary>Standby Bucket 변경 이벤트</summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Constants.LogEventTypes.SECTION_MARKER">
+            <summary>섹션 마커 이벤트 (로그 파싱용)</summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Exceptions.ConfigurationException">
+            <summary>
+            설정 파일 관련 예외 기본 클래스
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Exceptions.ConfigurationNotFoundException">
+            <summary>
+            설정 파일을 찾을 수 없을 때 발생
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Exceptions.ConfigurationValidationException">
+            <summary>
+            설정 파일 검증 실패 시 발생
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Exceptions.ConfigurationLoadException">
+            <summary>
+            설정 파일 로드 중 예외 발생
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Exceptions.ParsingException">
+            <summary>
+            파싱 관련 예외 기본 클래스
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Exceptions.LogFileTooLargeException">
+            <summary>
+            로그 파일 크기 초과 시 발생
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Exceptions.CriticalParsingException">
+            <summary>
+            파싱 중 치명적 에러 발생 시
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Interfaces.IConfigurationLoader`1">
+            <summary>
+            설정 파일 로더 인터페이스
+            </summary>
+            <typeparam name="TConfig">설정 타입</typeparam>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.IConfigurationLoader`1.Load(System.String)">
+            <summary>
+            설정 파일 동기 로드
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.IConfigurationLoader`1.LoadAsync(System.String)">
+            <summary>
+            설정 파일 비동기 로드
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.IConfigurationLoader`1.Reload">
+            <summary>
+            설정 재로드
+            파싱 작업 중에는 호출 불가
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.IConfigurationLoader`1.CurrentConfiguration">
+            <summary>
+            현재 로드된 설정
+            </summary>
+        </member>
+        <member name="E:AndroidAdbAnalyzeModule.Core.Interfaces.IConfigurationLoader`1.ConfigurationChanged">
+            <summary>
+            설정 변경 이벤트
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Interfaces.ConfigurationChangedEventArgs">
+            <summary>
+            설정 변경 이벤트 인자
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.ConfigurationChangedEventArgs.NewConfiguration">
+            <summary>
+            새로운 설정
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Interfaces.ILineParser">
+            <summary>
+            라인 파서 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ILineParser.CanParse(System.String,AndroidAdbAnalyzeModule.Core.Interfaces.ParsingContext)">
+            <summary>
+            해당 라인을 파싱할 수 있는지 확인
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ILineParser.Parse(System.String,AndroidAdbAnalyzeModule.Core.Interfaces.ParsingContext)">
+            <summary>
+            라인 파싱
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Interfaces.ParsingContext">
+            <summary>
+            파싱 컨텍스트
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.ParsingContext.SectionId">
+            <summary>
+            현재 섹션 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.ParsingContext.LineNumber">
+            <summary>
+            현재 라인 번호
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.ParsingContext.LastTimestamp">
+            <summary>
+            마지막 파싱된 타임스탬프
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.ParsingContext.SharedState">
+            <summary>
+            공유 상태 (섹션 내 상태 유지용)
+            읽기 전용 뷰를 제공하며, 내부 상태는 불변
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Interfaces.ILogEventRepository">
+            <summary>
+            로그 이벤트 저장소 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ILogEventRepository.SaveEventAsync(AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent)">
+            <summary>
+            단일 이벤트 저장
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ILogEventRepository.SaveEventsAsync(System.Collections.Generic.IEnumerable{AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent})">
+            <summary>
+            여러 이벤트 배치 저장
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ILogEventRepository.GetEventsByTimeRangeAsync(System.DateTime,System.DateTime,System.String)">
+            <summary>
+            시간 범위로 이벤트 조회
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ILogEventRepository.GetRelatedEventsAsync(System.Guid,System.TimeSpan)">
+            <summary>
+            특정 이벤트와 관련된 이벤트 조회 (시간 윈도우 기반)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ILogEventRepository.ClearAsync">
+            <summary>
+            저장소 비우기
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ILogEventRepository.GetCountAsync">
+            <summary>
+            저장된 전체 이벤트 수
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Interfaces.ILogParser">
+            <summary>
+            로그 파서 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ILogParser.ParseAsync(System.String,AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions,System.Threading.CancellationToken)">
+            <summary>
+            로그 파일을 비동기로 파싱
+            </summary>
+            <param name="logFilePath">로그 파일 경로</param>
+            <param name="options">파싱 옵션</param>
+            <param name="cancellationToken">취소 토큰</param>
+            <returns>파싱 결과</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Interfaces.ISectionSplitter">
+            <summary>
+            로그 섹션 분리기 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Core.Interfaces.ISectionSplitter.SplitAsync(System.String,System.Collections.Generic.IEnumerable{AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition})">
+            <summary>
+            로그 파일을 섹션별로 분리
+            </summary>
+            <param name="logFilePath">로그 파일 경로</param>
+            <param name="sectionDefinitions">섹션 정의 목록</param>
+            <returns>섹션별 로그 내용</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition">
+            <summary>
+            섹션 정의
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition.Id">
+            <summary>
+            섹션 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition.Name">
+            <summary>
+            섹션 이름
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition.Enabled">
+            <summary>
+            활성화 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition.StartMarker">
+            <summary>
+            시작 마커
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition.EndMarker">
+            <summary>
+            종료 마커
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition.MarkerType">
+            <summary>
+            마커 타입 (text, regex, lineNumber)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Interfaces.LogSection">
+            <summary>
+            로그 섹션
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.LogSection.Id">
+            <summary>
+            섹션 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.LogSection.Name">
+            <summary>
+            섹션 이름
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.LogSection.StartLine">
+            <summary>
+            시작 라인 번호
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.LogSection.EndLine">
+            <summary>
+            종료 라인 번호
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Interfaces.LogSection.Lines">
+            <summary>
+            섹션 라인 목록
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Models.DeviceInfo">
+            <summary>
+            안드로이드 디바이스 정보
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.DeviceInfo.TimeZone">
+            <summary>
+            디바이스 TimeZone (예: "Asia/Seoul", "America/New_York")
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.DeviceInfo.CurrentTime">
+            <summary>
+            디바이스 현재 시간
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.DeviceInfo.AndroidVersion">
+            <summary>
+            안드로이드 버전 (예: "15", "14")
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.DeviceInfo.Manufacturer">
+            <summary>
+            제조사 (예: "samsung", "google", "xiaomi")
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.DeviceInfo.Model">
+            <summary>
+            디바이스 모델명 (선택사항)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions">
+            <summary>
+            로그 파싱 옵션
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions.DeviceInfo">
+            <summary>
+            디바이스 정보
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions.ConvertToUtc">
+            <summary>
+            타임스탬프를 UTC로 변환할지 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions.Encoding">
+            <summary>
+            로그 파일 인코딩 (기본: UTF-8)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions.MaxFileSizeMB">
+            <summary>
+            최대 파일 크기 (MB)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions.StartTime">
+            <summary>
+            파싱할 로그의 시작 시간 (null이면 제한 없음)
+            이 시간 이상의 로그만 파싱 (포함)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions.EndTime">
+            <summary>
+            파싱할 로그의 종료 시간 (null이면 제한 없음)
+            이 시간 이하의 로그만 파싱 (포함)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent">
+            <summary>
+            정규화된 로그 이벤트
+            하나의 로그 파일에서 여러 타입의 이벤트가 추출될 수 있음
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent.EventId">
+            <summary>
+            이벤트 고유 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent.Timestamp">
+            <summary>
+            정규화된 타임스탬프 (UTC 또는 로컬)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent.EventType">
+            <summary>
+            이벤트 타입 (예: "CAMERA_CAPTURE", "AUDIO_FOCUS", "RECORDING")
+            하나의 로그 파일에서 여러 타입의 이벤트 추출 가능
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent.SourceSection">
+            <summary>
+            이벤트가 추출된 로그 섹션 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent.PackageName">
+            <summary>
+            이벤트 발생 패키지명 (선택사항)
+            Attributes["package"]에서 자동 추출되며, 패키지별 필터링/분석에 사용됩니다.
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent.Attributes">
+            <summary>
+            이벤트 속성 (동적 필드)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent.RawLine">
+            <summary>
+            원본 로그 라인 (디버깅용)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent.SourceFileName">
+            <summary>
+            로그 파일명 (선택사항)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent.DeviceInfo">
+            <summary>
+            디바이스 정보 (파싱 시 설정됨)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry">
+            <summary>
+            파싱된 로그 항목 (중간 결과)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry.EventType">
+            <summary>
+            이벤트 타입 (예: "PLAYER_CREATED", "PLAYER_EVENT", "PLAYER_RELEASED")
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry.Timestamp">
+            <summary>
+            타임스탬프 (파싱된 원본 타임스탬프, 아직 정규화 전)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry.Fields">
+            <summary>
+            파싱된 필드 (예: piid, uid, pid, package 등)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry.RawLine">
+            <summary>
+            원본 로그 라인
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry.LineNumber">
+            <summary>
+            라인 번호
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry.SectionId">
+            <summary>
+            소속 섹션 ID
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Models.ParsingError">
+            <summary>
+            파싱 에러 정보
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingError.LineNumber">
+            <summary>
+            에러 발생 라인 번호
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingError.Line">
+            <summary>
+            에러가 발생한 원본 라인
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingError.ErrorMessage">
+            <summary>
+            에러 메시지
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingError.Exception">
+            <summary>
+            예외 정보 (선택사항)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingError.Severity">
+            <summary>
+            에러 심각도
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingError.SectionId">
+            <summary>
+            에러 발생 섹션 ID (선택사항)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Models.ErrorSeverity">
+            <summary>
+            에러 심각도
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Models.ErrorSeverity.Warning">
+            <summary>
+            경고 (파싱 계속 진행)
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Models.ErrorSeverity.Error">
+            <summary>
+            에러 (해당 라인 스킵)
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyzeModule.Core.Models.ErrorSeverity.Critical">
+            <summary>
+            치명적 (파싱 중단 고려)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Models.ParsingResult">
+            <summary>
+            로그 파싱 결과
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingResult.Success">
+            <summary>
+            파싱 성공 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingResult.Events">
+            <summary>
+            파싱된 이벤트 목록
+            하나의 로그 파일에서 여러 타입의 이벤트가 포함될 수 있음
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingResult.Statistics">
+            <summary>
+            파싱 통계
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingResult.Errors">
+            <summary>
+            발생한 에러 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingResult.ErrorMessage">
+            <summary>
+            에러 메시지 (파싱 실패 시)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingResult.Exception">
+            <summary>
+            예외 정보 (파싱 실패 시)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Core.Models.ParsingStatistics">
+            <summary>
+            파싱 통계 정보
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingStatistics.TotalLines">
+            <summary>
+            전체 라인 수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingStatistics.ParsedLines">
+            <summary>
+            성공적으로 파싱된 라인 수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingStatistics.SkippedLines">
+            <summary>
+            스킵된 라인 수 (빈 라인, 주석 등)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingStatistics.ErrorLines">
+            <summary>
+            에러 발생 라인 수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingStatistics.ElapsedTime">
+            <summary>
+            파싱 소요 시간
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingStatistics.EventTypeCounts">
+            <summary>
+            이벤트 타입별 개수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingStatistics.SectionLineCounts">
+            <summary>
+            섹션별 파싱 라인 수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Core.Models.ParsingStatistics.SuccessRate">
+            <summary>
+            파싱 성공률 (0.0 ~ 1.0)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Parsing.AdbLogParser">
+            <summary>
+            ADB 로그 파서 구현체
+            전체 파싱 파이프라인 통합
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.AdbLogParser.#ctor(AndroidAdbAnalyzeModule.Configuration.Models.LogConfiguration,Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyzeModule.Parsing.AdbLogParser})">
+            <summary>
+            AdbLogParser 생성자
+            </summary>
+            <param name="configuration">로그 설정</param>
+            <param name="logger">로거 (선택사항)</param>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.AdbLogParser.InitializeMultilineParsers">
+            <summary>
+            복잡한 패턴(2줄 이상) 파서 초기화
+            현재는 하드코딩으로 관리하며, 3개 이상 반복 시 플러그인 시스템으로 전환 예정
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.AdbLogParser.InitializeParsers">
+            <summary>
+            모든 파서 인스턴스를 미리 생성하여 캐싱
+            이를 통해 매 라인마다 파서를 재생성하는 오버헤드를 제거
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.AdbLogParser.ParseAsync(System.String,AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions,System.Threading.CancellationToken)">
+            <summary>
+            로그 파일 파싱
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.AdbLogParser.SplitSectionsAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            섹션 분리
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.AdbLogParser.ParseSection(AndroidAdbAnalyzeModule.Core.Interfaces.LogSection,System.Collections.Generic.List{AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry},System.Collections.Generic.List{AndroidAdbAnalyzeModule.Core.Models.ParsingError})">
+            <summary>
+            섹션 파싱
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.AdbLogParser.NormalizeEvents(System.Collections.Generic.List{AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry},AndroidAdbAnalyzeModule.Core.Models.LogParsingOptions,System.Collections.Generic.List{AndroidAdbAnalyzeModule.Core.Models.ParsingError})">
+            <summary>
+            ParsedLogEntry를 NormalizedLogEvent로 변환
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.AdbLogParser.CreateStatistics(System.Int32,System.Int32,System.Int32,System.TimeSpan,System.Collections.Generic.List{AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent})">
+            <summary>
+            통계 생성
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.AdbLogParser.ExtractPackageName(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object})">
+            <summary>
+            Fields에서 패키지명 추출
+            </summary>
+            <param name="fields">ParsedLogEntry의 Fields</param>
+            <returns>추출된 패키지명 또는 null</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Parsing.Interfaces.IMultilinePatternParser">
+            <summary>
+            복잡한 패턴(2줄 이상)을 파싱하는 인터페이스
+            반복되는 패턴 발견 시 플러그인 시스템으로 전환 예정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Parsing.Interfaces.IMultilinePatternParser.ParserId">
+            <summary>
+            파서 고유 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Parsing.Interfaces.IMultilinePatternParser.TargetSectionId">
+            <summary>
+            대상 섹션 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Parsing.Interfaces.IMultilinePatternParser.Priority">
+            <summary>
+            우선순위 (낮을수록 먼저 시도)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.Interfaces.IMultilinePatternParser.CanParse(AndroidAdbAnalyzeModule.Core.Interfaces.LogSection,System.Int32)">
+            <summary>
+            현재 위치에서 multiline 패턴을 파싱할 수 있는지 확인
+            </summary>
+            <param name="section">로그 섹션</param>
+            <param name="currentIndex">현재 라인 인덱스</param>
+            <returns>파싱 가능 여부</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.Interfaces.IMultilinePatternParser.TryParse(AndroidAdbAnalyzeModule.Core.Interfaces.LogSection,System.Int32,AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry@,System.Int32@)">
+            <summary>
+            Multiline 패턴 파싱 시도
+            </summary>
+            <param name="section">로그 섹션</param>
+            <param name="currentIndex">현재 라인 인덱스</param>
+            <param name="entry">파싱 결과 (성공 시)</param>
+            <param name="linesToSkip">파싱 후 스킵할 라인 수 (성공 시)</param>
+            <returns>파싱 성공 여부</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Parsing.LineParsers.RegexLineParser">
+            <summary>
+            Regex 기반 라인 파서
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.LineParsers.RegexLineParser.#ctor(AndroidAdbAnalyzeModule.Configuration.Models.LinePatternConfig)">
+            <summary>
+            RegexLineParser 생성자
+            </summary>
+            <param name="patternConfig">라인 패턴 설정</param>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.LineParsers.RegexLineParser.CanParse(System.String,AndroidAdbAnalyzeModule.Core.Interfaces.ParsingContext)">
+            <summary>
+            해당 라인을 파싱할 수 있는지 확인
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.LineParsers.RegexLineParser.Parse(System.String,AndroidAdbAnalyzeModule.Core.Interfaces.ParsingContext)">
+            <summary>
+            라인 파싱
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.LineParsers.RegexLineParser.ConvertValue(System.String,System.String,System.String)">
+            <summary>
+            값 타입 변환
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.LineParsers.RegexLineParser.ConvertHex(System.String)">
+            <summary>
+            16진수 문자열을 int로 변환
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.LineParsers.RegexLineParser.ParseDateTime(System.String,System.String)">
+            <summary>
+            날짜/시간 파싱
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.ActivityRefreshRateParser">
+            <summary>
+            Activity Log의 Refresh Rate 2줄 패턴 파서
+            패턴:
+              Line 1: #15 &lt;&lt; 10-06 22:58:30.717 &gt;&gt;
+              Line 2:  [Min] Requested ( refreshRate=60.0 w=Window{...})
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.ActivityRefreshRateParser.ParserId">
+            <inheritdoc />
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.ActivityRefreshRateParser.TargetSectionId">
+            <inheritdoc />
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.ActivityRefreshRateParser.Priority">
+            <inheritdoc />
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.ActivityRefreshRateParser.CanParse(AndroidAdbAnalyzeModule.Core.Interfaces.LogSection,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.ActivityRefreshRateParser.TryParse(AndroidAdbAnalyzeModule.Core.Interfaces.LogSection,System.Int32,AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry@,System.Int32@)">
+            <inheritdoc />
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.SilentCameraCaptureParser">
+            <summary>
+            무음 카메라 촬영 패턴 파서 (5줄 패턴)
+            
+            패턴 구조:
+            Line 1: #N 타임스탬프 (MM-dd HH:mm:ss.fff)
+            Line 2: [Min] Requested ( refreshRate=60.0 w=Window{...SilentCamera/...CameraActivity})
+            Line 3: (빈줄)
+            Line 4: #N-1 타임스탬프 (MM-dd HH:mm:ss.fff)
+            Line 5: [Min] Requested ( refreshRate=60.0 w=Window{... Toast})
+            
+            이 패턴은 무음 카메라 앱의 사진 촬영을 명확하게 나타냅니다.
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.SilentCameraCaptureParser.ParserId">
+            <inheritdoc />
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.SilentCameraCaptureParser.TargetSectionId">
+            <inheritdoc />
+        </member>
+        <member name="P:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.SilentCameraCaptureParser.Priority">
+            <inheritdoc />
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.SilentCameraCaptureParser.CanParse(AndroidAdbAnalyzeModule.Core.Interfaces.LogSection,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.MultilinePatterns.SilentCameraCaptureParser.TryParse(AndroidAdbAnalyzeModule.Core.Interfaces.LogSection,System.Int32,AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry@,System.Int32@)">
+            <inheritdoc />
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Parsing.SectionSplitters.LogSectionSplitter">
+            <summary>
+            로그 섹션 분리기
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.SectionSplitters.LogSectionSplitter.#ctor(Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            LogSectionSplitter 생성자
+            </summary>
+            <param name="logger">로거 (선택사항)</param>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.SectionSplitters.LogSectionSplitter.SplitAsync(System.String,System.Collections.Generic.IEnumerable{AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition})">
+            <summary>
+            로그 파일을 섹션별로 분리
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.SectionSplitters.LogSectionSplitter.SplitSections(System.String[],System.Collections.Generic.List{AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition})">
+            <summary>
+            라인 배열을 섹션별로 분리
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.SectionSplitters.LogSectionSplitter.FindSection(System.String[],AndroidAdbAnalyzeModule.Core.Interfaces.SectionDefinition)">
+            <summary>
+            특정 섹션 찾기
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Parsing.SectionSplitters.LogSectionSplitter.IsMarkerMatch(System.String,System.String,System.String)">
+            <summary>
+            마커 매칭 확인
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Preprocessing.TimestampNormalizer">
+            <summary>
+            타임스탬프 정규화기
+            다양한 포맷의 타임스탬프를 UTC로 변환
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Preprocessing.TimestampNormalizer.#ctor(AndroidAdbAnalyzeModule.Core.Models.DeviceInfo,System.Boolean)">
+            <summary>
+            TimestampNormalizer 생성자
+            </summary>
+            <param name="deviceInfo">디바이스 정보</param>
+            <param name="convertToUtc">UTC 변환 여부</param>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Preprocessing.TimestampNormalizer.Normalize(System.String)">
+            <summary>
+            타임스탬프 문자열을 DateTime으로 변환
+            </summary>
+            <param name="timestampString">타임스탬프 문자열</param>
+            <returns>정규화된 DateTime (UTC 또는 디바이스 로컬 시간)</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Preprocessing.TimestampNormalizer.TryParseWithFormat(System.String,System.String,System.DateTime@)">
+            <summary>
+            특정 포맷으로 파싱 시도
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Preprocessing.TimestampNormalizer.NormalizeDateTime(System.DateTime,System.String)">
+            <summary>
+            DateTime 정규화 (연도 보완, UTC 변환)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Preprocessing.TimestampNormalizer.AddYearInformation(System.DateTime)">
+            <summary>
+            연도 정보 보완
+            MM-dd 포맷의 경우 디바이스 현재 시간 기준으로 연도 추정
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Preprocessing.TimestampNormalizer.ConvertToUtc(System.DateTime,System.String)">
+            <summary>
+            UTC로 변환
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Preprocessing.TimestampNormalizer.NormalizeLogEntry(AndroidAdbAnalyzeModule.Core.Models.ParsedLogEntry)">
+            <summary>
+            ParsedLogEntry의 타임스탬프를 정규화
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyzeModule.Repositories.InMemoryLogEventRepository">
+            <summary>
+            메모리 기반 로그 이벤트 저장소
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Repositories.InMemoryLogEventRepository.SaveEventAsync(AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent)">
+            <summary>
+            단일 이벤트 저장
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Repositories.InMemoryLogEventRepository.SaveEventsAsync(System.Collections.Generic.IEnumerable{AndroidAdbAnalyzeModule.Core.Models.NormalizedLogEvent})">
+            <summary>
+            여러 이벤트 일괄 저장
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Repositories.InMemoryLogEventRepository.GetEventsByTimeRangeAsync(System.DateTime,System.DateTime,System.String)">
+            <summary>
+            시간 범위로 이벤트 조회
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Repositories.InMemoryLogEventRepository.GetRelatedEventsAsync(System.Guid,System.TimeSpan)">
+            <summary>
+            관련 이벤트 조회 (시간 윈도우 기반)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Repositories.InMemoryLogEventRepository.ClearAsync">
+            <summary>
+            모든 이벤트 삭제
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Repositories.InMemoryLogEventRepository.GetCountAsync">
+            <summary>
+            저장된 이벤트 개수 조회
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyzeModule.Repositories.InMemoryLogEventRepository.Dispose">
+            <summary>
+            Dispose 패턴 구현
+            </summary>
+        </member>
+    </members>
+</doc>

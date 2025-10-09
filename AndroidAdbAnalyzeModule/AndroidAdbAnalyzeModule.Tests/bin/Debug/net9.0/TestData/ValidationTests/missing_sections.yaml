@@ -1,0 +1,33 @@
+# Missing required 'sections' field
+configSchemaVersion: "1.0"
+
+metadata:
+  logType: adb_audio_log
+  supportedVersions: ["15"]
+  displayName: "Config missing sections field"
+
+filePatterns:
+  - "audio*.txt"
+
+globalSettings:
+  encoding: utf-8
+  timestampFormat: "MM-dd HH:mm:ss':'fff"
+
+# sections field is intentionally missing for testing
+
+parsers:
+  - id: test_parser
+    name: "Test Parser"
+    targetSections: ["test_section"]
+    linePatterns:
+      - id: new_player_pattern
+        eventType: PLAYER_CREATED
+        regex: '(\d{2}-\d{2} \d{2}:\d{2}:\d{2}:\d{3}) new player piid:(\d+)'
+        fields:
+          timestamp:
+            group: 1
+            type: string
+          piid:
+            group: 2
+            type: int
+

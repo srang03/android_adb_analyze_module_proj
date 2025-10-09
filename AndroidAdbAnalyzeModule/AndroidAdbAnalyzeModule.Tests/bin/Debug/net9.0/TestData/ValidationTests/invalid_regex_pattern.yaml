@@ -1,0 +1,35 @@
+# Invalid regex pattern
+configSchemaVersion: "1.0"
+
+metadata:
+  logType: adb_audio_log
+  supportedVersions: ["15"]
+  displayName: "Config with invalid regex pattern"
+
+filePatterns:
+  - "audio*.txt"
+
+sections:
+  - id: playback_activity
+    name: "Playback Activity"
+    startMarker: "Players:"
+    endMarker: "^$"
+    markerType: text
+
+globalSettings:
+  encoding: utf-8
+  timestampFormat: "MM-dd HH:mm:ss':'fff"
+
+parsers:
+  - id: test_parser
+    name: "Test Parser"
+    targetSections: ["playback_activity"]
+    linePatterns:
+      - id: invalid_pattern
+        eventType: TEST_EVENT
+        regex: '(?P<invalid[unclosed group)(\d+'
+        fields:
+          timestamp:
+            group: 1
+            type: string
+

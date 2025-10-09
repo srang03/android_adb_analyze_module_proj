@@ -1,0 +1,128 @@
+# ADB Camera Worker Log Configuration
+# Version: 1.0
+# Description: Configuration for parsing Android ADB CameraServiceWorker logs
+
+configSchemaVersion: "1.0"
+
+metadata:
+  logType: "adb_media_camera_worker"
+  supportedVersions: ["15"]
+  displayName: "ADB Camera Worker Log (Android 15)"
+  description: "Parse ADB CameraServiceWorker logs for camera usage and media database insert events"
+  author: "System"
+  createdDate: "2025-10-04"
+
+# File matching patterns
+filePatterns:
+  - "media.camera.worker.txt"
+  - "media_camera_worker*.txt"
+  - "camera_worker*.log"
+  - "dumpsys_camera*.txt"
+
+# Global parsing settings
+globalSettings:
+  encoding: "utf-8"
+  skipEmptyLines: true
+  skipComments: false
+  commentPrefix: "#"
+  timeSeriesOrder: "ascending"  # ascending, descending, none
+  timestampFormat: "yyyy-MM-dd HH:mm:ss.fff zzz"
+  
+# Performance settings
+performance:
+  maxFileSizeMB: 500
+  timeoutSeconds: 300
+  bufferSizeKB: 64
+  useStreamingParser: false
+  parallelProcessing: false
+
+# Error handling
+errorHandling:
+  onInvalidLine: "skip"  # skip, abort, log
+  onMissingTimestamp: "skip"
+  onParsingError: "log"
+  validateSchema: true
+
+# Section definitions - divide log into manageable sections
+sections:
+  - id: "camera_event"
+    name: "Camera Open/Close Events"
+    enabled: true
+    startMarker: "Dump of CameraServiceWorker CAMERA_EVENT"
+    endMarker: "Fold Event"
+    markerType: "text"
+    
+  - id: "database_event"
+    name: "Database Insert Events"
+    enabled: true
+    startMarker: "Dump of CameraServiceWorker DATABASE_EVENT"
+    endMarker: "$"
+    markerType: "text"
+
+# Line parsing rules for each section
+parsers:
+  # Camera Open/Close Events Parser
+  - id: "camera_lifecycle_parser"
+    name: "Camera Lifecycle Parser"
+    enabled: true
+    targetSections: ["camera_event"]
+    priority: 1
+    
+    linePatterns:
+      # Camera Connect pattern (Open)
+      # Example: 2025-09-04 15:08:25.432 +0900, Open camera(20) for com.sec.android.app.camera
+      - id: "camera_connect_pattern"
+        name: "Camera Connect Event"
+        regex: '^\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{4}), Open camera\((\d+)\) for ([\w\.]+)'
+        fields:
+          timestamp: { group: 1, type: "datetime", format: "yyyy-MM-dd HH:mm:ss.fff zzz" }
+          cameraId: { group: 2, type: "int" }
+          package: { group: 3, type: "string" }
+        eventType: "CAMERA_CONNECT"
+      
+      # Camera Disconnect pattern (Close)
+      # Example: 2025-09-04 15:08:30.123 +0900, Close camera(20) for com.sec.android.app.camera
+      - id: "camera_disconnect_pattern"
+        name: "Camera Disconnect Event"
+        regex: '^\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{4}), Close camera\((\d+)\) for ([\w\.]+)'
+        fields:
+          timestamp: { group: 1, type: "datetime", format: "yyyy-MM-dd HH:mm:ss.fff zzz" }
+          cameraId: { group: 2, type: "int" }
+          package: { group: 3, type: "string" }
+        eventType: "CAMERA_DISCONNECT"
+
+  # Database Insert Events Parser
+  - id: "database_insert_parser"
+    name: "Database Insert Parser"
+    enabled: true
+    targetSections: ["database_event"]
+    priority: 1
+    
+    linePatterns:
+      # Media INSERT Start pattern
+      # Example: 2025-09-04 15:08:31.119 +0900, 1902 8024 PostProcessDBHelper: INSERT content://secmedia/media  Start: 1756966111118
+      - id: "media_insert_start_pattern"
+        name: "Media Insert Start"
+        regex: '^\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{4}), (\d+) (\d+) PostProcessDBHelper: INSERT (content://[\w/]+)\s+Start: (\d+)'
+        fields:
+          timestamp: { group: 1, type: "datetime", format: "yyyy-MM-dd HH:mm:ss.fff zzz" }
+          pid: { group: 2, type: "int" }
+          tid: { group: 3, type: "int" }
+          uri: { group: 4, type: "string" }
+          startTimestampMs: { group: 5, type: "long" }
+        eventType: "MEDIA_INSERT_START"
+        
+      # Media INSERT End pattern (촬영 확정!)
+      # Example: 2025-09-04 15:08:31.129 +0900, 1902 8024 PostProcessDBHelper: INSERT content://secmedia/media/2147483667  End: 1756966111129
+      - id: "media_insert_end_pattern"
+        name: "Media Insert End (Capture Confirmed!)"
+        regex: '^\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{4}), (\d+) (\d+) PostProcessDBHelper: INSERT (content://[\w/]+/(\d+))\s+End: (\d+)'
+        fields:
+          timestamp: { group: 1, type: "datetime", format: "yyyy-MM-dd HH:mm:ss.fff zzz" }
+          pid: { group: 2, type: "int" }
+          tid: { group: 3, type: "int" }
+          uri: { group: 4, type: "string" }
+          mediaId: { group: 5, type: "long" }  # Important! Media ID
+          endTimestampMs: { group: 6, type: "long" }
+        eventType: "MEDIA_INSERT_END"  # ⭐ Photo capture 100% confirmed!
+

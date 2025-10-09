@@ -1,0 +1,745 @@
+CameraService_worker is up and running
+	Camera is opened: false
+
+	Dump of CameraServiceWorker CAMERA_EVENT
+		2025-10-05 22:15:42.466 +0900, Open camera(0) for org.telegram.messenger
+		2025-10-05 22:15:53.880 +0900, Close camera(0) for org.telegram.messenger
+		2025-10-05 22:16:51.442 +0900, Open camera(0) for org.telegram.messenger
+		2025-10-05 22:17:09.822 +0900, Close camera(0) for org.telegram.messenger
+		2025-10-05 22:17:49.347 +0900, Open camera(0) for org.telegram.messenger
+		2025-10-05 22:18:03.820 +0900, Close camera(0) for org.telegram.messenger
+		2025-10-05 22:19:03.372 +0900, Open camera(0) for org.telegram.messenger
+		2025-10-05 22:19:08.261 +0900, Close camera(0) for org.telegram.messenger
+		2025-10-05 22:19:51.857 +0900, Open camera(0) for com.peace.SilentCamera
+		2025-10-05 22:19:57.151 +0900, Close camera(0) for com.peace.SilentCamera
+		2025-10-05 22:20:23.813 +0900, Open camera(0) for com.peace.SilentCamera
+		2025-10-05 22:20:34.206 +0900, Close camera(0) for com.peace.SilentCamera
+		2025-10-06 22:46:43.617 +0900, Open camera(20) for com.sec.android.app.camera
+		2025-10-06 22:46:47.926 +0900, Close camera(20) for com.sec.android.app.camera
+		2025-10-06 22:47:40.766 +0900, Open camera(20) for com.sec.android.app.camera
+		2025-10-06 22:47:51.192 +0900, Close camera(20) for com.sec.android.app.camera
+		2025-10-06 22:48:51.650 +0900, Open camera(20) for com.sec.android.app.camera
+		2025-10-06 22:48:56.334 +0900, Close camera(20) for com.sec.android.app.camera
+		2025-10-06 22:49:52.876 +0900, Open camera(20) for com.sec.android.app.camera
+		2025-10-06 22:50:01.872 +0900, Close camera(20) for com.sec.android.app.camera
+		2025-10-06 22:50:54.727 +0900, Open camera(20) for com.sec.android.app.camera
+		2025-10-06 22:51:03.906 +0900, Close camera(20) for com.sec.android.app.camera
+		2025-10-06 22:53:25.441 +0900, Open camera(0) for org.telegram.messenger
+		2025-10-06 22:53:36.879 +0900, Close camera(0) for org.telegram.messenger
+		2025-10-06 22:54:29.372 +0900, Open camera(0) for org.telegram.messenger
+		2025-10-06 22:54:47.828 +0900, Close camera(0) for org.telegram.messenger
+		2025-10-06 22:55:24.489 +0900, Open camera(0) for org.telegram.messenger
+		2025-10-06 22:55:38.979 +0900, Close camera(0) for org.telegram.messenger
+		2025-10-06 22:56:52.444 +0900, Open camera(0) for org.telegram.messenger
+		2025-10-06 22:56:57.329 +0900, Close camera(0) for org.telegram.messenger
+		2025-10-06 22:57:37.836 +0900, Open camera(0) for com.peace.SilentCamera
+		2025-10-06 22:57:43.332 +0900, Close camera(0) for com.peace.SilentCamera
+		2025-10-06 22:58:22.751 +0900, Open camera(0) for com.peace.SilentCamera
+		2025-10-06 22:58:33.296 +0900, Close camera(0) for com.peace.SilentCamera
+
+	Fold Event
+		Last fold state: 6
+
+	Dump of CameraServiceWorker FOLD_EVENT
+		2025-10-05 22:11:48.716 +0900, Fold state changed, DeviceState{identifier=0, name='DEFAULT', app_accessible=true, cancel_when_requester_not_on_top=false}
+
+	Shake EventListener: false
+	Last event: No event.
+
+	Dump of CameraServiceWorker SHAKE_EVENT_LISTENER
+
+	Dump of Request Injector Service Activity
+		Total # of ExtraRequest: 0
+
+	Dump of Request Injector Allow List
+		Total # of allow list: 14
+		com.bluejeansnet.Base
+		com.cisco.webex.meetings
+		com.cisco.wx2.android
+		com.facebook.orca
+		com.google.android.apps.meetings
+		com.google.android.apps.tachyon
+		com.google.android.gm
+		com.kakao.talk
+		com.microsoft.teams
+		com.sds.meeting
+		com.sds.sdsmeeting
+		com.tencent.mm
+		com.whatsapp
+		us.zoom.videomeetings
+
+	Dump of ScpmReceiver list
+
+	Policy Type : CAMERA_3RD_PARTY
+
+	Current list : version - 2025051511
+		Y29tLmhhbmFiYW5rLmViay5jaGFubmVsLmFuZHJvaWQuaGFuYW5iYW5r arg1: 1 arg2: 3rdAppPolicy:3.0c
+		Y29tLmludHNpZy5CQ1JMaXRl arg1: 1 arg2: 3rdAppPolicy:3.0c
+		Y29tLmludHNpZy5CaXpDYXJkUmVhZGVy arg1: 1 arg2: 3rdAppPolicy:3.0c
+		Y29tLmtha2FvYmFuay5jaGFubmVs arg1: 1 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNoaW5oYW4uc2Jhbmtpbmc= arg1: 1 arg2: 3rdAppPolicy:3.0c
+		a3Iub3Iuc2JiYW5rLnBsdXM= arg1: 1 arg2: 3rdAppPolicy:3.0c
+		bmguc21hcnQuYmFua2luZw== arg1: 1 arg2: 3rdAppPolicy:3.0c
+		Y29tLmppbnNpdC5zYWZlcGFzcw== arg1: 16 arg2: 3rdAppPolicy:3.0c
+		Y29tLnppbmcuemFsbw== arg1: 256 arg2: 3rdAppPolicy:3.0c
+		bmF0aXguYWkuZHJpdmUubWFwLm1vdmUuZWFybi53ZWIz arg1: 256 arg2: 3rdAppPolicy:3.0c
+		bmV0Lmxvdm9vLmFuZHJvaWQ= arg1: 256 arg2: 3rdAppPolicy:3.0c
+		Y29tLmFsaWJhYmEuYW5kcm9pZC5yaW1ldA== arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmFuZHJvaWQuY2hyb21l arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmNpc2NvLndlYmV4Lm1lZXRpbmdz arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmNpc2NvLnd4Mi5hbmRyb2lk arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmRpc2NvcmQ= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmdvb2dsZS5hbmRyb2lkLmFwcHMubWVldGluZ3M= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmdvb2dsZS5hbmRyb2lkLmFwcHMudGFjaHlvbg== arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmdvb2dsZS5hbmRyb2lkLmdt arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmdvb2dsZS5hbmRyb2lkLnRhbGs= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmltby5hbmRyb2lkLmltb2lt arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmt0Lm5hcmxl arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLm1pY3Jvc29mdC50ZWFtcw== arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNhbXN1bmcuYW5kcm9pZC5hcmRyYXdpbmc= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNkcy5tZWV0aW5n arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNkcy5zZHNtZWV0aW5n arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNlYy5zdmU= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNnaWdnbGUucHJvZHVjdGlvbg== arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNrdC5wcm9kLmRpYWxlcg== arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNreXBlLmluc2lkZXJz arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNreXBlLnJhaWRlcg== arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnRlbmNlbnQubW0= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnRlbmNlbnQubW9iaWxlcXE= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnRlbmNlbnQudGlt arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLnZpYmVyLnZvaXA= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLndlc2Nhbi5hbG8= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		aW0udGhlYm90Lm1lc3Nlbmdlcg== arg1: 260 arg2: 3rdAppPolicy:3.0c
+		anAubmF2ZXIubGluZS5hbmRyb2lk arg1: 260 arg2: 3rdAppPolicy:3.0c
+		b3JnLmppdHNpLm1lZXQ= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		b3JnLnRlbGVncmFtLm1lc3Nlbmdlcg== arg1: 260 arg2: 3rdAppPolicy:3.0c
+		b3JnLnRob3VnaHRjcmltZS5zZWN1cmVzbXM= arg1: 260 arg2: 3rdAppPolicy:3.0c
+		dXMuem9vbS52aWRlb21lZXRpbmdz arg1: 260 arg2: 3rdAppPolicy:3.0c
+		Y29tLmtha2FvLnRhbGs= arg1: 262 arg2: 3rdAppPolicy:3.0c
+		Y29tLm5pYW50aWNsYWJzLnBva2Vtb25nbw== arg1: 264 arg2: 3rdAppPolicy:3.0c
+		c2cuYmlnby5saXZl arg1: 292 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNrdC50bWFwLmt1 arg1: 296 arg2: 3rdAppPolicy:3.0c
+		Y29tLnByaXNtLmxpdmU= arg1: 352 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNvY2lhbC5tZWRpYS5icm9hZGNhc3QuYW9zcG9wLmU= arg1: 352 arg2: 3rdAppPolicy:3.0c
+		Y29tLnZhdWx0bWljcm8uY2FtZXJhZmkubGl2ZQ== arg1: 352 arg2: 3rdAppPolicy:3.0c
+		a3IuY28ubm93Y29tLm1vYmlsZS5hZnJlZWNh arg1: 352 arg2: 3rdAppPolicy:3.0c
+		Y29tLmNhbXBtb2JpbGUuc25vdw== arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLmdvcmdlb3VzLmxpdGVpbnRlcm5hdGlvbmFs arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLmluc3RhZ3JhbS5hbmRyb2lk arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLmxpbmVjb3JwLmI2MTIuYW5kcm9pZA== arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNhbXN1bmcuYW5kcm9pZC5od3Jlc291cmNlc2hhcmU= arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNpbmEud2VpYm8= arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNub3djb3JwLnNvZGEuYW5kcm9pZA== arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNzLmFuZHJvaWQudWdj arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNzLmFuZHJvaWQudWdjLnRyaWxs arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLnR3aXR0ZXIuYW5kcm9pZA== arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLnlpcnVpa2Uuc29kYWNuLmFuZHJvaWQ= arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLnpoaWxpYW9hcHAubXVzaWNhbGx5 arg1: 512 arg2: 3rdAppPolicy:3.0c
+		Y29tLnNuYXBjaGF0LmFuZHJvaWQ= arg1: 516 arg2: 3rdAppPolicy:3.0c
+		Y29tLmZhY2Vib29rLmthdGFuYQ== arg1: 772 arg2: 3rdAppPolicy:3.0c
+		Y29tLmZhY2Vib29rLm9yY2E= arg1: 772 arg2: 3rdAppPolicy:3.0c
+		Y29tLndoYXRzYXBw arg1: 2820 arg2: 3rdAppPolicy:3.0c
+		Y29tLndoYXRzYXBwLnc0Yg== arg1: 2820 arg2: 0
+
+	Policy Type : HIDDEN_ID_PERMITTED
+
+	Current list : version - 2024071000
+		Y29tLmZhY3RvcnkubW1pZ3JvdXA= arg1: 1 arg2: 
+		Y29tLnZhbC5oYXJkd2FyZQ== arg1: 1 arg2: 
+		Y29tLmxvbmdjaGVlci5taWR0ZXN0 arg1: 1 arg2: 
+		Y29tLnNhbXN1bmc= arg1: 2 arg2: 
+		Y29tLnNlYw== arg1: 2 arg2: 
+		Y2xpZW50LnBpZA== arg1: 2 arg2: 
+		Y29tLmRpYW1vbmQuYXBw arg1: 2 arg2: 
+		Y29tLndhbG1hcnQuZGlhbW9uZC5hcHA= arg1: 2 arg2: 
+		Y29tLnNuYXBjaGF0LmFuZHJvaWQ= arg1: 2 arg2: 
+		aWUuZ2FyZGEuYW5kcm9pZC5hbnBy arg1: 2 arg2: 
+		Y29tLnF1cmFtc29mdC50YWN0aWNzY2FtZXJh arg1: 2 arg2: 
+		Y29tLnNyYnIuYXBwLnNlbnNvcnByb3h5 arg1: 2 arg2: 
+		Y29tLnByaXNtLmxpdmU= arg1: 2 arg2: 
+		Y29tLnNzLmFuZHJvaWQudWdjLmF3ZW1l arg1: 2 arg2: 
+		Y29tLnNzLmFuZHJvaWQudWdjLnRyaWxs arg1: 2 arg2: 
+		Y29tLnpoaWxpYW9hcHAubXVzaWNhbGx5 arg1: 2 arg2: 
+		Y29tLmNhbXBtb2JpbGUuc25vdw== arg1: 2 arg2: 
+		Y29tLmxpbmVjb3JwLmI2MTIuYW5kcm9pZA== arg1: 2 arg2: 
+		Y29tLmxpbmVjb3JwLmZvb2RjYW0uYW5kcm9pZA== arg1: 2 arg2: 
+		Y29tLmxpbmVjb3JwLmZvb2RjYW1jbi5hbmRyb2lk arg1: 2 arg2: 
+		Y29tLnNub3djb3JwLnNvZGEuYW5kcm9pZA== arg1: 2 arg2: 
+		Y29tLnlpcnVpa2Uuc29kYWNuLmFuZHJvaWQ= arg1: 2 arg2: 
+
+	Dump of CameraServiceWorker REQUEST_INJECTOR_SERVICE
+		2025-10-05 22:11:49.255 +0900, VT Camera Setting exists. Register camera listener.
+		2025-10-05 22:12:10.667 +0900, VT Camera provider exist. Observer registered.
+		2025-10-05 22:12:10.668 +0900, VtCameraProviderObserver.onChange(true)
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.bluejeansnet.Base(88) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.cisco.webex.meetings(89) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.cisco.wx2.android(90) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.facebook.orca(91) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.google.android.apps.meetings(92) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.google.android.apps.tachyon(93) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.google.android.gm(94) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.kakao.talk(97) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.microsoft.teams(98) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.sds.meeting(99) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.sds.sdsmeeting(100) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.tencent.mm(101) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding com.whatsapp(102) to allow list
+		2025-10-05 22:12:10.899 +0900, onChange: Adding us.zoom.videomeetings(103) to allow list
+		2025-10-05 22:12:10.900 +0900, Updating allowed package list for request injector is done
+		2025-10-05 22:12:10.900 +0900, Updating allowed package list for request injector is done
+		2025-10-05 22:12:10.902 +0900, sendAllExtraRequestsToRequestInjector
+		2025-10-05 22:12:10.902 +0900, sendExtraRequestsToRequestInjector updated size = 0
+		2025-10-05 22:12:10.902 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-05 22:12:29.976 +0900, applyRequests requests size = 1
+		2025-10-05 22:12:29.976 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:12:29.976 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-05 22:12:29.976 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:12:29.978 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-05 22:12:31.755 +0900, applyRequests requests size = 1
+		2025-10-05 22:12:31.755 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:12:31.755 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-05 22:12:31.755 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:12:31.755 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-05 22:15:42.555 +0900, applyRequests requests size = 1
+		2025-10-05 22:15:42.555 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:15:42.555 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-05 22:15:42.555 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:15:42.555 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-05 22:16:51.448 +0900, applyRequests requests size = 1
+		2025-10-05 22:16:51.448 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:16:51.449 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-05 22:16:51.450 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:16:51.450 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-05 22:17:49.361 +0900, applyRequests requests size = 1
+		2025-10-05 22:17:49.362 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:17:49.362 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-05 22:17:49.362 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:17:49.365 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-05 22:19:03.369 +0900, applyRequests requests size = 1
+		2025-10-05 22:19:03.370 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:19:03.370 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-05 22:19:03.370 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:19:03.373 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-05 22:19:51.859 +0900, applyRequests requests size = 1
+		2025-10-05 22:19:51.859 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:19:51.859 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-05 22:19:51.859 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:19:51.859 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-05 22:20:23.823 +0900, applyRequests requests size = 1
+		2025-10-05 22:20:23.823 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:20:23.823 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-05 22:20:23.823 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-05 22:20:23.823 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-06 22:53:25.671 +0900, applyRequests requests size = 1
+		2025-10-06 22:53:25.671 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:53:25.671 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-06 22:53:25.671 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:53:25.672 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-06 22:54:29.398 +0900, applyRequests requests size = 1
+		2025-10-06 22:54:29.399 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:54:29.399 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-06 22:54:29.399 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:54:29.399 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-06 22:55:24.500 +0900, applyRequests requests size = 1
+		2025-10-06 22:55:24.501 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:55:24.501 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-06 22:55:24.501 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:55:24.502 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-06 22:56:52.461 +0900, applyRequests requests size = 1
+		2025-10-06 22:56:52.462 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:56:52.462 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-06 22:56:52.462 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:56:52.463 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-06 22:57:37.841 +0900, applyRequests requests size = 1
+		2025-10-06 22:57:37.841 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:57:37.841 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-06 22:57:37.841 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:57:37.841 +0900, sendExtraRequestsToRequestInjector done
+		2025-10-06 22:58:22.752 +0900, applyRequests requests size = 1
+		2025-10-06 22:58:22.752 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:58:22.752 +0900, sendExtraRequestsToRequestInjector updated size = 1
+		2025-10-06 22:58:22.752 +0900,   PersistableBundle[{key.i32=[], key.tagName=android.control.aeTargetFpsRange}]
+		2025-10-06 22:58:22.753 +0900, sendExtraRequestsToRequestInjector done
+
+	Dump of CameraServiceWorker POST_PROCESS_EVENT
+		2025-10-06 22:46:43.425 +0900, 14297 14324 I PictureProcessorManager: initializePPP
+		2025-10-06 22:46:43.425 +0900, 14297 14324 I PostProcessor: PostProcess(context com.sec.android.app.camera.CameraApplication@a5cbd99)
+		2025-10-06 22:46:43.426 +0900, 14297 14324 I PostProcessNotificationManager: bindService
+		2025-10-06 22:46:43.428 +0900, 14297 14324 I PostProcessThread: initRecoveryFilePathList E
+		2025-10-06 22:46:43.436 +0900, 14297 14324 I PostProcessThread: initRecoveryFilePathList X
+		2025-10-06 22:46:43.436 +0900, 14297 14324 I PostProcessThread: runWorkerLogic E
+		2025-10-06 22:46:43.436 +0900, 14297 14324 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles E
+		2025-10-06 22:46:43.437 +0900, 14297 14324 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles X
+		2025-10-06 22:46:43.437 +0900, 14297 14324 I RemovePrTempFileWorker: removeProcessTempFiles E
+		2025-10-06 22:46:43.438 +0900, 14297 14324 I RemovePrTempFileWorker: removeProcessTempFiles X
+		2025-10-06 22:46:43.438 +0900, 14297 14324 I PostProcessThread: runWorkerLogic X
+		2025-10-06 22:46:43.438 +0900, 14297 14324 I GppmStateManager: isGPPMEnabled E
+		2025-10-06 22:46:43.491 +0900, 14297 14297 I PostProcessService: onCreate
+		2025-10-06 22:46:43.506 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected E : component ComponentInfo{com.sec.android.app.camera/com.samsung.android.camera.core2.processor.PostProcessService}
+		2025-10-06 22:46:43.506 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected X
+		2025-10-06 22:46:43.556 +0900, 14297 14324 I GppmStateManager: GPPM is enabled.
+		2025-10-06 22:46:43.558 +0900, 14297 14324 I GppmStateManager: isGPPMEnabled X
+		2025-10-06 22:46:43.559 +0900, 14297 14324 I PostProcessor: initializeStateObserver
+		2025-10-06 22:46:43.564 +0900, 14297 14324 I GppmStateManager: notifyForegroundApp E
+		2025-10-06 22:46:43.590 +0900, 14297 14324 I GppmStateManager: notifyForegroundApp: res(true)
+		2025-10-06 22:46:43.590 +0900, 14297 14324 I GppmStateManager: notifyForegroundApp X
+		2025-10-06 22:46:43.591 +0900, 14297 14413 I PostProcessThread: PostProcessThread - initThread : thread id(14413), user id(0)
+		2025-10-06 22:46:43.592 +0900, 14297 14413 I PostProcessor: startRecoveryProcess E
+		2025-10-06 22:46:43.592 +0900, 14297 14413 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData E
+		2025-10-06 22:46:43.592 +0900, 14297 14413 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData X
+		2025-10-06 22:46:43.592 +0900, 14297 14413 I PostProcessor: startRecoveryProcess X (0 ms)
+		2025-10-06 22:46:43.592 +0900, 14297 14413 W PostProcessThread: PostProcessThread - waitAndGetFirstRequest await : stack is empty
+		2025-10-06 22:46:44.311 +0900, 14297 14352 I PostProcessThread: setOverHeatHint : 0
+		2025-10-06 22:46:47.934 +0900, 14297 14324 I PictureProcessorManager: deinitializePPP
+		2025-10-06 22:46:47.935 +0900, 14297 14324 I PostProcessor: tryDeinitialize
+		2025-10-06 22:46:47.935 +0900, 14297 14324 I SequenceApprovalStateMachineMGR: requestExit - (unCompletedMachineList: (empty))
+		2025-10-06 22:46:47.935 +0900, 14297 14324 I PostProcessThread: PostProcessThread - requestExit
+		2025-10-06 22:46:47.935 +0900, 14297 14324 I GppmStateManager: notifyBackgroundApp E
+		2025-10-06 22:46:47.937 +0900, 14297 14413 I PostProcessThread: PostProcessThread - endThread thread id(14413)
+		2025-10-06 22:46:47.937 +0900, 14297 14413 I PostProcessor: deInitializeStateObserver
+		2025-10-06 22:46:47.954 +0900, 14297 14324 I GppmStateManager: notifyBackgroundApp: res(true)
+		2025-10-06 22:46:47.954 +0900, 14297 14324 I GppmStateManager: notifyBackgroundApp X
+		2025-10-06 22:46:47.954 +0900, 14297 14413 I GppmProcessingManager: stop - call in [IDLE] state
+		2025-10-06 22:46:47.954 +0900, 14297 14413 I GppmProcessingManager: setState - change state [IDLE] -> [STOPPED]
+		2025-10-06 22:46:47.954 +0900, 14297 14413 I PostProcessNotificationManager: unBindService
+		2025-10-06 22:46:47.954 +0900, 14297 14413 I PostProcessNotificationManager: sendMessage - (CANCEL_NOTIFICATION, 0, 0)
+		2025-10-06 22:46:47.955 +0900, 14297 14413 W PostProcessNotificationManager: In case of an abnormal termination, call stopForeground immediately without delay.
+		2025-10-06 22:46:47.957 +0900, 14297 14413 W PostProcessThread: PostProcessThread - exit thread
+		2025-10-06 22:46:48.053 +0900, 14297 14297 I PostProcessService: onDestroy
+		2025-10-06 22:47:40.731 +0900, 14297 15444 I PictureProcessorManager: initializePPP
+		2025-10-06 22:47:40.732 +0900, 14297 15444 I PostProcessor: tryRecycle - false, needAbort : true
+		2025-10-06 22:47:40.732 +0900, 14297 15444 I PostProcessor: PostProcess(context com.sec.android.app.camera.CameraApplication@a5cbd99)
+		2025-10-06 22:47:40.732 +0900, 14297 15444 I PostProcessNotificationManager: bindService
+		2025-10-06 22:47:40.736 +0900, 14297 15444 I PostProcessThread: initRecoveryFilePathList E
+		2025-10-06 22:47:40.736 +0900, 14297 15444 I PostProcessThread: initRecoveryFilePathList X
+		2025-10-06 22:47:40.736 +0900, 14297 15444 I PostProcessThread: runWorkerLogic E
+		2025-10-06 22:47:40.736 +0900, 14297 15444 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles E
+		2025-10-06 22:47:40.737 +0900, 14297 15444 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles X
+		2025-10-06 22:47:40.737 +0900, 14297 15444 I RemovePrTempFileWorker: removeProcessTempFiles E
+		2025-10-06 22:47:40.737 +0900, 14297 15444 I RemovePrTempFileWorker: removeProcessTempFiles X
+		2025-10-06 22:47:40.737 +0900, 14297 15444 I PostProcessThread: runWorkerLogic X
+		2025-10-06 22:47:40.737 +0900, 14297 15444 I GppmStateManager: isGPPMEnabled E
+		2025-10-06 22:47:40.737 +0900, 14297 15444 I GppmStateManager: GPPM is enabled.
+		2025-10-06 22:47:40.737 +0900, 14297 15444 I GppmStateManager: isGPPMEnabled X
+		2025-10-06 22:47:40.737 +0900, 14297 15444 I PostProcessor: initializeStateObserver
+		2025-10-06 22:47:40.738 +0900, 14297 15444 I GppmStateManager: notifyForegroundApp E
+		2025-10-06 22:47:40.751 +0900, 14297 15444 I GppmStateManager: notifyForegroundApp: res(true)
+		2025-10-06 22:47:40.752 +0900, 14297 15444 I GppmStateManager: notifyForegroundApp X
+		2025-10-06 22:47:40.752 +0900, 14297 15480 I PostProcessThread: PostProcessThread - initThread : thread id(15480), user id(0)
+		2025-10-06 22:47:40.752 +0900, 14297 15480 I PostProcessor: startRecoveryProcess E
+		2025-10-06 22:47:40.753 +0900, 14297 15480 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData E
+		2025-10-06 22:47:40.753 +0900, 14297 15480 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData X
+		2025-10-06 22:47:40.753 +0900, 14297 15480 I PostProcessor: startRecoveryProcess X (0 ms)
+		2025-10-06 22:47:40.753 +0900, 14297 15480 W PostProcessThread: PostProcessThread - waitAndGetFirstRequest await : stack is empty
+		2025-10-06 22:47:40.768 +0900, 14297 14297 I PostProcessService: onCreate
+		2025-10-06 22:47:40.786 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected E : component ComponentInfo{com.sec.android.app.camera/com.samsung.android.camera.core2.processor.PostProcessService}
+		2025-10-06 22:47:40.786 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected X
+		2025-10-06 22:47:41.227 +0900, 14297 15462 I PostProcessThread: setOverHeatHint : 0
+		2025-10-06 22:47:41.270 +0900, 14297 14306 I PostProcessThread: PostProcessThread - finalize
+		2025-10-06 22:47:41.270 +0900, 14297 14306 I PostProcessThread: EndThread has already been called.
+		2025-10-06 22:47:45.680 +0900, 14297 15454 I SequenceApprovalStateMachineMGR: createSequenceApprovalStateMachine(ppSequenceId: 0, unCompletedMachineList: (empty))
+		2025-10-06 22:47:45.680 +0900, 14297 15454 I SequenceApprovalStateMachine: makeSequenceApprovalState(ppSequenceId: 0) - [state: PENDING]
+		2025-10-06 22:47:45.683 +0900, 14297 15454 I SequenceApprovalStateMachineMGR: approve(ppSequenceId: 0)
+		2025-10-06 22:47:45.684 +0900, 14297 15454 I SequenceApprovalStateMachine: approve(ppSequenceId: 0) - in [PENDING] state
+		2025-10-06 22:47:45.684 +0900, 14297 15454 I SequenceApprovalStateMachine: changeState(ppSequenceId: 0) - [PENDING -> APPROVED]
+		2025-10-06 22:47:45.684 +0900, 14297 15454 I SequenceApprovalStateMachine: makeSequenceApprovalState(ppSequenceId: 0) - [state: APPROVED]
+		2025-10-06 22:47:46.674 +0900, 14297 16003 I GppmTaskManager: setSupportedGppmTaskTypeList - [WATERMARK]
+		2025-10-06 22:47:46.674 +0900, 14297 16003 I GppmTaskManager: confirmGppmTaskType - null
+		2025-10-06 22:47:46.685 +0900, 14297 16003 I SequenceApprovalStateMachineMGR: addResourceImageProcessRequest(ppSequenceId: 0) 1/6
+		2025-10-06 22:47:46.685 +0900, 14297 16003 I SequenceApprovalStateMachine: addResourceImageProcessRequest(ppSequenceId: 0) - in [APPROVED] state
+		2025-10-06 22:47:46.685 +0900, 14297 16003 I PostProcessor: trackAndCheckProcessRequestCollection(RESOURCE_IMAGE) ppSequenceId 0 processCount 1/6
+		2025-10-06 22:47:46.686 +0900, 14297 16003 I PostProcessor: addResourceImageProcessRequestToPppStack(ppSequence id 0) - sequenceSet activatedSequenceCount(1), pendingSequenceCount(0)
+		2025-10-06 22:47:46.686 +0900, 14297 16003 I PostSavingStateManagerGroup: createPostSavingState - ppSequenceId : 0, state : IDLE
+		2025-10-06 22:47:46.686 +0900, 14297 16003 I ProcessSequenceStack: addProcessRequest: SequenceList = [normal 1, pending 0]
+		2025-10-06 22:47:46.686 +0900, 14297 16003 I ProcessSequenceStack: addProcessRequest - element(ppSequenceId 0, add/total count 1/6)
+		2025-10-06 22:47:46.686 +0900, 14297 16003 I PostProcessNotificationManager: sequenceAdd(id: 0, isPendingSequence: false)
+		2025-10-06 22:47:46.686 +0900, 14297 16003 I PostProcessNotificationManager: removeMessage - (STOP_FOREGROUND)
+		2025-10-06 22:47:46.686 +0900, 14297 16003 I PostProcessNotificationManager: sendMessage - (START_FOREGROUND, 0, 0)
+		2025-10-06 22:47:46.687 +0900, 14297 16003 I PostProcessNotificationManager: sendMessage - (SET_PROGRESS, 0, 1)
+		2025-10-06 22:47:46.687 +0900, 14297 15480 I GppmStateManager: updateStateTo E
+		2025-10-06 22:47:46.687 +0900, 14297 15491 I PostProcessService: startForegroundService
+		2025-10-06 22:47:46.689 +0900, 14297 15480 I GppmStateManager: updateStateTo from STOPPED to READY E
+		2025-10-06 22:47:46.690 +0900, 14297 15480 I GppmStateManager: requestPermission E
+		2025-10-06 22:47:46.699 +0900, 14297 15480 I GppmStateManager: requestPermission : success to get permission
+		2025-10-06 22:47:46.699 +0900, 14297 15480 I GppmStateManager: requestPermission X
+		2025-10-06 22:47:46.699 +0900, 14297 15480 I GppmStateManager: updateStateTo to READY X : result = true
+		2025-10-06 22:47:46.699 +0900, 14297 15480 I GppmStateManager: updateStateTo X
+		2025-10-06 22:47:46.699 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - isComplete null
+		2025-10-06 22:47:46.699 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 1/6, poll count 1)
+		2025-10-06 22:47:46.699 +0900, 14297 15480 I PostProcessNotificationManager: sequenceStart(id: 0)
+		2025-10-06 22:47:46.699 +0900, 14297 15480 I PostProcessNotificationManager: sendMessage - (SET_PROGRESS, 0, 1)
+		2025-10-06 22:47:46.700 +0900, 14297 15480 I GppmStateManager: updateStateTo E
+		2025-10-06 22:47:46.702 +0900, 14297 15480 I GppmStateManager: updateStateTo from STARTING to STARTED E
+		2025-10-06 22:47:46.703 +0900, 14297 15480 I GppmStateManager: updateStateTo to STARTED X : result = true
+		2025-10-06 22:47:46.704 +0900, 14297 15480 I GppmStateManager: updateStateTo X
+		2025-10-06 22:47:46.704 +0900, 14297 15480 I PostProcessThread: PostProcessThread - start sequence(id 0, dsMode SUPER_NIGHT_EXTREME_DARK, dsExtraInfo [SUPER_HDR, properties []])
+		2025-10-06 22:47:46.704 +0900, 14297 15480 I PostProcessor: deinitializing nodeChain - request info is different
+		2025-10-06 22:47:46.704 +0900, 14297 15480 I PppNodeControllerStateIdle: initialize E
+		2025-10-06 22:47:46.704 +0900, 14297 15480 I PppNodeController: createNodeChain E
+		2025-10-06 22:47:46.704 +0900, 14297 15480 I PppNodeController: createPreprocessingNodeChain E
+		2025-10-06 22:47:46.704 +0900, 14297 15480 I PppNodeController: createPreprocessingNodeChain X
+		2025-10-06 22:47:46.704 +0900, 14297 15480 I PppNodeController: createPostProcessingNodeChain E
+		2025-10-06 22:47:46.712 +0900, 14297 15480 I PppNodeController: createPostProcessingNodeChain X
+		2025-10-06 22:47:46.712 +0900, 14297 15480 I PppNodeController: createEncodingNodeChain E
+		2025-10-06 22:47:46.712 +0900, 14297 15480 I PppNodeController: createEncodingNodeChain X
+		2025-10-06 22:47:46.713 +0900, 14297 15480 I PppNodeController: createNodeChain X
+		2025-10-06 22:47:46.713 +0900, 14297 15480 I PppNodeController: configureNodeChain E: SUPER_NIGHT_EXTREME_DARK
+		2025-10-06 22:47:46.713 +0900, 14297 15480 I PppNodeController: configureNodeChain: [PREPROCESSOR(SaveYuvForGainMapNode) - SUPER_NIGHT(SuperNightNodeBase) - ENCODER(ImageCodecNodeBase, SefNode)] nodeChain will be configured
+		2025-10-06 22:47:46.713 +0900, 14297 15480 I PppNodeController: configurePreprocessorNodeChain: preprocessor node chain is enabled.
+		2025-10-06 22:47:46.713 +0900, 14297 15480 I PppNodeController: configureMultiFrameNodeChain: key = com.samsung.android.camera.core2.processor.nodeController.NodeChainKeyContainer$6@3684d5d
+		2025-10-06 22:47:46.724 +0900, 14297 16003 I SequenceApprovalStateMachineMGR: addDraftImageProcessRequest(ppSequenceId: 0)
+		2025-10-06 22:47:46.724 +0900, 14297 16003 I SequenceApprovalStateMachine: addDraftImageProcessRequest(ppSequenceId: 0) - in [APPROVED] state
+		2025-10-06 22:47:46.724 +0900, 14297 16003 I PostProcessor: trackAndCheckProcessRequestCollection(DRAFT_IMAGE) ppSequenceId 0 processCount 1/6
+		2025-10-06 22:47:46.724 +0900, 14297 16003 I SavingDraftImageTaskManager: getSavingDraftImageTask - SavingSingleDraftImageTask(ppSequenceId:0).
+		2025-10-06 22:47:46.724 +0900, 14297 16003 I PostProcessor: saveDraftImage - submit savingDraftImageTask(ppSequenceId 0).
+		2025-10-06 22:47:46.724 +0900, 14297 16016 I SavingSingleDraftImageTask: run(ppSequenceId : 0, sequenceId : 8) E
+		2025-10-06 22:47:46.724 +0900, 14297 16016 I PostSavingStateManagerGroup: runDraft - ppSequenceId : 0, state : IDLE
+		2025-10-06 22:47:46.725 +0900, 14297 16016 I SavingSingleDraftImageTask: processDraftJpeg(ppSequenceId : 0, sequenceId : 8) E
+		2025-10-06 22:47:46.725 +0900, 14297 16016 D DraftJpegNodeChainAccessor: createNodeChain E
+		2025-10-06 22:47:46.725 +0900, 14297 16016 D DraftJpegNodeChainAccessor: createNodeChain X
+		2025-10-06 22:47:46.725 +0900, 14297 16016 D DraftJpegNodeChainAccessor: configureNodeChain E
+		2025-10-06 22:47:46.725 +0900, 14297 16016 D DraftJpegNodeChainAccessor: configureDraftFilterNodeChain: filterInfo = null
+		2025-10-06 22:47:46.725 +0900, 14297 16016 D DraftJpegNodeChainAccessor: configureDraftFilterNodeChain X: filterInfo is not applied, so skip
+		2025-10-06 22:47:46.725 +0900, 14297 16016 I PppNodeController: configureDraftEncoderNodeChain: draft encode node chain is enabled.
+		2025-10-06 22:47:46.744 +0900, 14297 16016 D DraftJpegNodeChainAccessor: configureNodeChain X
+		2025-10-06 22:47:46.744 +0900, 14297 15480 I PppNodeController: configureEncoderNodeChain - ImageCodecNode activate true
+		2025-10-06 22:47:46.745 +0900, 14297 15480 I PppNodeController: configureNodeChain X
+		2025-10-06 22:47:46.745 +0900, 14297 15480 I PppNodeControllerStateIdle: initialize X
+		2025-10-06 22:47:46.745 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process(ppSequenceId 0, processCount 1/6, dsMode SUPER_NIGHT_EXTREME_DARK) : Start[1759758466745]
+		2025-10-06 22:47:46.745 +0900, 14297 15480 I PppNodeControllerStateInitializing: process - ppSequenceId=0, count=(1/6)
+		2025-10-06 22:47:46.745 +0900, 14297 15480 I PppNodeControllerStateProcessing: process - ppSequenceId=0, count=(1/6)
+		2025-10-06 22:47:46.746 +0900, 14297 16016 I SavingSingleDraftImageTask: processDraftJpeg(ppSequenceId : 0, sequenceId : 8) X
+		2025-10-06 22:47:46.746 +0900, 14297 16016 I SavingInfoContainer: setImageBuffer
+		2025-10-06 22:47:46.746 +0900, 14297 16016 I PostSavingStateIdle: runModules
+		2025-10-06 22:47:46.746 +0900, 14297 16016 I PostSavingStateIdle: runModulesInternal
+		2025-10-06 22:47:46.747 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleSefInsert - runModulesInternal E
+		2025-10-06 22:47:46.850 +0900, 14297 16016 I SavingInfoContainer: clearImageBuffer
+		2025-10-06 22:47:46.852 +0900, 14297 16016 I SavingInfoContainer: setImageBuffer
+		2025-10-06 22:47:46.852 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleSefInsert - runModulesInternal X
+		2025-10-06 22:47:46.852 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleDraftWrite - runModulesInternal E
+		2025-10-06 22:47:46.855 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleDraftWrite - runModulesInternal X
+		2025-10-06 22:47:46.855 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleSecMpInsert - runModulesInternal E
+		2025-10-06 22:47:46.867 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleSecMpInsert - runModulesInternal X
+		2025-10-06 22:47:46.867 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleRecoveryDataSave - runModulesInternal E
+		2025-10-06 22:47:46.867 +0900, 14297 16016 I PostSavingModuleRecoveryDataSave: createRecoveryData
+		2025-10-06 22:47:46.868 +0900, 14297 16016 I PostSavingModuleRecoveryDataSave: saveRecoveryDataToFile E
+		2025-10-06 22:47:46.869 +0900, 14297 16016 I PostSavingModuleRecoveryDataSave: saveRecoveryDataToFile X
+		2025-10-06 22:47:46.869 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleRecoveryDataSave - runModulesInternal X
+		2025-10-06 22:47:46.869 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleCallback - runModulesInternal E
+		2025-10-06 22:47:46.869 +0900, 14297 16016 I PostProcessor: onDraftImageSaved
+		2025-10-06 22:47:46.869 +0900, 14297 16016 W ProcessCallbackSequencer: SequenceCondition is null
+		2025-10-06 22:47:46.869 +0900, 14297 16016 I PostSavingStateIdle: PostSavingModuleCallback - runModulesInternal X
+		2025-10-06 22:47:46.869 +0900, 14297 16016 I SavingInfoContainer: clearImageBuffer
+		2025-10-06 22:47:46.870 +0900, 14297 16016 I PostSavingStateManager: postSavingStateChanged(ppSequenceId:0)  E : IDLE->DRAFT
+		2025-10-06 22:47:46.870 +0900, 14297 16016 I PostSavingStateManager: postSavingStateChanged  X
+		2025-10-06 22:47:46.870 +0900, 14297 16016 I SavingSingleDraftImageTask: run(ppSequenceId : 0, sequenceId : 8) X
+		2025-10-06 22:47:46.906 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process : End[1759758466906]
+		2025-10-06 22:47:46.907 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 1/6, poll count 1)
+		2025-10-06 22:47:46.907 +0900, 14297 15480 W PostProcessThread: PostProcessThread - waitAndGetRequest await
+		2025-10-06 22:47:47.116 +0900, 14297 16003 I SequenceApprovalStateMachineMGR: addResourceImageProcessRequest(ppSequenceId: 0) 2/6
+		2025-10-06 22:47:47.116 +0900, 14297 16003 I SequenceApprovalStateMachine: addResourceImageProcessRequest(ppSequenceId: 0) - in [APPROVED] state
+		2025-10-06 22:47:47.117 +0900, 14297 16003 I PostProcessor: trackAndCheckProcessRequestCollection(RESOURCE_IMAGE) ppSequenceId 0 processCount 2/6
+		2025-10-06 22:47:47.118 +0900, 14297 16003 I ProcessSequenceStack: addProcessRequest - element(ppSequenceId 0, add/total count 2/6)
+		2025-10-06 22:47:47.118 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 2/6, poll count 2)
+		2025-10-06 22:47:47.118 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process(ppSequenceId 0, processCount 2/6, dsMode SUPER_NIGHT_EXTREME_DARK) : Start[1759758467117]
+		2025-10-06 22:47:47.118 +0900, 14297 15480 I PppNodeControllerStateProcessing: process - ppSequenceId=0, count=(2/6)
+		2025-10-06 22:47:47.153 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process : End[1759758467153]
+		2025-10-06 22:47:47.161 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 2/6, poll count 2)
+		2025-10-06 22:47:47.162 +0900, 14297 15480 W PostProcessThread: PostProcessThread - waitAndGetRequest await
+		2025-10-06 22:47:47.619 +0900, 14297 16003 I SequenceApprovalStateMachineMGR: addResourceImageProcessRequest(ppSequenceId: 0) 3/6
+		2025-10-06 22:47:47.620 +0900, 14297 16003 I SequenceApprovalStateMachine: addResourceImageProcessRequest(ppSequenceId: 0) - in [APPROVED] state
+		2025-10-06 22:47:47.621 +0900, 14297 16003 I PostProcessor: trackAndCheckProcessRequestCollection(RESOURCE_IMAGE) ppSequenceId 0 processCount 3/6
+		2025-10-06 22:47:47.622 +0900, 14297 16003 I ProcessSequenceStack: addProcessRequest - element(ppSequenceId 0, add/total count 3/6)
+		2025-10-06 22:47:47.622 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 3/6, poll count 3)
+		2025-10-06 22:47:47.622 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process(ppSequenceId 0, processCount 3/6, dsMode SUPER_NIGHT_EXTREME_DARK) : Start[1759758467619]
+		2025-10-06 22:47:47.623 +0900, 14297 15480 I PppNodeControllerStateProcessing: process - ppSequenceId=0, count=(3/6)
+		2025-10-06 22:47:47.625 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process : End[1759758467625]
+		2025-10-06 22:47:47.633 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 3/6, poll count 3)
+		2025-10-06 22:47:47.633 +0900, 14297 15480 W PostProcessThread: PostProcessThread - waitAndGetRequest await
+		2025-10-06 22:47:48.115 +0900, 14297 16003 I SequenceApprovalStateMachineMGR: addResourceImageProcessRequest(ppSequenceId: 0) 4/6
+		2025-10-06 22:47:48.116 +0900, 14297 16003 I SequenceApprovalStateMachine: addResourceImageProcessRequest(ppSequenceId: 0) - in [APPROVED] state
+		2025-10-06 22:47:48.116 +0900, 14297 16003 I PostProcessor: trackAndCheckProcessRequestCollection(RESOURCE_IMAGE) ppSequenceId 0 processCount 4/6
+		2025-10-06 22:47:48.117 +0900, 14297 16003 I ProcessSequenceStack: addProcessRequest - element(ppSequenceId 0, add/total count 4/6)
+		2025-10-06 22:47:48.117 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 4/6, poll count 4)
+		2025-10-06 22:47:48.118 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process(ppSequenceId 0, processCount 4/6, dsMode SUPER_NIGHT_EXTREME_DARK) : Start[1759758468116]
+		2025-10-06 22:47:48.118 +0900, 14297 15480 I PppNodeControllerStateProcessing: process - ppSequenceId=0, count=(4/6)
+		2025-10-06 22:47:48.124 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process : End[1759758468123]
+		2025-10-06 22:47:48.140 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 4/6, poll count 4)
+		2025-10-06 22:47:48.140 +0900, 14297 15480 W PostProcessThread: PostProcessThread - waitAndGetRequest await
+		2025-10-06 22:47:48.618 +0900, 14297 16003 I SequenceApprovalStateMachineMGR: addResourceImageProcessRequest(ppSequenceId: 0) 5/6
+		2025-10-06 22:47:48.619 +0900, 14297 16003 I SequenceApprovalStateMachine: addResourceImageProcessRequest(ppSequenceId: 0) - in [APPROVED] state
+		2025-10-06 22:47:48.620 +0900, 14297 16003 I PostProcessor: trackAndCheckProcessRequestCollection(RESOURCE_IMAGE) ppSequenceId 0 processCount 5/6
+		2025-10-06 22:47:48.620 +0900, 14297 16003 I ProcessSequenceStack: addProcessRequest - element(ppSequenceId 0, add/total count 5/6)
+		2025-10-06 22:47:48.620 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 5/6, poll count 5)
+		2025-10-06 22:47:48.620 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process(ppSequenceId 0, processCount 5/6, dsMode SUPER_NIGHT_EXTREME_DARK) : Start[1759758468619]
+		2025-10-06 22:47:48.620 +0900, 14297 15480 I PppNodeControllerStateProcessing: process - ppSequenceId=0, count=(5/6)
+		2025-10-06 22:47:48.631 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process : End[1759758468630]
+		2025-10-06 22:47:48.641 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 5/6, poll count 5)
+		2025-10-06 22:47:48.641 +0900, 14297 15480 W PostProcessThread: PostProcessThread - waitAndGetRequest await
+		2025-10-06 22:47:49.113 +0900, 14297 16003 I SequenceApprovalStateMachineMGR: addResourceImageProcessRequest(ppSequenceId: 0) 6/6
+		2025-10-06 22:47:49.113 +0900, 14297 16003 I SequenceApprovalStateMachine: addResourceImageProcessRequest(ppSequenceId: 0) - in [APPROVED] state
+		2025-10-06 22:47:49.113 +0900, 14297 16003 I PostProcessor: trackAndCheckProcessRequestCollection(RESOURCE_IMAGE) ppSequenceId 0 processCount 6/6
+		2025-10-06 22:47:49.114 +0900, 14297 16003 I ProcessSequenceStack: addProcessRequest - element(ppSequenceId 0, add/total count 6/6)
+		2025-10-06 22:47:49.114 +0900, 14297 16003 I SequenceApprovalStateMachine: changeState(ppSequenceId: 0) - [APPROVED -> COMPLETED]
+		2025-10-06 22:47:49.114 +0900, 14297 16003 I SequenceApprovalStateMachine: makeSequenceApprovalState(ppSequenceId: 0) - [state: COMPLETED]
+		2025-10-06 22:47:49.114 +0900, 14297 16003 I SequenceApprovalStateMachine: clear(ppSequenceId: 0) - in [COMPLETED] state
+		2025-10-06 22:47:49.114 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest - element(ppSequenceId 0, add/total count 6/6, poll count 6)
+		2025-10-06 22:47:49.115 +0900, 14297 16003 I SequenceApprovalStateMachineMGR: onCompleted(ppSequenceId: 0), removed SequenceApprovalStateMachine(ppSequenceId: 0, unCompletedMachineList (empty))
+		2025-10-06 22:47:49.115 +0900, 14297 15480 I ProcessSequenceStack: pollProcessRequest: current sequence is completed, SequenceList = [normal 0, pending 0]
+		2025-10-06 22:47:49.115 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process(ppSequenceId 0, processCount 6/6, dsMode SUPER_NIGHT_EXTREME_DARK) : Start[1759758469114]
+		2025-10-06 22:47:49.115 +0900, 14297 15480 I PppNodeControllerStateProcessing: process - ppSequenceId=0, count=(6/6)
+		2025-10-06 22:47:51.197 +0900, 14297 15444 I PictureProcessorManager: deinitializePPP
+		2025-10-06 22:47:51.197 +0900, 14297 15444 I PostProcessor: tryDeinitialize
+		2025-10-06 22:47:51.197 +0900, 14297 15444 I SequenceApprovalStateMachineMGR: requestExit - (unCompletedMachineList: (empty))
+		2025-10-06 22:47:51.197 +0900, 14297 15444 I PostProcessThread: PostProcessThread - requestExit
+		2025-10-06 22:47:51.197 +0900, 14297 15444 I GppmStateManager: notifyBackgroundApp E
+		2025-10-06 22:47:51.206 +0900, 14297 15444 I GppmStateManager: notifyBackgroundApp: res(true)
+		2025-10-06 22:47:51.206 +0900, 14297 15444 I GppmStateManager: notifyBackgroundApp X
+		2025-10-06 22:47:52.683 +0900, 14297 15480 I CameraPerformance: Capture - PostProcessor Process : End[1759758472683]
+		2025-10-06 22:47:52.683 +0900, 14297 15480 I PostProcessor: PostProcessThread - onSequenceCompleted(sequenceId 0)
+		2025-10-06 22:47:52.683 +0900, 14297 15480 I PostSavingStateManagerGroup: runComplete - ppSequenceId : 0, state : DRAFT
+		2025-10-06 22:47:52.683 +0900, 14297 15480 I SavingInfoContainer: setImageBuffer
+		2025-10-06 22:47:52.683 +0900, 14297 15480 I PostSavingStateDraft: runModules
+		2025-10-06 22:47:52.684 +0900, 14297 15480 I PostSavingStateDraft: runModulesInternal
+		2025-10-06 22:47:52.684 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleValidationCheck - runModulesInternal E
+		2025-10-06 22:47:52.684 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleValidationCheck - runModulesInternal X
+		2025-10-06 22:47:52.684 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleSefInsert - runModulesInternal E
+		2025-10-06 22:47:52.684 +0900, 14297 15480 I SavingInfoContainer: clearImageBuffer
+		2025-10-06 22:47:52.684 +0900, 14297 15480 I SavingInfoContainer: setImageBuffer
+		2025-10-06 22:47:52.685 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleSefInsert - runModulesInternal X
+		2025-10-06 22:47:52.685 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleImageWrite - runModulesInternal E
+		2025-10-06 22:47:52.710 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleImageWrite - runModulesInternal X
+		2025-10-06 22:47:52.710 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleMpUpdate - runModulesInternal E
+		2025-10-06 22:47:52.714 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleMpUpdate - runModulesInternal X
+		2025-10-06 22:47:52.714 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleScanFile - runModulesInternal E
+		2025-10-06 22:47:52.730 +0900, 14297 16291 I PostProcessDBHelper: The scan about the /storage/emulated/0/DCIM/Camera/20251006_224745.jpg was completed, uri is content://media/external_primary/images/media/1198
+		2025-10-06 22:47:52.730 +0900, 14297 15480 I PostProcessDBHelper: scanFile was successful
+		2025-10-06 22:47:52.730 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleScanFile - runModulesInternal X
+		2025-10-06 22:47:52.730 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleNotifyingComplete - runModulesInternal E
+		2025-10-06 22:47:52.730 +0900, 14297 15480 I PostSavingModuleNotifyingComplete: runModule - secMpId(2147484140), tempFilePath(/data/sec/camera/native/20251006_224745_temp.jpg)
+		2025-10-06 22:47:52.749 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleNotifyingComplete - runModulesInternal X
+		2025-10-06 22:47:52.750 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleRemoveTemp - runModulesInternal E
+		2025-10-06 22:47:52.751 +0900, 14297 15480 I PostSavingStateDraft: PostSavingModuleRemoveTemp - runModulesInternal X
+		2025-10-06 22:47:52.751 +0900, 14297 15480 I PostSavingStateDraft: sendBroadcastNewPicture E
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I PostSavingStateDraft: sendBroadcastNewPicture X : 1198
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I PostSavingStateManager: postSavingStateChanged(ppSequenceId:0)  E : DRAFT->COMPLETE
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I PostSavingStateManagerGroup: onStateDone : 0
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I PostSavingStateManager: PostSavingStateManager clear
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I SavingInfoContainer: clearImageBuffer
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I PostSavingStateManager: postSavingStateChanged  X
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I PostProcessThread: PostProcessThread - end sequence(id 0, dsMode 0x53, dsExtraInfo 0x800000, errorInSequence NONE)
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I PostProcessThread: completeSequence - ppSequence(id 0)
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I PostProcessor: onSequenceEnded(ppSequence id 0) - activatedSequenceCount(0), pendingSequenceCount(0)
+		2025-10-06 22:47:52.758 +0900, 14297 15480 I PppNodeControllerStateProcessing: deinitialize : isAbortCalled=false
+		2025-10-06 22:47:52.759 +0900, 14297 15480 I PostProcessNotificationManager: sequenceEnd(id: 0)
+		2025-10-06 22:47:52.759 +0900, 14297 15480 I PostProcessNotificationManager: sendMessage - (SET_PROGRESS, 1, 1)
+		2025-10-06 22:47:52.760 +0900, 14297 15480 W PostProcessNotificationManager: notify progress 100%, processedSequenceCount 1, totalSequenceCount 1
+		2025-10-06 22:47:52.760 +0900, 14297 15480 I PostProcessNotificationManager: sendMessage - (CANCEL_NOTIFICATION, 0, 0)
+		2025-10-06 22:47:52.760 +0900, 14297 15480 I PostProcessNotificationManager: sendMessageDelayed - (STOP_FOREGROUND, 0, 0)
+		2025-10-06 22:47:52.760 +0900, 14297 15480 I PostProcessNotificationManager: hideNotification
+		2025-10-06 22:47:52.760 +0900, 14297 15480 I PostProcessNotificationManager: sendMessage - (CANCEL_NOTIFICATION, 0, 0)
+		2025-10-06 22:47:52.764 +0900, 14297 15480 I GppmStateManager: updateStateTo E
+		2025-10-06 22:47:52.768 +0900, 14297 15480 I GppmStateManager: updateStateTo from STARTED to STOPPED E
+		2025-10-06 22:47:52.771 +0900, 14297 15480 I GppmStateManager: updateStateTo to STOPPED X : result = true
+		2025-10-06 22:47:52.771 +0900, 14297 15480 I GppmStateManager: updateStateTo X
+		2025-10-06 22:47:52.771 +0900, 14297 15480 I PostProcessThread: PostProcessThread - endThread thread id(15480)
+		2025-10-06 22:47:52.772 +0900, 14297 15480 I PostProcessor: deInitializeStateObserver
+		2025-10-06 22:47:52.772 +0900, 14297 15480 I GppmProcessingManager: stop - call in [IDLE] state
+		2025-10-06 22:47:52.772 +0900, 14297 15480 I GppmProcessingManager: setState - change state [IDLE] -> [STOPPED]
+		2025-10-06 22:47:52.773 +0900, 14297 15480 I PostProcessNotificationManager: unBindService
+		2025-10-06 22:47:52.773 +0900, 14297 15480 I PostProcessNotificationManager: sendMessage - (CANCEL_NOTIFICATION, 0, 0)
+		2025-10-06 22:47:52.773 +0900, 14297 15480 W PostProcessNotificationManager: Wait for 300 msec to execute the delayed stop foreground command.
+		2025-10-06 22:47:52.773 +0900, 14297 15480 W PostProcessThread: PostProcessThread - exit thread
+		2025-10-06 22:47:53.060 +0900, 14297 15491 I PostProcessService: stopForegroundService E
+		2025-10-06 22:47:53.065 +0900, 14297 15491 I PostProcessService: stopForegroundService X
+		2025-10-06 22:47:53.081 +0900, 14297 14297 I PostProcessService: onDestroy
+		2025-10-06 22:48:51.623 +0900, 14297 17213 I PictureProcessorManager: initializePPP
+		2025-10-06 22:48:51.623 +0900, 14297 17213 I PostProcessor: tryRecycle - false, needAbort : true
+		2025-10-06 22:48:51.624 +0900, 14297 17213 I PostProcessor: PostProcess(context com.sec.android.app.camera.CameraApplication@a5cbd99)
+		2025-10-06 22:48:51.624 +0900, 14297 17213 I PostProcessNotificationManager: bindService
+		2025-10-06 22:48:51.626 +0900, 14297 17213 I PostProcessThread: initRecoveryFilePathList E
+		2025-10-06 22:48:51.627 +0900, 14297 17213 I PostProcessThread: initRecoveryFilePathList X
+		2025-10-06 22:48:51.627 +0900, 14297 17213 I PostProcessThread: runWorkerLogic E
+		2025-10-06 22:48:51.627 +0900, 14297 17213 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles E
+		2025-10-06 22:48:51.628 +0900, 14297 17213 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles X
+		2025-10-06 22:48:51.628 +0900, 14297 17213 I RemovePrTempFileWorker: removeProcessTempFiles E
+		2025-10-06 22:48:51.629 +0900, 14297 17213 I RemovePrTempFileWorker: removeProcessTempFiles X
+		2025-10-06 22:48:51.629 +0900, 14297 17213 I PostProcessThread: runWorkerLogic X
+		2025-10-06 22:48:51.629 +0900, 14297 17213 I GppmStateManager: isGPPMEnabled E
+		2025-10-06 22:48:51.629 +0900, 14297 17213 I GppmStateManager: GPPM is enabled.
+		2025-10-06 22:48:51.629 +0900, 14297 17213 I GppmStateManager: isGPPMEnabled X
+		2025-10-06 22:48:51.629 +0900, 14297 17213 I PostProcessor: initializeStateObserver
+		2025-10-06 22:48:51.629 +0900, 14297 17213 I GppmStateManager: notifyForegroundApp E
+		2025-10-06 22:48:51.634 +0900, 14297 17213 I GppmStateManager: notifyForegroundApp: res(true)
+		2025-10-06 22:48:51.634 +0900, 14297 17213 I GppmStateManager: notifyForegroundApp X
+		2025-10-06 22:48:51.635 +0900, 14297 17241 I PostProcessThread: PostProcessThread - initThread : thread id(17241), user id(0)
+		2025-10-06 22:48:51.635 +0900, 14297 17241 I PostProcessor: startRecoveryProcess E
+		2025-10-06 22:48:51.635 +0900, 14297 17241 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData E
+		2025-10-06 22:48:51.635 +0900, 14297 17241 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData X
+		2025-10-06 22:48:51.635 +0900, 14297 17241 I PostProcessor: startRecoveryProcess X (0 ms)
+		2025-10-06 22:48:51.635 +0900, 14297 17241 W PostProcessThread: PostProcessThread - waitAndGetFirstRequest await : stack is empty
+		2025-10-06 22:48:51.664 +0900, 14297 14297 I PostProcessService: onCreate
+		2025-10-06 22:48:51.674 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected E : component ComponentInfo{com.sec.android.app.camera/com.samsung.android.camera.core2.processor.PostProcessService}
+		2025-10-06 22:48:51.675 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected X
+		2025-10-06 22:48:51.948 +0900, 14297 14306 I PostProcessThread: PostProcessThread - finalize
+		2025-10-06 22:48:51.948 +0900, 14297 14306 I PostProcessThread: EndThread has already been called.
+		2025-10-06 22:48:52.088 +0900, 14297 17231 I PostProcessThread: setOverHeatHint : 0
+		2025-10-06 22:48:56.355 +0900, 14297 17213 I PictureProcessorManager: deinitializePPP
+		2025-10-06 22:48:56.355 +0900, 14297 17213 I PostProcessor: tryDeinitialize
+		2025-10-06 22:48:56.355 +0900, 14297 17213 I SequenceApprovalStateMachineMGR: requestExit - (unCompletedMachineList: (empty))
+		2025-10-06 22:48:56.355 +0900, 14297 17213 I PostProcessThread: PostProcessThread - requestExit
+		2025-10-06 22:48:56.355 +0900, 14297 17241 I PostProcessThread: PostProcessThread - endThread thread id(17241)
+		2025-10-06 22:48:56.355 +0900, 14297 17213 I GppmStateManager: notifyBackgroundApp E
+		2025-10-06 22:48:56.355 +0900, 14297 17241 I PostProcessor: deInitializeStateObserver
+		2025-10-06 22:48:56.356 +0900, 14297 17213 I GppmStateManager: notifyBackgroundApp: res(true)
+		2025-10-06 22:48:56.356 +0900, 14297 17213 I GppmStateManager: notifyBackgroundApp X
+		2025-10-06 22:48:56.356 +0900, 14297 17241 I GppmProcessingManager: stop - call in [IDLE] state
+		2025-10-06 22:48:56.357 +0900, 14297 17241 I GppmProcessingManager: setState - change state [IDLE] -> [STOPPED]
+		2025-10-06 22:48:56.357 +0900, 14297 17241 I PostProcessNotificationManager: unBindService
+		2025-10-06 22:48:56.357 +0900, 14297 17241 I PostProcessNotificationManager: sendMessage - (CANCEL_NOTIFICATION, 0, 0)
+		2025-10-06 22:48:56.357 +0900, 14297 17241 W PostProcessNotificationManager: In case of an abnormal termination, call stopForeground immediately without delay.
+		2025-10-06 22:48:56.360 +0900, 14297 17241 W PostProcessThread: PostProcessThread - exit thread
+		2025-10-06 22:48:56.383 +0900, 14297 14297 I PostProcessService: onDestroy
+		2025-10-06 22:49:52.837 +0900, 14297 18126 I PictureProcessorManager: initializePPP
+		2025-10-06 22:49:52.837 +0900, 14297 18126 I PostProcessor: tryRecycle - false, needAbort : true
+		2025-10-06 22:49:52.837 +0900, 14297 18126 I PostProcessor: PostProcess(context com.sec.android.app.camera.CameraApplication@a5cbd99)
+		2025-10-06 22:49:52.837 +0900, 14297 18126 I PostProcessNotificationManager: bindService
+		2025-10-06 22:49:52.844 +0900, 14297 18126 I PostProcessThread: initRecoveryFilePathList E
+		2025-10-06 22:49:52.844 +0900, 14297 18126 I PostProcessThread: initRecoveryFilePathList X
+		2025-10-06 22:49:52.844 +0900, 14297 18126 I PostProcessThread: runWorkerLogic E
+		2025-10-06 22:49:52.845 +0900, 14297 18126 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles E
+		2025-10-06 22:49:52.846 +0900, 14297 18126 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles X
+		2025-10-06 22:49:52.846 +0900, 14297 18126 I RemovePrTempFileWorker: removeProcessTempFiles E
+		2025-10-06 22:49:52.846 +0900, 14297 18126 I RemovePrTempFileWorker: removeProcessTempFiles X
+		2025-10-06 22:49:52.846 +0900, 14297 18126 I PostProcessThread: runWorkerLogic X
+		2025-10-06 22:49:52.846 +0900, 14297 18126 I GppmStateManager: isGPPMEnabled E
+		2025-10-06 22:49:52.846 +0900, 14297 18126 I GppmStateManager: GPPM is enabled.
+		2025-10-06 22:49:52.846 +0900, 14297 18126 I GppmStateManager: isGPPMEnabled X
+		2025-10-06 22:49:52.846 +0900, 14297 18126 I PostProcessor: initializeStateObserver
+		2025-10-06 22:49:52.846 +0900, 14297 18126 I GppmStateManager: notifyForegroundApp E
+		2025-10-06 22:49:52.850 +0900, 14297 18126 I GppmStateManager: notifyForegroundApp: res(true)
+		2025-10-06 22:49:52.850 +0900, 14297 18126 I GppmStateManager: notifyForegroundApp X
+		2025-10-06 22:49:52.851 +0900, 14297 18153 I PostProcessThread: PostProcessThread - initThread : thread id(18153), user id(0)
+		2025-10-06 22:49:52.851 +0900, 14297 18153 I PostProcessor: startRecoveryProcess E
+		2025-10-06 22:49:52.851 +0900, 14297 18153 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData E
+		2025-10-06 22:49:52.851 +0900, 14297 18153 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData X
+		2025-10-06 22:49:52.851 +0900, 14297 18153 I PostProcessor: startRecoveryProcess X (0 ms)
+		2025-10-06 22:49:52.852 +0900, 14297 18153 W PostProcessThread: PostProcessThread - waitAndGetFirstRequest await : stack is empty
+		2025-10-06 22:49:52.860 +0900, 14297 14297 I PostProcessService: onCreate
+		2025-10-06 22:49:52.877 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected E : component ComponentInfo{com.sec.android.app.camera/com.samsung.android.camera.core2.processor.PostProcessService}
+		2025-10-06 22:49:52.877 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected X
+		2025-10-06 22:49:53.311 +0900, 14297 18143 I PostProcessThread: setOverHeatHint : 0
+		2025-10-06 22:49:54.588 +0900, 14297 14306 I PostProcessThread: PostProcessThread - finalize
+		2025-10-06 22:49:54.588 +0900, 14297 14306 I PostProcessThread: EndThread has already been called.
+		2025-10-06 22:49:57.358 +0900, 14297 18648 I GppmStateManager: notifyForceStart E
+		2025-10-06 22:49:57.362 +0900, 14297 18648 I GppmStateManager: notifyForceStart: res(true)
+		2025-10-06 22:49:57.362 +0900, 14297 18648 I GppmStateManager: notifyForceStart X
+		2025-10-06 22:49:57.363 +0900, 14297 18648 I IppNodeControllerStateIdle: initialize E
+		2025-10-06 22:49:57.363 +0900, 14297 18648 I IppNodeController: createPreprocessingNodeChain E
+		2025-10-06 22:49:57.363 +0900, 14297 18648 I IppNodeController: createPreprocessingNodeChain X
+		2025-10-06 22:49:57.363 +0900, 14297 18648 I IppNodeController: createPostProcessingNodeChain E
+		2025-10-06 22:49:57.365 +0900, 14297 18648 I IppNodeController: createPostProcessingNodeChain X
+		2025-10-06 22:49:57.365 +0900, 14297 18648 I IppNodeController: createEncodingNodeChain E
+		2025-10-06 22:49:57.365 +0900, 14297 18648 I IppNodeController: createEncodingNodeChain X
+		2025-10-06 22:49:57.368 +0900, 14297 18648 I IppNodeController: IppNodeController - configureNodeChain : [PREPROCESSOR(SaveYuvForGainMapNode) - ENCODER(ImageCodecNodeBase, SefNode)] nodeChain will be configured
+		2025-10-06 22:49:57.368 +0900, 14297 18648 I IppNodeController: configurePreprocessorNodeChain: preprocessor node chain is enabled.
+		2025-10-06 22:49:57.368 +0900, 14297 18648 I IppNodeController: configureMultiFrameNodeChain - skip about SINGLE
+		2025-10-06 22:49:57.370 +0900, 14297 18648 I IppNodeController: configureEncoderNodeChain - ImageCodecNode activate true
+		2025-10-06 22:49:57.370 +0900, 14297 18648 I IppNodeControllerStateIdle: initialize X
+		2025-10-06 22:49:57.370 +0900, 14297 18648 I IppNodeControllerStateInitializing: process - ppSequenceId=1, count=(1/1)
+		2025-10-06 22:49:57.370 +0900, 14297 18648 I IppNodeControllerStateProcessing: process - ppSequenceId=1, count=(1/1)
+		2025-10-06 22:49:57.439 +0900, 14297 18648 I IppNodeControllerStateProcessing: deinitialize : isAbortCalled=false
+		2025-10-06 22:49:57.444 +0900, 14297 18648 I GppmStateManager: notifyForceStop E
+		2025-10-06 22:49:57.446 +0900, 14297 18648 I GppmStateManager: notifyForceStop: res(true)
+		2025-10-06 22:49:57.446 +0900, 14297 18648 I GppmStateManager: notifyForceStop X
+		2025-10-06 22:50:01.875 +0900, 14297 18126 I PictureProcessorManager: deinitializePPP
+		2025-10-06 22:50:01.875 +0900, 14297 18126 I PostProcessor: tryDeinitialize
+		2025-10-06 22:50:01.875 +0900, 14297 18126 I SequenceApprovalStateMachineMGR: requestExit - (unCompletedMachineList: (empty))
+		2025-10-06 22:50:01.875 +0900, 14297 18126 I PostProcessThread: PostProcessThread - requestExit
+		2025-10-06 22:50:01.875 +0900, 14297 18126 I GppmStateManager: notifyBackgroundApp E
+		2025-10-06 22:50:01.876 +0900, 14297 18153 I PostProcessThread: PostProcessThread - endThread thread id(18153)
+		2025-10-06 22:50:01.876 +0900, 14297 18153 I PostProcessor: deInitializeStateObserver
+		2025-10-06 22:50:01.880 +0900, 14297 18126 I GppmStateManager: notifyBackgroundApp: res(true)
+		2025-10-06 22:50:01.880 +0900, 14297 18126 I GppmStateManager: notifyBackgroundApp X
+		2025-10-06 22:50:01.880 +0900, 14297 18153 I GppmProcessingManager: stop - call in [IDLE] state
+		2025-10-06 22:50:01.880 +0900, 14297 18153 I GppmProcessingManager: setState - change state [IDLE] -> [STOPPED]
+		2025-10-06 22:50:01.880 +0900, 14297 18153 I PostProcessNotificationManager: unBindService
+		2025-10-06 22:50:01.880 +0900, 14297 18153 I PostProcessNotificationManager: sendMessage - (CANCEL_NOTIFICATION, 0, 0)
+		2025-10-06 22:50:01.881 +0900, 14297 18153 W PostProcessNotificationManager: In case of an abnormal termination, call stopForeground immediately without delay.
+		2025-10-06 22:50:01.881 +0900, 14297 18153 W PostProcessThread: PostProcessThread - exit thread
+		2025-10-06 22:50:01.946 +0900, 14297 14297 I PostProcessService: onDestroy
+		2025-10-06 22:50:54.693 +0900, 14297 19215 I PictureProcessorManager: initializePPP
+		2025-10-06 22:50:54.694 +0900, 14297 19215 I PostProcessor: tryRecycle - false, needAbort : true
+		2025-10-06 22:50:54.694 +0900, 14297 19215 I PostProcessor: PostProcess(context com.sec.android.app.camera.CameraApplication@a5cbd99)
+		2025-10-06 22:50:54.694 +0900, 14297 19215 I PostProcessNotificationManager: bindService
+		2025-10-06 22:50:54.696 +0900, 14297 19215 I PostProcessThread: initRecoveryFilePathList E
+		2025-10-06 22:50:54.698 +0900, 14297 19215 I PostProcessThread: initRecoveryFilePathList X
+		2025-10-06 22:50:54.698 +0900, 14297 19215 I PostProcessThread: runWorkerLogic E
+		2025-10-06 22:50:54.699 +0900, 14297 19215 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles E
+		2025-10-06 22:50:54.699 +0900, 14297 19215 I RecoveryDraftImageLegacyWorker: recoveryDraftImageFiles X
+		2025-10-06 22:50:54.699 +0900, 14297 19215 I RemovePrTempFileWorker: removeProcessTempFiles E
+		2025-10-06 22:50:54.699 +0900, 14297 19215 I RemovePrTempFileWorker: removeProcessTempFiles X
+		2025-10-06 22:50:54.699 +0900, 14297 19215 I PostProcessThread: runWorkerLogic X
+		2025-10-06 22:50:54.699 +0900, 14297 19215 I GppmStateManager: isGPPMEnabled E
+		2025-10-06 22:50:54.700 +0900, 14297 19215 I GppmStateManager: GPPM is enabled.
+		2025-10-06 22:50:54.700 +0900, 14297 19215 I GppmStateManager: isGPPMEnabled X
+		2025-10-06 22:50:54.700 +0900, 14297 19215 I PostProcessor: initializeStateObserver
+		2025-10-06 22:50:54.702 +0900, 14297 19215 I GppmStateManager: notifyForegroundApp E
+		2025-10-06 22:50:54.712 +0900, 14297 19215 I GppmStateManager: notifyForegroundApp: res(true)
+		2025-10-06 22:50:54.712 +0900, 14297 19215 I GppmStateManager: notifyForegroundApp X
+		2025-10-06 22:50:54.713 +0900, 14297 19251 I PostProcessThread: PostProcessThread - initThread : thread id(19251), user id(0)
+		2025-10-06 22:50:54.713 +0900, 14297 19251 I PostProcessor: startRecoveryProcess E
+		2025-10-06 22:50:54.713 +0900, 14297 19251 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData E
+		2025-10-06 22:50:54.713 +0900, 14297 19251 I RecoveryProcessManager: recoveryDraftImageWithoutRecoveryData X
+		2025-10-06 22:50:54.713 +0900, 14297 19251 I PostProcessor: startRecoveryProcess X (0 ms)
+		2025-10-06 22:50:54.713 +0900, 14297 19251 W PostProcessThread: PostProcessThread - waitAndGetFirstRequest await : stack is empty
+		2025-10-06 22:50:54.722 +0900, 14297 14297 I PostProcessService: onCreate
+		2025-10-06 22:50:54.733 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected E : component ComponentInfo{com.sec.android.app.camera/com.samsung.android.camera.core2.processor.PostProcessService}
+		2025-10-06 22:50:54.733 +0900, 14297 14297 I PostProcessNotificationManager: PostProcessNotificationServiceConnection - onServiceConnected X
+		2025-10-06 22:50:55.151 +0900, 14297 19231 I PostProcessThread: setOverHeatHint : 0
+		2025-10-06 22:50:56.700 +0900, 14297 14306 I PostProcessThread: PostProcessThread - finalize
+		2025-10-06 22:50:56.700 +0900, 14297 14306 I PostProcessThread: EndThread has already been called.
+		2025-10-06 22:50:59.199 +0900, 14297 19723 I GppmStateManager: notifyForceStart E
+		2025-10-06 22:50:59.203 +0900, 14297 19723 I GppmStateManager: notifyForceStart: res(true)
+		2025-10-06 22:50:59.203 +0900, 14297 19723 I GppmStateManager: notifyForceStart X
+		2025-10-06 22:50:59.203 +0900, 14297 19723 I IppNodeControllerStateIdle: initialize E
+		2025-10-06 22:50:59.203 +0900, 14297 19723 I IppNodeController: createPreprocessingNodeChain E
+		2025-10-06 22:50:59.204 +0900, 14297 19723 I IppNodeController: createPreprocessingNodeChain X
+		2025-10-06 22:50:59.204 +0900, 14297 19723 I IppNodeController: createPostProcessingNodeChain E
+		2025-10-06 22:50:59.205 +0900, 14297 19723 I IppNodeController: createPostProcessingNodeChain X
+		2025-10-06 22:50:59.206 +0900, 14297 19723 I IppNodeController: createEncodingNodeChain E
+		2025-10-06 22:50:59.206 +0900, 14297 19723 I IppNodeController: createEncodingNodeChain X
+		2025-10-06 22:50:59.207 +0900, 14297 19723 I IppNodeController: IppNodeController - configureNodeChain : [PREPROCESSOR(SaveYuvForGainMapNode) - ENCODER(ImageCodecNodeBase, SefNode)] nodeChain will be configured
+		2025-10-06 22:50:59.208 +0900, 14297 19723 I IppNodeController: configurePreprocessorNodeChain: preprocessor node chain is enabled.
+		2025-10-06 22:50:59.208 +0900, 14297 19723 I IppNodeController: configureMultiFrameNodeChain - skip about SINGLE
+		2025-10-06 22:50:59.209 +0900, 14297 19723 I IppNodeController: configureEncoderNodeChain - ImageCodecNode activate true
+		2025-10-06 22:50:59.209 +0900, 14297 19723 I IppNodeControllerStateIdle: initialize X
+		2025-10-06 22:50:59.210 +0900, 14297 19723 I IppNodeControllerStateInitializing: process - ppSequenceId=2, count=(1/1)
+		2025-10-06 22:50:59.210 +0900, 14297 19723 I IppNodeControllerStateProcessing: process - ppSequenceId=2, count=(1/1)
+		2025-10-06 22:50:59.276 +0900, 14297 19723 I IppNodeControllerStateProcessing: deinitialize : isAbortCalled=false
+		2025-10-06 22:50:59.283 +0900, 14297 19723 I GppmStateManager: notifyForceStop E
+		2025-10-06 22:50:59.286 +0900, 14297 19723 I GppmStateManager: notifyForceStop: res(true)
+		2025-10-06 22:50:59.286 +0900, 14297 19723 I GppmStateManager: notifyForceStop X
+		2025-10-06 22:51:03.909 +0900, 14297 19215 I PictureProcessorManager: deinitializePPP
+		2025-10-06 22:51:03.909 +0900, 14297 19215 I PostProcessor: tryDeinitialize
+		2025-10-06 22:51:03.909 +0900, 14297 19215 I SequenceApprovalStateMachineMGR: requestExit - (unCompletedMachineList: (empty))
+		2025-10-06 22:51:03.909 +0900, 14297 19215 I PostProcessThread: PostProcessThread - requestExit
+		2025-10-06 22:51:03.909 +0900, 14297 19215 I GppmStateManager: notifyBackgroundApp E
+		2025-10-06 22:51:03.909 +0900, 14297 19251 I PostProcessThread: PostProcessThread - endThread thread id(19251)
+		2025-10-06 22:51:03.909 +0900, 14297 19251 I PostProcessor: deInitializeStateObserver
+		2025-10-06 22:51:03.913 +0900, 14297 19215 I GppmStateManager: notifyBackgroundApp: res(true)
+		2025-10-06 22:51:03.913 +0900, 14297 19215 I GppmStateManager: notifyBackgroundApp X
+		2025-10-06 22:51:03.913 +0900, 14297 19251 I GppmProcessingManager: stop - call in [IDLE] state
+		2025-10-06 22:51:03.914 +0900, 14297 19251 I GppmProcessingManager: setState - change state [IDLE] -> [STOPPED]
+		2025-10-06 22:51:03.914 +0900, 14297 19251 I PostProcessNotificationManager: unBindService
+		2025-10-06 22:51:03.914 +0900, 14297 19251 I PostProcessNotificationManager: sendMessage - (CANCEL_NOTIFICATION, 0, 0)
+		2025-10-06 22:51:03.914 +0900, 14297 19251 W PostProcessNotificationManager: In case of an abnormal termination, call stopForeground immediately without delay.
+		2025-10-06 22:51:03.914 +0900, 14297 19251 W PostProcessThread: PostProcessThread - exit thread
+		2025-10-06 22:51:03.975 +0900, 14297 14297 I PostProcessService: onDestroy
+
+	Dump of CameraServiceWorker CAMERA_APPLICATION_EVENT
+
+	Dump of CameraServiceWorker DATABASE_EVENT
+		2025-10-06 22:47:46.699 +0900, 14297 15480 PostProcessThread: updateGppmStateToReady - sec_mp_id is null
+		2025-10-06 22:47:46.856 +0900, 14297 16016 PostProcessDBHelper: INSERT content://secmedia/media  Start: 1759758466856
+		2025-10-06 22:47:46.867 +0900, 14297 16016 PostProcessDBHelper: INSERT content://secmedia/media/2147484140  End: 1759758466867

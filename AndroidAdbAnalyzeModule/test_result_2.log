@@ -1,0 +1,264 @@
+﻿  蹂듭썝???꾨줈?앺듃瑜??뺤씤?섎뒗 以?..
+  蹂듭썝??紐⑤뱺 ?꾨줈?앺듃媛 理쒖떊 ?곹깭?낅땲??
+  AndroidAdbAnalyzeModule -> C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule\bin\Debug\net8.0\AndroidAdbAnalyzeModule.dll
+  AndroidAdbAnalyze.Analysis -> C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis\bin\Debug\net8.0\AndroidAdbAnalyze.Analysis.dll
+  AndroidAdbAnalyze.Analysis.Tests -> C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests\bin\Debug\net9.0\AndroidAdbAnalyze.Analysis.Tests.dll
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests\bin\Debug\net9.0\AndroidAdbAnalyze.Analysis.Tests.dll(.NETCoreApp,Version=v9.0)??????뚯뒪???ㅽ뻾
+VSTest 踰꾩쟾 17.14.1 (x64)
+
+?뚯뒪???ㅽ뻾???쒖옉?섎뒗 以묒엯?덈떎. ?좎떆 湲곕떎??二쇱꽭??..
+吏?뺣맂 ?⑦꽩怨??쇱튂??珥??뚯뒪???뚯씪 ?섎뒗 1媛쒖엯?덈떎.
+  ?ㅽ뙣 AndroidAdbAnalyze.Analysis.Tests.Integration.EndToEndAnalysisTests.Sample4_AnalysisResult_MatchesGroundTruth [1 s]
+  ?ㅻ쪟 硫붿떆吏:
+   Expected result.Statistics.TotalCaptureEvents to be between 7 and 11 because 9媛?珥ъ쁺 ?덉긽 (湲곕낯 2 + 移댁뭅?ㅽ넚 3 + ?붾젅洹몃옩 3 + 臾댁쓬 1), but found 17.
+  ?ㅽ깮 異붿쟻:
+     at FluentAssertions.Execution.LateBoundTestFramework.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.AddPreFormattedFailure(String formattedFailureMessage)
+   at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+   at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+   at FluentAssertions.Execution.AssertionChain.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.NumericAssertionsBase`3.BeInRange(T minimumValue, T maximumValue, String because, Object[] becauseArgs)
+   at AndroidAdbAnalyze.Analysis.Tests.Integration.EndToEndAnalysisTests.Sample4_AnalysisResult_MatchesGroundTruth() in C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests\Integration\EndToEndAnalysisTests.cs:line 646
+--- End of stack trace from previous location ---
+  ?쒖? 異쒕젰 硫붿떆吏:
+ Current Dir: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests\bin\Debug\net9.0
+ Project Root: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule
+ Sample Logs: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\..\sample_logs
+ Parser Configs: C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule\Configs
+ ??Parsed audio.log: 27 events
+ ??Parsed media_camera_worker.log: 23 events
+ ??Parsed media_camera.log: 22 events
+ ??Parsed media_metrics.log: 124 events
+ ??Parsed usagestats.log: 334 events
+ ??Parsed vibrator_manager.log: 77 events
+ ??Parsed activity.log: 35 events
+ ?뱤 Total events from 4李??섑뵆: 642
+ ?뱷 Top 20 Event Types:
+   - ACTIVITY_RESUMED: 92媛?
+   - ACTIVITY_STOPPED: 91媛?
+   - ACTIVITY_PAUSED: 86媛?
+   - VIBRATION_EVENT: 77媛?
+   - AUDIO_TRACK: 67媛?
+   - MEDIA_EXTRACTOR: 57媛?
+   - FOREGROUND_SERVICE: 30媛?
+   - CAMERA_ACTIVITY_REFRESH: 25媛?
+   - CAMERA_CONNECT: 22媛?
+   - CAMERA_DISCONNECT: 22媛?
+   - STANDBY_BUCKET_CHANGED: 17媛?
+   - NOTIFICATION: 14媛?
+   - PLAYER_RELEASED: 13媛?
+   - PLAYER_CREATED: 7媛?
+   - PLAYER_EVENT: 7媛?
+   - URI_PERMISSION_GRANT: 6媛?
+   - URI_PERMISSION_REVOKE: 3媛?
+   - SCREEN_STATE: 2媛?
+   - KEYGUARD: 2媛?
+   - MEDIA_INSERT_START: 1媛?
+ 
+?뵇 DATABASE/MEDIA_INSERT 愿???대깽?? 1媛?
+   ??낅퀎 遺꾪룷:
+     - MEDIA_INSERT_START: 1媛?
+ 
+  理쒓렐 5媛??섑뵆:
+     - MEDIA_INSERT_START at 22:47:46.856
+ 
+?렏 移대찓???대깽??遺꾩꽍:
+   CAMERA_CONNECT: 22媛?
+   CAMERA_DISCONNECT: 22媛?
+   遺덇퇏?? 0媛?
+ === ?뵇 ?뚯떛 寃利? usagestats ?대깽??(EventType 湲곗?) ===
+ 珥?ACTIVITY_RESUMED ?대깽?? 92媛?
+ 移대찓??ACTIVITY_RESUMED ?대깽?? 7媛?
+   [22:46:42] package=com.sec.android.app.camera, taskRootPackage=com.sec.android.app.camera
+   [22:47:39] package=com.sec.android.app.camera, taskRootPackage=com.sec.android.app.camera
+   [22:48:50] package=com.sec.android.app.camera, taskRootPackage=com.kakao.talk
+     狩?移댁뭅?ㅽ넚 taskRootPackage 諛쒓껄!
+   [22:49:52] package=com.sec.android.app.camera, taskRootPackage=com.kakao.talk
+     狩?移댁뭅?ㅽ넚 taskRootPackage 諛쒓껄!
+   [22:50:53] package=com.sec.android.app.camera, taskRootPackage=com.kakao.talk
+     狩?移댁뭅?ㅽ넚 taskRootPackage 諛쒓껄!
+   [22:57:37] package=com.peace.SilentCamera, taskRootPackage=com.peace.SilentCamera
+   [22:58:21] package=com.peace.SilentCamera, taskRootPackage=com.peace.SilentCamera
+ === ?뵇 UsagestatsSessionSource ?몄뀡 ?앹꽦 寃利?===
+ UsagestatsSessionSource媛 ?앹꽦???몄뀡: 7媛?
+   - Package: com.sec.android.app.camera, Time: 22:46:42 ~ 22:46:46, Sources: usagestats
+   - Package: com.sec.android.app.camera, Time: 22:47:39 ~ 22:47:49, Sources: usagestats
+   - Package: com.kakao.talk, Time: 22:48:50 ~ 22:48:55, Sources: usagestats
+   - Package: com.kakao.talk, Time: 22:49:52 ~ 22:50:01, Sources: usagestats
+   - Package: com.kakao.talk, Time: 22:50:53 ~ 22:51:03, Sources: usagestats
+   - Package: com.peace.SilentCamera, Time: 22:57:37 ~ 22:57:41, Sources: usagestats
+   - Package: com.peace.SilentCamera, Time: 22:58:21 ~ 22:58:31, Sources: usagestats
+ 移댁뭅?ㅽ넚 ?몄뀡: 3媛?
+   狩?KakaoTalk Session: 22:48:50 ~ 22:48:55
+   狩?KakaoTalk Session: 22:49:52 ~ 22:50:01
+   狩?KakaoTalk Session: 22:50:53 ~ 22:51:03
+ =====================================
+ === 4李??섑뵆 遺꾩꽍 寃곌낵 ===
+ 泥섎━ ?쒓컙: 0.109珥?
+ 珥??대깽?? 642
+ 以묐났 ?쒓굅: 81
+ ?몄뀡 媛먯?: 11媛?(?덉긽: 11媛?
+ 珥ъ쁺 媛먯?: 17媛?(?덉긽: 9媛?
+ 
+?벀 媛먯????몄뀡 ?곸꽭 (11媛?:
+ 
+  ?벑 Package: com.kakao.talk (3媛??몄뀡)
+     ?몄뀡 #1:
+       Time: 22:48:50.000 ~ 22:48:56.000
+       Duration: 6.0珥?
+       Status: ?꾩쟾
+       Confidence: 0.500 (50%)
+       Captures: 3媛?
+     ?몄뀡 #2:
+       Time: 22:49:52.000 ~ 22:50:01.000
+       Duration: 9.0珥?
+       Status: ?꾩쟾
+       Confidence: 0.500 (50%)
+       Captures: 6媛?
+     ?몄뀡 #3:
+       Time: 22:50:53.000 ~ 22:51:03.000
+       Duration: 10.0珥?
+       Status: ?꾩쟾
+       Confidence: 0.500 (50%)
+       Captures: 5媛?
+ 
+  ?벑 Package: com.peace.SilentCamera (2媛??몄뀡)
+     ?몄뀡 #1:
+       Time: 22:57:37.000 ~ 22:57:43.000
+       Duration: 6.0珥?
+       Status: ?꾩쟾
+       Confidence: 0.500 (50%)
+       Captures: 0媛?
+     ?몄뀡 #2:
+       Time: 22:58:21.000 ~ 22:58:33.000
+       Duration: 12.0珥?
+       Status: ?꾩쟾
+       Confidence: 0.500 (50%)
+       Captures: 1媛?
+ 
+  ?벑 Package: com.sec.android.app.camera (2媛??몄뀡)
+     ?몄뀡 #1:
+       Time: 22:46:43.000 ~ 22:46:47.000
+       Duration: 4.0珥?
+       Status: ?꾩쟾
+       Confidence: 1.000 (100%)
+       Captures: 0媛?
+     ?몄뀡 #2:
+       Time: 22:47:39.000 ~ 22:47:51.000
+       Duration: 12.0珥?
+       Status: ?꾩쟾
+       Confidence: 0.500 (50%)
+       Captures: 1媛?
+ 
+  ?벑 Package: org.telegram.messenger (4媛??몄뀡)
+     ?몄뀡 #1:
+       Time: 22:53:25.000 ~ 22:53:36.000
+       Duration: 11.0珥?
+       Status: ?꾩쟾
+       Confidence: 0.950 (95%)
+       Captures: 0媛?
+     ?몄뀡 #2:
+       Time: 22:54:29.000 ~ 22:54:47.000
+       Duration: 18.0珥?
+       Status: ?꾩쟾
+       Confidence: 1.000 (100%)
+       Captures: 0媛?
+     ?몄뀡 #3:
+       Time: 22:55:24.000 ~ 22:55:38.000
+       Duration: 14.0珥?
+       Status: ?꾩쟾
+       Confidence: 1.000 (100%)
+       Captures: 1媛?
+     ?몄뀡 #4:
+       Time: 22:56:52.000 ~ 22:56:57.000
+       Duration: 5.0珥?
+       Status: ?꾩쟾
+       Confidence: 0.950 (95%)
+       Captures: 0媛?
+ 
+?벝 媛먯???珥ъ쁺 ?대깽??(17媛?:
+ 
+  ?벑 Package: com.kakao.talk (14媛?珥ъ쁺)
+     珥ъ쁺 #1:
+       Time: 22:48:51.594
+       Confidence: 0.700 (70%)
+       EvidenceTypes: URI_PERMISSION_GRANT, PLAYER_CREATED, PLAYER_RELEASED
+     珥ъ쁺 #2:
+       Time: 22:48:55.616
+       Confidence: 0.850 (85%)
+       EvidenceTypes: VIBRATION_EVENT, URI_PERMISSION_GRANT, PLAYER_CREATED, PLAYER_RELEASED
+     珥ъ쁺 #3:
+       Time: 22:48:56.545
+       Confidence: 0.850 (85%)
+       EvidenceTypes: VIBRATION_EVENT, URI_PERMISSION_GRANT, PLAYER_CREATED, PLAYER_RELEASED
+     珥ъ쁺 #4:
+       Time: 22:49:52.810
+       Confidence: 1.000 (100%)
+       EvidenceTypes: URI_PERMISSION_GRANT, PLAYER_CREATED, CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #5:
+       Time: 22:49:53.352
+       Confidence: 1.000 (100%)
+       EvidenceTypes: CAMERA_ACTIVITY_REFRESH, URI_PERMISSION_GRANT, PLAYER_CREATED, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #6:
+       Time: 22:49:56.658
+       Confidence: 1.000 (100%)
+       EvidenceTypes: VIBRATION_EVENT, URI_PERMISSION_GRANT, PLAYER_CREATED, CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #7:
+       Time: 22:49:56.793
+       Confidence: 1.000 (100%)
+       EvidenceTypes: VIBRATION_EVENT, URI_PERMISSION_GRANT, PLAYER_CREATED, CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #8:
+       Time: 22:50:06.712
+       Confidence: 1.000 (100%)
+       EvidenceTypes: VIBRATION_EVENT, URI_PERMISSION_GRANT, PLAYER_CREATED, CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #9:
+       Time: 22:50:07.628
+       Confidence: 1.000 (100%)
+       EvidenceTypes: VIBRATION_EVENT, URI_PERMISSION_GRANT, PLAYER_CREATED, CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #10:
+       Time: 22:50:54.667
+       Confidence: 1.000 (100%)
+       EvidenceTypes: URI_PERMISSION_GRANT, PLAYER_CREATED, CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #11:
+       Time: 22:50:55.211
+       Confidence: 1.000 (100%)
+       EvidenceTypes: CAMERA_ACTIVITY_REFRESH, URI_PERMISSION_GRANT, PLAYER_CREATED, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #12:
+       Time: 22:50:55.212
+       Confidence: 1.000 (100%)
+       EvidenceTypes: CAMERA_ACTIVITY_REFRESH, URI_PERMISSION_GRANT, PLAYER_CREATED, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #13:
+       Time: 22:50:58.595
+       Confidence: 1.000 (100%)
+       EvidenceTypes: VIBRATION_EVENT, URI_PERMISSION_GRANT, PLAYER_CREATED, CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR, PLAYER_RELEASED
+     珥ъ쁺 #14:
+       Time: 22:50:58.698
+       Confidence: 1.000 (100%)
+       EvidenceTypes: VIBRATION_EVENT, URI_PERMISSION_GRANT, PLAYER_CREATED, CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR, PLAYER_RELEASED
+ 
+  ?벑 Package: com.peace.SilentCamera (1媛?珥ъ쁺)
+     珥ъ쁺 #1:
+       Time: 22:58:30.717
+       Confidence: 1.000 (100%)
+       EvidenceTypes: SILENT_CAMERA_CAPTURE, CAMERA_ACTIVITY_REFRESH, VIBRATION_EVENT
+ 
+  ?벑 Package: com.sec.android.app.camera (1媛?珥ъ쁺)
+     珥ъ쁺 #1:
+       Time: 22:47:45.699
+       Confidence: 1.000 (100%)
+       EvidenceTypes: PLAYER_EVENT, PLAYER_CREATED, VIBRATION_EVENT, MEDIA_EXTRACTOR, PLAYER_RELEASED
+ 
+  ?벑 Package: org.telegram.messenger (1媛?珥ъ쁺)
+     珥ъ쁺 #1:
+       Time: 22:55:33.507
+       Confidence: 0.400 (40%)
+       EvidenceTypes: VIBRATION_EVENT, PLAYER_CREATED
+ 
+?뱤 Ground Truth 鍮꾧탳:
+   ?몄뀡: 11媛?(?덉긽: 11媛?
+   珥ъ쁺: 17媛?(?덉긽: 9媛?
+
+
+
+?ㅽ뙣!  - ?ㅽ뙣:     1, ?듦낵:     0, 嫄대꼫?:     0, ?꾩껜:     1, 湲곌컙: 1 s - AndroidAdbAnalyze.Analysis.Tests.dll (net9.0)

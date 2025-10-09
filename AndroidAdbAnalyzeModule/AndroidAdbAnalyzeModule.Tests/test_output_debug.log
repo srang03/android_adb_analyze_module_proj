@@ -1,0 +1,131 @@
+﻿  蹂듭썝???꾨줈?앺듃瑜??뺤씤?섎뒗 以?..
+  蹂듭썝??紐⑤뱺 ?꾨줈?앺듃媛 理쒖떊 ?곹깭?낅땲??
+  AndroidAdbAnalyzeModule -> C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule\bin\Debug\net8.0\AndroidAdbAnalyzeModule.dll
+  AndroidAdbAnalyzeModule.Tests -> C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule.Tests\bin\Debug\net9.0\AndroidAdbAnalyzeModule.Tests.dll
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule.Tests\bin\Debug\net9.0\AndroidAdbAnalyzeModule.Tests.dll(.NETCoreApp,Version=v9.0)??????뚯뒪???ㅽ뻾
+VSTest 踰꾩쟾 17.14.1 (x64)
+
+?뚯뒪???ㅽ뻾???쒖옉?섎뒗 以묒엯?덈떎. ?좎떆 湲곕떎??二쇱꽭??..
+吏?뺣맂 ?⑦꽩怨??쇱튂??珥??뚯뒪???뚯씪 ?섎뒗 1媛쒖엯?덈떎.
+C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule.Tests\bin\Debug\net9.0\AndroidAdbAnalyzeModule.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.9)
+[xUnit.net 00:00:00.07]   Discovering: AndroidAdbAnalyzeModule.Tests
+[xUnit.net 00:00:00.11]   Discovered:  AndroidAdbAnalyzeModule.Tests
+[xUnit.net 00:00:00.11]   Starting:    AndroidAdbAnalyzeModule.Tests
+info: AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader[0]
+      Loading configuration asynchronously from: TestData\adb_activity_config.yaml
+dbug: AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader[0]
+      Read 5130 characters from configuration file
+dbug: AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader[0]
+      Validating deserialized configuration
+info: AndroidAdbAnalyzeModule.Configuration.Loaders.YamlConfigurationLoader[0]
+      Configuration loaded successfully: adb_activity v1.0
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Initialized 2 parsers with 4 patterns
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Initialized 1 multiline pattern parsers
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Validating device compatibility: Android 15
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Device compatibility validated successfully
+info: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Starting log parsing: ..\..\..\..\..\sample_logs\4占쏙옙 占쏙옙占쏙옙\activity.log
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Splitting log file into sections
+info: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Found 3 sections
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Parsing sections
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Parsing section: uri_permissions (927 lines)
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Parsing section: activity_starter (3669 lines)
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Parsing section: activities (562 lines)
+info: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Parsed 23 entries from 3 sections
+dbug: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Normalizing events
+info: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Normalized 23 events
+info: AndroidAdbAnalyzeModule.Parsing.AdbLogParser[0]
+      Parsing completed: 23 events, 0 errors, 68ms
+     Warning:
+     The component "Fluent Assertions" is governed by the rules defined in the Xceed License Agreement and
+     the Xceed Fluent Assertions Community License. You may use Fluent Assertions free of charge for
+     non-commercial use only. An active subscription is required to use Fluent Assertions for commercial use.
+     Please contact Xceed Sales mailto:sales@xceed.com to acquire a subscription at a very low cost.
+     A paid commercial license supports the development and continued increasing support of
+     Fluent Assertions users under both commercial and community licenses. Help us
+     keep Fluent Assertions at the forefront of unit testing.
+     For more information, visit https://xceed.com/products/unit-testing/fluent-assertions/
+dotnet : [xUnit.net 00:00:00.64]     AndroidAdbAnalyzeModule.Tests.ActivityCameraFeatureLogParserTests.ParseActivityLog
+_4thSample_ShouldParse_CameraActivityRefresh [FAIL]
+위치 C:\Users\성우\AppData\Local\Temp\ps-script-e1660f47-6e64-4d6e-adda-ad8d48d5d648.ps1:7 문자:59
++ ... dule.Tests; dotnet test --filter "FullyQualifiedName~ParseActivityLog ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...yRefresh [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[xUnit.net 00:00:00.65]       Expected refreshEvents not to be empty because Should parse CAMERA_ACTIVITY_REFRESH events from multiline pattern.
+[xUnit.net 00:00:00.65]       Stack Trace:
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.LateBoundTestFramework.Throw(String message)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.AssertionScope.AddPreFormattedFailure(String formattedFailureMessage)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.AssertionChain.FailWith(String message, Object[] args)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.GivenSelector`1.FailWith(String message, Object[] args)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.GivenSelector`1.FailWith(String message)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Collections.GenericCollectionAssertions`3.<NotBeEmpty>b__56_0(AssertionChain chain)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.AssertionChain.WithExpectation(String message, Action`1 chain, Object[] args)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Execution.AssertionChain.WithExpectation(String message, Action`1 chain)
+[xUnit.net 00:00:00.65]            at FluentAssertions.Collections.GenericCollectionAssertions`3.NotBeEmpty(String because, Object[] becauseArgs)
+[xUnit.net 00:00:00.65]         C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule.Tests\ActivityCameraFeatureLogParserTests.cs(437,0): at AndroidAdbAnalyzeModule.Tests.ActivityCameraFeatureLogParserTests.ParseActivityLog_4thSample_ShouldParse_CameraActivityRefresh()
+[xUnit.net 00:00:00.65]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.65]       Output:
+[xUnit.net 00:00:00.65]         
+=== Activity Log Parsing (4th Sample) ===
+[xUnit.net 00:00:00.65]         Success: True
+[xUnit.net 00:00:00.65]         Total Events: 23
+[xUnit.net 00:00:00.65]         Total Lines: 23
+[xUnit.net 00:00:00.65]         Parsed Lines: 23
+[xUnit.net 00:00:00.65]         Elapsed: 66.3994ms
+[xUnit.net 00:00:00.65]         
+CAMERA_ACTIVITY_REFRESH Events: 0
+[xUnit.net 00:00:00.66]   Finished:    AndroidAdbAnalyzeModule.Tests
+  ?ㅽ뙣 AndroidAdbAnalyzeModule.Tests.ActivityCameraFeatureLogParserTests.ParseActivityLog_4thSample_ShouldParse_CameraActivityRefresh [479 ms]
+  ?ㅻ쪟 硫붿떆吏:
+   Expected refreshEvents not to be empty because Should parse CAMERA_ACTIVITY_REFRESH events from multiline pattern.
+  ?ㅽ깮 異붿쟻:
+     at FluentAssertions.Execution.LateBoundTestFramework.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.AddPreFormattedFailure(String formattedFailureMessage)
+   at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+   at FluentAssertions.Execution.AssertionChain.FailWith(Func`1 getFailureReason)
+   at FluentAssertions.Execution.AssertionChain.FailWith(String message, Object[] args)
+   at FluentAssertions.Execution.GivenSelector`1.FailWith(String message, Object[] args)
+   at FluentAssertions.Execution.GivenSelector`1.FailWith(String message)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.<NotBeEmpty>b__56_0(AssertionChain chain)
+   at FluentAssertions.Execution.AssertionChain.WithExpectation(String message, Action`1 chain, Object[] args)
+   at FluentAssertions.Execution.AssertionChain.WithExpectation(String message, Action`1 chain)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.NotBeEmpty(String because, Object[] becauseArgs)
+   at AndroidAdbAnalyzeModule.Tests.ActivityCameraFeatureLogParserTests.ParseActivityLog_4thSample_ShouldParse_CameraActivityRefresh() in C:\dev\001_csharp\005_android_adb_analyze_module\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule.Tests\ActivityCameraFeatureLogParserTests.cs:line 437
+--- End of stack trace from previous location ---
+  ?쒖? 異쒕젰 硫붿떆吏:
+ 
+=== Activity Log Parsing (4th Sample) ===
+ Success: True
+ Total Events: 23
+ Total Lines: 23
+ Parsed Lines: 23
+ Elapsed: 66.3994ms
+ 
+CAMERA_ACTIVITY_REFRESH Events: 0
+
+
+
+?뚯뒪???ㅽ뻾???ㅽ뙣?덉뒿?덈떎.
+珥??뚯뒪???? 1
+     ?ㅽ뙣: 1
+ 珥??쒓컙: 1.2009 珥?

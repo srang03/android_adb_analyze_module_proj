@@ -1,0 +1,38 @@
+# Config with wildcard version support
+configSchemaVersion: "1.0"
+
+metadata:
+  logType: adb_audio_log_universal
+  supportedVersions: ["*"]
+  displayName: "Audio log config supporting all Android versions"
+
+filePatterns:
+  - "audio*.txt"
+
+sections:
+  - id: playback_activity
+    name: "Playback Activity"
+    startMarker: "Players:"
+    endMarker: "^$"
+    markerType: text
+
+globalSettings:
+  encoding: utf-8
+  timestampFormat: "MM-dd HH:mm:ss':'fff"
+
+parsers:
+  - id: audio_parser
+    name: "Audio Parser"
+    targetSections: ["playback_activity"]
+    linePatterns:
+      - id: new_player_pattern
+        eventType: PLAYER_CREATED
+        regex: '(\d{2}-\d{2} \d{2}:\d{2}:\d{2}:\d{3}) new player piid:(\d+)'
+        fields:
+          timestamp:
+            group: 1
+            type: string
+          piid:
+            group: 2
+            type: int
+

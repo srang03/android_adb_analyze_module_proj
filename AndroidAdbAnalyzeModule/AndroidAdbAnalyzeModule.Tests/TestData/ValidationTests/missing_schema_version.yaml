@@ -1,0 +1,34 @@
+# Missing required 'configSchemaVersion' field
+# configSchemaVersion is intentionally missing for testing
+
+metadata:
+  logType: adb_audio_log
+  supportedVersions: ["15"]
+  displayName: "Config missing schema version"
+
+filePatterns:
+  - "audio*.txt"
+
+sections:
+  - id: playback_activity
+    name: "Playback Activity"
+    startMarker: "Players:"
+    endMarker: "^$"
+    markerType: text
+
+parsers:
+  - id: test_parser
+    name: "Test Parser"
+    targetSections: ["playback_activity"]
+    linePatterns:
+      - id: new_player_pattern
+        eventType: PLAYER_CREATED
+        regex: '(\d{2}-\d{2} \d{2}:\d{2}:\d{2}:\d{3}) new player piid:(\d+)'
+        fields:
+          timestamp:
+            group: 1
+            type: string
+          piid:
+            group: 2
+            type: int
+

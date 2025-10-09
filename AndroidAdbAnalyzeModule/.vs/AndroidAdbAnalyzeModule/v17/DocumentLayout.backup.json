@@ -1,0 +1,634 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis.tests\\integration\\endtoendanalysistests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|solutionrelative:androidadbanalyze.analysis.tests\\integration\\endtoendanalysistests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis.tests\\extensions\\servicecollectionextensionstests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|solutionrelative:androidadbanalyze.analysis.tests\\extensions\\servicecollectionextensionstests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis.tests\\services\\strategies\\basepatternstrategytests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|solutionrelative:androidadbanalyze.analysis.tests\\services\\strategies\\basepatternstrategytests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis.tests\\services\\captures\\cameracapturedetectortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|solutionrelative:androidadbanalyze.analysis.tests\\services\\captures\\cameracapturedetectortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\parsing\\multilinepatterns\\silentcameracaptureparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\parsing\\multilinepatterns\\silentcameracaptureparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule.tests\\timerangefilteringtests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|solutionrelative:androidadbanalyzemodule.tests\\timerangefilteringtests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\parsing\\adblogparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\parsing\\adblogparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule.tests\\usagestatslogparsertest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|solutionrelative:androidadbanalyzemodule.tests\\usagestatslogparsertest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule.tests\\mediametricslogparsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|solutionrelative:androidadbanalyzemodule.tests\\mediametricslogparsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule.tests\\mediacameralogparsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|solutionrelative:androidadbanalyzemodule.tests\\mediacameralogparsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule.tests\\cameraworkerlogparsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|solutionrelative:androidadbanalyzemodule.tests\\cameraworkerlogparsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule.tests\\androidadbanalyzemodule.tests.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|solutionrelative:androidadbanalyzemodule.tests\\androidadbanalyzemodule.tests.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\configuration\\loaders\\yamlconfigurationloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\configuration\\loaders\\yamlconfigurationloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis.tests\\services\\deduplication\\eventdeduplicatortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|solutionrelative:androidadbanalyze.analysis.tests\\services\\deduplication\\eventdeduplicatortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B7B268E-6B08-421C-1448-FE17F216B7C2}|AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis\\services\\deduplication\\eventdeduplicator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B7B268E-6B08-421C-1448-FE17F216B7C2}|AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj|solutionrelative:androidadbanalyze.analysis\\services\\deduplication\\eventdeduplicator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis.tests\\services\\orchestration\\analysisorchestratortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|solutionrelative:androidadbanalyze.analysis.tests\\services\\orchestration\\analysisorchestratortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis.tests\\androidadbanalyze.analysis.tests.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{948CBABF-01CE-4D7E-B362-B3360CB6501A}|AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj|solutionrelative:androidadbanalyze.analysis.tests\\androidadbanalyze.analysis.tests.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B7B268E-6B08-421C-1448-FE17F216B7C2}|AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis\\services\\sessions\\camerasessiondetector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B7B268E-6B08-421C-1448-FE17F216B7C2}|AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj|solutionrelative:androidadbanalyze.analysis\\services\\sessions\\camerasessiondetector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B7B268E-6B08-421C-1448-FE17F216B7C2}|AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyze.analysis\\androidadbanalyze.analysis.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9B7B268E-6B08-421C-1448-FE17F216B7C2}|AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj|solutionrelative:androidadbanalyze.analysis\\androidadbanalyze.analysis.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\androidadbanalyzemodule.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\androidadbanalyzemodule.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule.tests\\activitylogparsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|solutionrelative:androidadbanalyzemodule.tests\\activitylogparsertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule.tests\\adblogparserendtoendtests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3A526FA4-2D92-47E3-B372-E06E6DFCF009}|AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj|solutionrelative:androidadbanalyzemodule.tests\\adblogparserendtoendtests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\core\\models\\deviceinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\core\\models\\deviceinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\core\\models\\normalizedlogevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\core\\models\\normalizedlogevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\parsing\\sectionsplitters\\logsectionsplitter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\parsing\\sectionsplitters\\logsectionsplitter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\parsing\\lineparsers\\regexlineparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\parsing\\lineparsers\\regexlineparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\core\\interfaces\\ilineparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\core\\interfaces\\ilineparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\core\\interfaces\\ilogparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\core\\interfaces\\ilogparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\core\\interfaces\\isectionsplitter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\core\\interfaces\\isectionsplitter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\core\\interfaces\\ilogeventrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\core\\interfaces\\ilogeventrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\core\\interfaces\\iconfigurationloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\core\\interfaces\\iconfigurationloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\core\\interfaces\\.gitkeep||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\core\\interfaces\\.gitkeep||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|c:\\dev\\001_csharp\\005_android_adb_analyze_module\\androidadbanalyzemodule\\androidadbanalyzemodule\\core\\exceptions\\.gitkeep||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}|AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj|solutionrelative:androidadbanalyzemodule\\core\\exceptions\\.gitkeep||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 179,
+          "SelectedChildIndex": 11,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{fbcae063-e2c0-4ab1-a516-996ea3dafb72}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{74946827-37a0-11d2-a273-00c04f8ef4ff}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BasePatternStrategyTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Services\\Strategies\\BasePatternStrategyTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis.Tests\\Services\\Strategies\\BasePatternStrategyTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Services\\Strategies\\BasePatternStrategyTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis.Tests\\Services\\Strategies\\BasePatternStrategyTests.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAIA4wC4AAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-08T03:32:52.407Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ServiceCollectionExtensionsTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Extensions\\ServiceCollectionExtensionsTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis.Tests\\Extensions\\ServiceCollectionExtensionsTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Extensions\\ServiceCollectionExtensionsTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis.Tests\\Extensions\\ServiceCollectionExtensionsTests.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-08T03:32:48.975Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CameraCaptureDetectorTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Services\\Captures\\CameraCaptureDetectorTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis.Tests\\Services\\Captures\\CameraCaptureDetectorTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Services\\Captures\\CameraCaptureDetectorTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis.Tests\\Services\\Captures\\CameraCaptureDetectorTests.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAIA3wC4AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-08T03:24:40.057Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SilentCameraCaptureParser.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Parsing\\MultilinePatterns\\SilentCameraCaptureParser.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Parsing\\MultilinePatterns\\SilentCameraCaptureParser.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Parsing\\MultilinePatterns\\SilentCameraCaptureParser.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Parsing\\MultilinePatterns\\SilentCameraCaptureParser.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAnwCgAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-07T13:51:20.424Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EndToEndAnalysisTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Integration\\EndToEndAnalysisTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis.Tests\\Integration\\EndToEndAnalysisTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Integration\\EndToEndAnalysisTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis.Tests\\Integration\\EndToEndAnalysisTests.cs",
+              "ViewState": "AgIAACEBAAAAAAAAAAA5wDYBAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T15:11:02.169Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TimeRangeFilteringTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\TimeRangeFilteringTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule.Tests\\TimeRangeFilteringTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\TimeRangeFilteringTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule.Tests\\TimeRangeFilteringTests.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAmwCUAAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-07T13:26:15.492Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "UsagestatsLogParserTest.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\UsagestatsLogParserTest.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule.Tests\\UsagestatsLogParserTest.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\UsagestatsLogParserTest.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule.Tests\\UsagestatsLogParserTest.cs",
+              "ViewState": "AgIAADwAAAAAAAAAAAAawGYAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-07T07:43:51.822Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AndroidAdbAnalyzeModule.Tests.csproj",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule.Tests\\AndroidAdbAnalyzeModule.Tests.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvykAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-04T01:15:38.999Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "CameraWorkerLogParserTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\CameraWorkerLogParserTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule.Tests\\CameraWorkerLogParserTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\CameraWorkerLogParserTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule.Tests\\CameraWorkerLogParserTests.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T08:51:42.348Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MediaMetricsLogParserTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\MediaMetricsLogParserTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule.Tests\\MediaMetricsLogParserTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\MediaMetricsLogParserTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule.Tests\\MediaMetricsLogParserTests.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAAwCEAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-07T07:45:55.967Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AdbLogParser.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Parsing\\AdbLogParser.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Parsing\\AdbLogParser.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Parsing\\AdbLogParser.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Parsing\\AdbLogParser.cs",
+              "ViewState": "AgIAAJQBAAAAAAAAAIA4wKQBAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T23:45:28.344Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "YamlConfigurationLoader.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Configuration\\Loaders\\YamlConfigurationLoader.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Configuration\\Loaders\\YamlConfigurationLoader.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Configuration\\Loaders\\YamlConfigurationLoader.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Configuration\\Loaders\\YamlConfigurationLoader.cs",
+              "ViewState": "AgIAAKUAAAAAAAAAAAA3wLQAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-07T07:10:33.378Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MediaCameraLogParserTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\MediaCameraLogParserTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule.Tests\\MediaCameraLogParserTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\MediaCameraLogParserTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule.Tests\\MediaCameraLogParserTests.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T13:32:37.477Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "EventDeduplicatorTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Services\\Deduplication\\EventDeduplicatorTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis.Tests\\Services\\Deduplication\\EventDeduplicatorTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Services\\Deduplication\\EventDeduplicatorTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis.Tests\\Services\\Deduplication\\EventDeduplicatorTests.cs",
+              "ViewState": "AgIAALoAAAAAAAAAAAAUwMQAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T07:50:44.802Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "CameraSessionDetector.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis\\Services\\Sessions\\CameraSessionDetector.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis\\Services\\Sessions\\CameraSessionDetector.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis\\Services\\Sessions\\CameraSessionDetector.cs",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis\\Services\\Sessions\\CameraSessionDetector.cs",
+              "ViewState": "AgIAAKsAAAAAAAAAAAAzwPcBAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T08:17:36.745Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "AnalysisOrchestratorTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Services\\Orchestration\\AnalysisOrchestratorTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis.Tests\\Services\\Orchestration\\AnalysisOrchestratorTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\Services\\Orchestration\\AnalysisOrchestratorTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis.Tests\\Services\\Orchestration\\AnalysisOrchestratorTests.cs",
+              "ViewState": "AgIAAGQBAAAAAAAAAAAhwHYBAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-05T13:22:00.779Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "EventDeduplicator.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis\\Services\\Deduplication\\EventDeduplicator.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis\\Services\\Deduplication\\EventDeduplicator.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis\\Services\\Deduplication\\EventDeduplicator.cs",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis\\Services\\Deduplication\\EventDeduplicator.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAuwB0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T14:03:06.121Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "AndroidAdbAnalyze.Analysis.Tests.csproj",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis.Tests\\AndroidAdbAnalyze.Analysis.Tests.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvyUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-05T07:50:41.635Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "AndroidAdbAnalyze.Analysis.csproj",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj",
+              "RelativeToolTip": "AndroidAdbAnalyze.Analysis\\AndroidAdbAnalyze.Analysis.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwgAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-05T06:09:58.693Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "ActivityLogParserTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\ActivityLogParserTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule.Tests\\ActivityLogParserTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\ActivityLogParserTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule.Tests\\ActivityLogParserTests.cs",
+              "ViewState": "AgIAACUAAAAAAAAAAAAuwDQAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T13:16:07.471Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "AdbLogParserEndToEndTests.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\AdbLogParserEndToEndTests.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule.Tests\\AdbLogParserEndToEndTests.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.Tests\\AdbLogParserEndToEndTests.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule.Tests\\AdbLogParserEndToEndTests.cs",
+              "ViewState": "AgIAAHEDAAAAAAAAAAAWwHEDAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T00:40:49.973Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "AndroidAdbAnalyzeModule.csproj",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvw8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-04T00:33:07.897Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "NormalizedLogEvent.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Models\\NormalizedLogEvent.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Core\\Models\\NormalizedLogEvent.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Models\\NormalizedLogEvent.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Core\\Models\\NormalizedLogEvent.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-04T00:20:20.593Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "DeviceInfo.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Models\\DeviceInfo.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Core\\Models\\DeviceInfo.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Models\\DeviceInfo.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Core\\Models\\DeviceInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAEwAoAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T23:45:38.163Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "LogSectionSplitter.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Parsing\\SectionSplitters\\LogSectionSplitter.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Parsing\\SectionSplitters\\LogSectionSplitter.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Parsing\\SectionSplitters\\LogSectionSplitter.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Parsing\\SectionSplitters\\LogSectionSplitter.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAuwCcAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T12:44:20.393Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "RegexLineParser.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Parsing\\LineParsers\\RegexLineParser.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Parsing\\LineParsers\\RegexLineParser.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Parsing\\LineParsers\\RegexLineParser.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Parsing\\LineParsers\\RegexLineParser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T12:44:18.758Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "ILineParser.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILineParser.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILineParser.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILineParser.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILineParser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T12:36:27.289Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "ISectionSplitter.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\ISectionSplitter.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\ISectionSplitter.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\ISectionSplitter.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\ISectionSplitter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T12:36:26.293Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "ILogEventRepository.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILogEventRepository.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILogEventRepository.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILogEventRepository.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILogEventRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T12:36:25.163Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "IConfigurationLoader.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\IConfigurationLoader.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\IConfigurationLoader.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\IConfigurationLoader.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\IConfigurationLoader.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T12:36:24.703Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": ".gitkeep",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\.gitkeep",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\.gitkeep",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\.gitkeep",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\.gitkeep",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-03T12:36:24.002Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "ILogParser.cs",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILogParser.cs",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILogParser.cs",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILogParser.cs",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Core\\Interfaces\\ILogParser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T12:36:23.272Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": ".gitkeep",
+              "DocumentMoniker": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Exceptions\\.gitkeep",
+              "RelativeDocumentMoniker": "AndroidAdbAnalyzeModule\\Core\\Exceptions\\.gitkeep",
+              "ToolTip": "C:\\dev\\001_csharp\\005_android_adb_analyze_module\\AndroidAdbAnalyzeModule\\AndroidAdbAnalyzeModule\\Core\\Exceptions\\.gitkeep",
+              "RelativeToolTip": "AndroidAdbAnalyzeModule\\Core\\Exceptions\\.gitkeep",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-03T12:33:15.552Z"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 129,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:133:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:135:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:136:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
