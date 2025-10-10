@@ -1,4 +1,4 @@
-using AndroidAdbAnalyzeModule.Core.Models;
+using AndroidAdbAnalyze.Parser.Core.Models;
 
 namespace AndroidAdbAnalyze.Analysis.Interfaces;
 

@@ -1,5 +1,3 @@
-using AndroidAdbAnalyzeModule.Core.Constants;
-using AndroidAdbAnalyzeModule.Core.Models;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Context;
 using AndroidAdbAnalyze.Analysis.Models.Options;
@@ -9,6 +7,8 @@ using AndroidAdbAnalyze.Analysis.Services.Strategies;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
+using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Parser.Core.Constants;
 
 namespace AndroidAdbAnalyze.Analysis.Tests.Services.Strategies;
 

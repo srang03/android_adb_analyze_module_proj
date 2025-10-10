@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36511.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAdbAnalyzeModule", "AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule.csproj", "{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAdbAnalyze.Parser", "AndroidAdbAnalyze.Parser\AndroidAdbAnalyze.Parser.csproj", "{8EABE998-F37D-4B98-A256-E6BA0D6C79D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAdbAnalyzeModule.Tests", "AndroidAdbAnalyzeModule.Tests\AndroidAdbAnalyzeModule.Tests.csproj", "{3A526FA4-2D92-47E3-B372-E06E6DFCF009}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAdbAnalyze.Parser.Tests", "AndroidAdbAnalyze.Parser.Tests\AndroidAdbAnalyze.Parser.Tests.csproj", "{3A526FA4-2D92-47E3-B372-E06E6DFCF009}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAdbAnalyze.Analysis", "AndroidAdbAnalyze.Analysis\AndroidAdbAnalyze.Analysis.csproj", "{9B7B268E-6B08-421C-1448-FE17F216B7C2}"
 EndProject

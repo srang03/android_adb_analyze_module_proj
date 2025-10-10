@@ -1,9 +1,9 @@
-using AndroidAdbAnalyzeModule.Core.Models;
-using AndroidAdbAnalyzeModule.Core.Constants;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Deduplication;
 using AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies;
 using Microsoft.Extensions.Logging;
+using AndroidAdbAnalyze.Parser.Core.Constants;
+using AndroidAdbAnalyze.Parser.Core.Models;
 
 namespace AndroidAdbAnalyze.Analysis.Services.Deduplication;
 

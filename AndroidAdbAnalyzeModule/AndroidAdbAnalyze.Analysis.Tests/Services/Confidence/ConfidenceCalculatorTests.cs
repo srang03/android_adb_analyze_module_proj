@@ -1,9 +1,9 @@
-using AndroidAdbAnalyzeModule.Core.Models;
-using AndroidAdbAnalyzeModule.Core.Constants;
 using AndroidAdbAnalyze.Analysis.Services.Confidence;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
+using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Parser.Core.Constants;
 
 namespace AndroidAdbAnalyze.Analysis.Tests.Services.Confidence;
 

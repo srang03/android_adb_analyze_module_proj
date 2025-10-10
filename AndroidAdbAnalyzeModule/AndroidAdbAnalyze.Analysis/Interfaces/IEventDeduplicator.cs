@@ -1,5 +1,5 @@
-using AndroidAdbAnalyzeModule.Core.Models;
 using AndroidAdbAnalyze.Analysis.Models.Deduplication;
+using AndroidAdbAnalyze.Parser.Core.Models;
 
 namespace AndroidAdbAnalyze.Analysis.Interfaces;
 

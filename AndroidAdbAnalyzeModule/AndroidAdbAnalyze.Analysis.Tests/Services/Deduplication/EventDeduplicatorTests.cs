@@ -1,6 +1,6 @@
-using AndroidAdbAnalyzeModule.Core.Models;
-using AndroidAdbAnalyzeModule.Core.Constants;
 using AndroidAdbAnalyze.Analysis.Services.Deduplication;
+using AndroidAdbAnalyze.Parser.Core.Constants;
+using AndroidAdbAnalyze.Parser.Core.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;

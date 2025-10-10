@@ -23,12 +23,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AndroidAdbAnalyze.Analysis\AndroidAdbAnalyze.Analysis.csproj" />
-    <ProjectReference Include="..\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule.csproj" />
+    <ProjectReference Include="..\AndroidAdbAnalyze.Parser\AndroidAdbAnalyze.Parser.csproj" />
   </ItemGroup>
 
   <!-- 공용 설정 파일을 Configs에서 참조 -->
   <ItemGroup>
-    <None Include="..\AndroidAdbAnalyzeModule\Configs\*.yaml">
+    <None Include="..\AndroidAdbAnalyze.Parser\Configs\*.yaml">
       <Link>Configs\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

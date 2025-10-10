@@ -1,0 +1,85 @@
+# Visual Studio generated files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio 2015 cache/options directory
+.vs/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NUnit
+*.nunit
+*.testresult
+
+# Build Results of an ATL Project
+[Dd]ebugPS/
+[Rr]eleasePS/
+dlldata.c
+
+# BenchmarkDotNet
+BenchmarkDotNet.Artifacts/
+
+# Rider
+*.sln.iml
+.idea/
+
+# Other
+*.vspscc
+*.vssscc
+*.pidb
+*.suo
+*_i.c
+*_p.c
+*.ncb
+*.opendb
+*.log
+*.plog
+*.dbmdl
+*.pfx
+*.publishsettings
+*.~cs
+*.orig
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/[Pp]ackages/*
+# except build/, which is used as an MSBuild target.
+!**/[Pp]ackages/build/
+# Caching packages.config packages
+packages.config.nupkg
+
+# ReSharper files
+_ReSharper*/
+*.[Rr]eSharper
+*.DotSettings.user
+
+# Coverlet
+coverage.*.json
+coverage.*.xml
+
+# Test files
+*.trx
+
+# Research Paper files
+Paper/

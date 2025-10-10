@@ -1,7 +1,7 @@
-using AndroidAdbAnalyzeModule.Core.Models;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using AndroidAdbAnalyze.Analysis.Models.Events;
 using AndroidAdbAnalyze.Analysis.Models.Deduplication;
+using AndroidAdbAnalyze.Parser.Core.Models;
 
 namespace AndroidAdbAnalyze.Analysis.Models.Results;
 

@@ -1,9 +1,9 @@
 using AndroidAdbAnalyze.Analysis.Extensions;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Options;
-using AndroidAdbAnalyzeModule.Configuration.Loaders;
-using AndroidAdbAnalyzeModule.Core.Models;
-using AndroidAdbAnalyzeModule.Parsing;
+using AndroidAdbAnalyze.Parser.Configuration.Loaders;
+using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Parser.Parsing;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -75,7 +75,7 @@ public sealed class Sample5GroundTruthTests : IAsyncLifetime
         var projectRoot = Path.GetFullPath(Path.Combine(currentDir, "..", "..", "..", ".."));
         
         _sampleLogsPath = Path.Combine(projectRoot, "..", "sample_logs");
-        _parserConfigPath = Path.Combine(projectRoot, "AndroidAdbAnalyzeModule", "Configs");
+        _parserConfigPath = Path.Combine(projectRoot, "AndroidAdbAnalyze.Parser", "Configs");
     }
 
     public async Task InitializeAsync()
@@ -508,6 +508,55 @@ public sealed class Sample5GroundTruthTests : IAsyncLifetime
         };
     }
 
+    #endregion
+    
+    #region HTML Report Generation
+    
+    [Fact]
+    public async Task Should_Generate_HtmlReport_Successfully()
+    {
+        // Arrange
+        var options = CreateDefaultAnalysisOptions();
+        var result = await _orchestrator!.AnalyzeAsync(_parsedEvents!, options);
+        result.Should().NotBeNull();
+        result.Success.Should().BeTrue();
+        
+        var services = new ServiceCollection();
+        services.AddLogging(builder => builder.AddProvider(NullLoggerProvider.Instance));
+        services.AddAndroidAdbAnalysis();
+        var serviceProvider = services.BuildServiceProvider();
+        var reportGenerator = serviceProvider.GetRequiredService<IReportGenerator>();
+        
+        // Act
+        var htmlReport = reportGenerator.GenerateReport(result);
+        
+        // Assert
+        htmlReport.Should().NotBeNullOrEmpty();
+        htmlReport.Should().Contain("<!DOCTYPE html>");
+        htmlReport.Should().Contain("모바일 로그 분석 보고서");
+        htmlReport.Should().Contain("카메라 세션");
+        htmlReport.Should().Contain("촬영 이벤트");
+        
+        // 통계 확인
+        htmlReport.Should().Contain($"{ExpectedTotalSessions}");
+        htmlReport.Should().Contain($"{ExpectedTotalCaptures}");
+        
+        // 파일로 저장
+        var reportPath = Path.Combine(
+            Path.GetTempPath(),
+            $"sample5_ground_truth_report_{DateTime.Now:yyyyMMdd_HHmmss}.html");
+        
+        File.WriteAllText(reportPath, htmlReport, System.Text.Encoding.UTF8);
+        _output.WriteLine($"\n=== HTML 보고서 생성 ===");
+        _output.WriteLine($"보고서 경로: {reportPath}");
+        _output.WriteLine($"보고서 크기: {htmlReport.Length:N0} bytes");
+        _output.WriteLine($"세션 수: {result.Sessions.Count}");
+        _output.WriteLine($"촬영 수: {result.CaptureEvents.Count}");
+        
+        // 파일 존재 확인
+        File.Exists(reportPath).Should().BeTrue();
+    }
+    
     #endregion
 }
 

@@ -1,17 +1,15 @@
-using AndroidAdbAnalyzeModule.Core.Constants;
-using AndroidAdbAnalyzeModule.Core.Models;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Context;
 using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using AndroidAdbAnalyze.Analysis.Services.Captures;
 using AndroidAdbAnalyze.Analysis.Services.Confidence;
-using AndroidAdbAnalyze.Analysis.Services.Context;
 using AndroidAdbAnalyze.Analysis.Services.Strategies;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Xunit;
+using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Parser.Core.Constants;
 
 namespace AndroidAdbAnalyze.Analysis.Tests.Services.Captures;
 

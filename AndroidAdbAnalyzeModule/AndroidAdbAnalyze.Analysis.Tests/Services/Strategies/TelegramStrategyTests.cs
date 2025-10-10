@@ -1,11 +1,11 @@
-using AndroidAdbAnalyzeModule.Core.Constants;
-using AndroidAdbAnalyzeModule.Core.Models;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Context;
 using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using AndroidAdbAnalyze.Analysis.Services.Confidence;
 using AndroidAdbAnalyze.Analysis.Services.Strategies;
+using AndroidAdbAnalyze.Parser.Core.Constants;
+using AndroidAdbAnalyze.Parser.Core.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;

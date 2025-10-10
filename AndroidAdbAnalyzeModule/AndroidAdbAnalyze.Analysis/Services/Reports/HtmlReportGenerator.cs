@@ -84,7 +84,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("<head>");
         html.AppendLine("    <meta charset=\"UTF-8\">");
         html.AppendLine("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-        html.AppendLine("    <title>디지털 포렌식 분석 보고서 - Android ADB 로그 분석</title>");
+        html.AppendLine("    <title>모바일 로그 분석 보고서 - Android ADB 로그 분석</title>");
     }
 
     private void AppendStyles(StringBuilder html)
@@ -98,7 +98,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
     private void AppendReportHeader(StringBuilder html)
     {
         html.AppendLine("        <div class=\"report-header\">");
-        html.AppendLine("            <h1>📱 디지털 포렌식 분석 보고서</h1>");
+        html.AppendLine("            <h1>📱 모바일 로그 분석 보고서</h1>");
         html.AppendLine("            <p class=\"subtitle\">Android ADB System Log Analysis</p>");
         html.AppendLine("        </div>");
     }
@@ -110,7 +110,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("            <div class=\"metadata-grid\">");
 
         AppendMetadataItem(html, "보고서 번호", $"ADB-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString()[..6].ToUpper()}");
-        AppendMetadataItem(html, "분석 일시", result.Statistics.AnalysisStartTime.ToString("yyyy-MM-dd HH:mm:ss") + " UTC");
+        AppendMetadataItem(html, "분석 일시", result.Statistics.AnalysisStartTime.ToString("yyyy-MM-dd HH:mm:ss") + " (로컬 시간)");
 
         if (result.DeviceInfo != null)
         {
@@ -162,7 +162,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
 
         html.AppendLine("            </div>");
         html.AppendLine("            <div class=\"alert alert-info\">");
-        html.AppendLine("                <strong>ℹ️ 정보:</strong> 모든 타임스탬프는 UTC 기준으로 표시됩니다.");
+        html.AppendLine("                <strong>ℹ️ 정보:</strong> 모든 타임스탬프는 로그가 생성된 디바이스의 로컬 시간 기준으로 표시됩니다.");
         html.AppendLine("            </div>");
         html.AppendLine("        </div>");
     }
@@ -369,7 +369,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
     {
         html.AppendLine("        <div class=\"report-footer\">");
         html.AppendLine("            <p><strong>AndroidAdbAnalyze - Digital Forensics Analysis Tool</strong></p>");
-        html.AppendLine($"            <p>Report Generated: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>");
+        html.AppendLine($"            <p>Report Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss} (로컬 시간)</p>");
         html.AppendLine("            <p>Version 1.0.0 | © 2025 All Rights Reserved</p>");
         html.AppendLine("        </div>");
     }
@@ -392,7 +392,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
             html.AppendLine("                        label: '카메라 세션',");
             html.Append("                        data: [");
             html.Append(string.Join(", ", sessions.Select(s => 
-                $"{{ x: new Date('{s.StartTime:yyyy-MM-ddTHH:mm:ssZ}'), y: 1 }}")));
+                $"{{ x: new Date('{s.StartTime:yyyy-MM-ddTHH:mm:ss}'), y: 1 }}")));
             html.AppendLine("],");
             html.AppendLine("                        backgroundColor: 'rgba(52, 152, 219, 0.7)',");
             html.AppendLine("                        borderColor: 'rgba(52, 152, 219, 1)',");
@@ -410,7 +410,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
             html.AppendLine("                        label: '촬영 이벤트',");
             html.Append("                        data: [");
             html.Append(string.Join(", ", captures.Select(c => 
-                $"{{ x: new Date('{c.StartTime:yyyy-MM-ddTHH:mm:ssZ}'), y: 0 }}")));
+                $"{{ x: new Date('{c.StartTime:yyyy-MM-ddTHH:mm:ss}'), y: 0 }}")));
             html.AppendLine("],");
             html.AppendLine("                        backgroundColor: 'rgba(231, 76, 60, 0.7)',");
             html.AppendLine("                        borderColor: 'rgba(231, 76, 60, 1)',");
@@ -451,12 +451,21 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("                        x: {");
         html.AppendLine("                            type: 'time',");
         html.AppendLine("                            time: { unit: 'minute', displayFormats: { minute: 'HH:mm' } },");
-        html.AppendLine("                            title: { display: true, text: '시간 (UTC)', font: { size: 14, weight: 'bold' }, color: '#2c3e50' },");
+        html.AppendLine("                            title: { display: true, text: '시간 (로컬 시간)', font: { size: 14, weight: 'bold' }, color: '#2c3e50' },");
         html.AppendLine("                            grid: { color: 'rgba(0, 0, 0, 0.05)' }");
         html.AppendLine("                        },");
         html.AppendLine("                        y: {");
         html.AppendLine("                            title: { display: true, text: '이벤트 타입', font: { size: 14, weight: 'bold' }, color: '#2c3e50' },");
-        html.AppendLine("                            ticks: { callback: function(value) { return value === 0 ? '촬영' : '세션'; } },");
+        html.AppendLine("                            min: -0.5,");
+        html.AppendLine("                            max: 1.5,");
+        html.AppendLine("                            ticks: { ");
+        html.AppendLine("                                stepSize: 1,");
+        html.AppendLine("                                callback: function(value) { ");
+        html.AppendLine("                                    if (value === 0) return '촬영';");
+        html.AppendLine("                                    if (value === 1) return '세션';");
+        html.AppendLine("                                    return '';");
+        html.AppendLine("                                }");
+        html.AppendLine("                            },");
         html.AppendLine("                            grid: { color: 'rgba(0, 0, 0, 0.05)' }");
         html.AppendLine("                        }");
         html.AppendLine("                    }");

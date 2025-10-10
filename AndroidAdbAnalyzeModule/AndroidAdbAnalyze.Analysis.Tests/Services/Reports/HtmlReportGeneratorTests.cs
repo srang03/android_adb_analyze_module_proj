@@ -5,7 +5,7 @@ using AndroidAdbAnalyze.Analysis.Models.Results;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using AndroidAdbAnalyze.Analysis.Models.Visualization;
 using AndroidAdbAnalyze.Analysis.Services.Reports;
-using AndroidAdbAnalyzeModule.Core.Models;
+using AndroidAdbAnalyze.Parser.Core.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -86,7 +86,7 @@ public sealed class HtmlReportGeneratorTests
         html.Should().Contain("<!DOCTYPE html>");
         html.Should().Contain("<html lang=\"ko\">");
         html.Should().Contain("</html>");
-        html.Should().Contain("디지털 포렌식 분석 보고서");
+        html.Should().Contain("모바일 로그 분석 보고서");
     }
 
     [Fact]

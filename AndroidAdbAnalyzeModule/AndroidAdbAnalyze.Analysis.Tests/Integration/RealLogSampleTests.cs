@@ -1,10 +1,10 @@
 using AndroidAdbAnalyze.Analysis.Extensions;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Options;
-using AndroidAdbAnalyzeModule.Configuration.Loaders;
-using AndroidAdbAnalyzeModule.Core.Constants;
-using AndroidAdbAnalyzeModule.Core.Models;
-using AndroidAdbAnalyzeModule.Parsing;
+using AndroidAdbAnalyze.Parser.Configuration.Loaders;
+using AndroidAdbAnalyze.Parser.Core.Constants;
+using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Parser.Parsing;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -33,7 +33,7 @@ public sealed class RealLogSampleTests
         var projectRoot = Path.GetFullPath(Path.Combine(currentDir, "..", "..", "..", ".."));
         
         _sampleLogsPath = Path.Combine(projectRoot, "..", "sample_logs", "4차 샘플");
-        _parserConfigPath = Path.Combine(projectRoot, "AndroidAdbAnalyzeModule", "Configs");
+        _parserConfigPath = Path.Combine(projectRoot, "AndroidAdbAnalyze.Parser", "Configs");
         
         _output.WriteLine($"Sample Logs Path: {_sampleLogsPath}");
         _output.WriteLine($"Parser Config Path: {_parserConfigPath}");

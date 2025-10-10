@@ -1,5 +1,3 @@
-using AndroidAdbAnalyzeModule.Core.Models;
-using AndroidAdbAnalyzeModule.Core.Constants;
 using AndroidAdbAnalyze.Analysis.Services.Sessions;
 using AndroidAdbAnalyze.Analysis.Services.Confidence;
 using AndroidAdbAnalyze.Analysis.Models.Options;
@@ -7,6 +5,8 @@ using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
+using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Parser.Core.Constants;
 
 namespace AndroidAdbAnalyze.Analysis.Tests.Services.Sessions;
 

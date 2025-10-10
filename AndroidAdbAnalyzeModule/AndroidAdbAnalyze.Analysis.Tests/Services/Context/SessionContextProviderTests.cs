@@ -1,9 +1,9 @@
-using AndroidAdbAnalyzeModule.Core.Constants;
-using AndroidAdbAnalyzeModule.Core.Models;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using AndroidAdbAnalyze.Analysis.Services.Context;
 using FluentAssertions;
 using Xunit;
+using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Parser.Core.Constants;
 
 namespace AndroidAdbAnalyze.Analysis.Tests.Services.Context;
 

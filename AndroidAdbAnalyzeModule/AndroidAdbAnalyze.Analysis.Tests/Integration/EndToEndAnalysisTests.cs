@@ -4,10 +4,9 @@ using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Services.Reports;
 using AndroidAdbAnalyze.Analysis.Services.Visualization;
-using AndroidAdbAnalyzeModule.Configuration.Loaders;
-using AndroidAdbAnalyzeModule.Configuration.Validators;
-using AndroidAdbAnalyzeModule.Core.Models;
-using AndroidAdbAnalyzeModule.Parsing;
+using AndroidAdbAnalyze.Parser.Configuration.Loaders;
+using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Parser.Parsing;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -39,7 +38,7 @@ public sealed class EndToEndAnalysisTests
         
         _sampleLogsPath = Path.Combine(projectRoot, "..", "sample_logs");
         // ✅ Config 파일 경로 수정: 통합된 Configs 폴더 사용
-        _parserConfigPath = Path.Combine(projectRoot, "AndroidAdbAnalyzeModule", "Configs");
+        _parserConfigPath = Path.Combine(projectRoot, "AndroidAdbAnalyze.Parser", "Configs");
         
         _output.WriteLine($"Current Dir: {currentDir}");
         _output.WriteLine($"Project Root: {projectRoot}");
@@ -311,7 +310,7 @@ public sealed class EndToEndAnalysisTests
     public async Task PerformanceBaseline_Sample2_MeasuresExecutionTime()
     {
         // Arrange
-        var events = await ParseSampleLogsAsync("2차 샘플");
+        var events = await ParseSampleLogsAsync("3차 샘플_기본카메라_카카오톡");
         events.Should().NotBeEmpty();
 
         var orchestrator = CreateOrchestrator();
@@ -349,7 +348,7 @@ public sealed class EndToEndAnalysisTests
     public async Task HtmlReport_Sample2_GeneratesAndSaves()
     {
         // Arrange
-        var events = await ParseSampleLogsAsync("2차 샘플");
+        var events = await ParseSampleLogsAsync("3차 샘플_기본카메라_카카오톡");
         events.Should().NotBeEmpty();
 
         var orchestrator = CreateOrchestrator();
@@ -374,7 +373,7 @@ public sealed class EndToEndAnalysisTests
         htmlReport.Should().Contain("촬영 이벤트");
 
         // 파일 저장 (테스트 출력 디렉토리)
-        var outputPath = Path.Combine(Directory.GetCurrentDirectory(), "test_report_sample2.html");
+        var outputPath = Path.Combine(Directory.GetCurrentDirectory(), "test_report_sample3.html");
         await File.WriteAllTextAsync(outputPath, htmlReport);
 
         _output.WriteLine($"✓ HTML 보고서 생성 완료: {outputPath}");

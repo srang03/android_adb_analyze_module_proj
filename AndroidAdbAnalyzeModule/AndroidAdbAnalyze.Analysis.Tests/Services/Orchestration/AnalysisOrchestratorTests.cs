@@ -1,16 +1,15 @@
-using AndroidAdbAnalyzeModule.Core.Models;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Options;
-using AndroidAdbAnalyze.Analysis.Models.Results;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using AndroidAdbAnalyze.Analysis.Models.Events;
 using AndroidAdbAnalyze.Analysis.Models.Deduplication;
 using AndroidAdbAnalyze.Analysis.Services.Orchestration;
-using AndroidAdbAnalyzeModule.Core.Constants;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Parser.Core.Constants;
 
 namespace AndroidAdbAnalyze.Analysis.Tests.Services.Orchestration;
 

@@ -1,10 +1,10 @@
-using AndroidAdbAnalyzeModule.Core.Constants;
-using AndroidAdbAnalyzeModule.Core.Models;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Context;
 using AndroidAdbAnalyze.Analysis.Models.Events;
 using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
+using AndroidAdbAnalyze.Parser.Core.Constants;
+using AndroidAdbAnalyze.Parser.Core.Models;
 using Microsoft.Extensions.Logging;
 
 namespace AndroidAdbAnalyze.Analysis.Services.Strategies;

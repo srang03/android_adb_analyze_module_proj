@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\AndroidAdbAnalyzeModule\AndroidAdbAnalyzeModule.csproj" />
+    <ProjectReference Include="..\AndroidAdbAnalyze.Parser\AndroidAdbAnalyze.Parser.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,9 +1,8 @@
 using System.Diagnostics;
-using AndroidAdbAnalyzeModule.Core.Models;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Models.Results;
-using AndroidAdbAnalyze.Analysis.Models.Deduplication;
+using AndroidAdbAnalyze.Parser.Core.Models;
 using Microsoft.Extensions.Logging;
 
 namespace AndroidAdbAnalyze.Analysis.Services.Orchestration;
