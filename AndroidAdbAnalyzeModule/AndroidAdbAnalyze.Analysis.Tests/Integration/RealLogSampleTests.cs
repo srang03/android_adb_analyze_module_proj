@@ -16,13 +16,16 @@ namespace AndroidAdbAnalyze.Analysis.Tests.Integration;
 
 /// <summary>
 /// 실제 로그 샘플 기반 통합 테스트
-/// 4차 샘플 로그를 사용하여 실제 시나리오 검증
+/// 2차 샘플 로그를 사용하여 실제 시나리오 검증
 /// </summary>
 public sealed class RealLogSampleTests
 {
     private readonly ITestOutputHelper _output;
     private readonly string _sampleLogsPath;
     private readonly string _parserConfigPath;
+    
+    // 샘플 디렉토리 경로
+    private const string SampleDirectoryName = "2차 샘플_25_10_06";
 
     public RealLogSampleTests(ITestOutputHelper output)
     {
@@ -32,7 +35,7 @@ public sealed class RealLogSampleTests
         var currentDir = Directory.GetCurrentDirectory();
         var projectRoot = Path.GetFullPath(Path.Combine(currentDir, "..", "..", "..", ".."));
         
-        _sampleLogsPath = Path.Combine(projectRoot, "..", "sample_logs", "4차 샘플");
+        _sampleLogsPath = Path.Combine(projectRoot, "..", "sample_logs", SampleDirectoryName);
         _parserConfigPath = Path.Combine(projectRoot, "AndroidAdbAnalyze.Parser", "Configs");
         
         _output.WriteLine($"Sample Logs Path: {_sampleLogsPath}");
@@ -105,6 +108,9 @@ public sealed class RealLogSampleTests
             builder.SetMinimumLevel(LogLevel.Trace);
             builder.AddProvider(NullLoggerProvider.Instance);
         });
+        
+        // AnalysisOptions 등록 (EventDeduplicator 의존성)
+        services.AddSingleton(new AnalysisOptions { DeduplicationSimilarityThreshold = 0.8 });
         
         // AndroidAdbAnalysis 서비스 등록 (Phase 5)
         services.AddAndroidAdbAnalysis();
@@ -241,8 +247,8 @@ public sealed class RealLogSampleTests
             _output.WriteLine($"\n  Capture:");
             _output.WriteLine($"    Time: {capture.CaptureTime:yyyy-MM-dd HH:mm:ss}");
             _output.WriteLine($"    Package: {capture.PackageName}");
-            _output.WriteLine($"    Confidence: {capture.ConfidenceScore:F2}");
-            _output.WriteLine($"    Evidence: {string.Join(", ", capture.EvidenceTypes)}");
+            _output.WriteLine($"    CaptureDetectionScore: {capture.CaptureDetectionScore:F2}");
+            _output.WriteLine($"    Artifact: {string.Join(", ", capture.ArtifactTypes)}");
             _output.WriteLine($"    FilePath: {capture.FilePath ?? "N/A"}");
         }
 
@@ -322,10 +328,10 @@ public sealed class RealLogSampleTests
         {
             _output.WriteLine($"\n  Capture:");
             _output.WriteLine($"    Time: {capture.CaptureTime:HH:mm:ss}");
-            _output.WriteLine($"    Confidence: {capture.ConfidenceScore:F2}");
-            _output.WriteLine($"    Evidence: {string.Join(", ", capture.EvidenceTypes)}");
+            _output.WriteLine($"    CaptureDetectionScore: {capture.CaptureDetectionScore:F2}");
+            _output.WriteLine($"    Artifact: {string.Join(", ", capture.ArtifactTypes)}");
             
-            var hasPLAYER_EVENT = capture.EvidenceTypes.Contains(LogEventTypes.PLAYER_EVENT);
+            var hasPLAYER_EVENT = capture.ArtifactTypes.Contains(LogEventTypes.PLAYER_EVENT);
             _output.WriteLine($"    Has PLAYER_EVENT: {hasPLAYER_EVENT}");
         }
 
@@ -333,7 +339,7 @@ public sealed class RealLogSampleTests
         if (playerEvents.Any())
         {
             result.CaptureEvents.Should().NotBeEmpty(
-                "Telegram captures should be detected using PLAYER_EVENT as conditional primary evidence");
+                "Telegram captures should be detected using PLAYER_EVENT as conditional key artifact");
         }
     }
 
@@ -389,8 +395,8 @@ public sealed class RealLogSampleTests
         {
             _output.WriteLine($"\n  Capture:");
             _output.WriteLine($"    Time: {capture.CaptureTime:HH:mm:ss}");
-            _output.WriteLine($"    Confidence: {capture.ConfidenceScore:F2}");
-            _output.WriteLine($"    Evidence: {string.Join(", ", capture.EvidenceTypes)}");
+            _output.WriteLine($"    CaptureDetectionScore: {capture.CaptureDetectionScore:F2}");
+            _output.WriteLine($"    Artifact: {string.Join(", ", capture.ArtifactTypes)}");
         }
 
         // PLAYER_EVENT 없이도 DATABASE_INSERT로 탐지되어야 함

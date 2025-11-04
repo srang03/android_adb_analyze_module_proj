@@ -3,7 +3,7 @@ using AndroidAdbAnalyze.Analysis.Models.Context;
 using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using AndroidAdbAnalyze.Analysis.Services.Confidence;
-using AndroidAdbAnalyze.Analysis.Services.Strategies;
+using AndroidAdbAnalyze.Analysis.Services.DetectionStrategies;
 using AndroidAdbAnalyze.Parser.Core.Constants;
 using AndroidAdbAnalyze.Parser.Core.Models;
 using FluentAssertions;
@@ -113,8 +113,8 @@ public sealed class TelegramStrategyTests
 
         // Assert
         captures.Should().HaveCount(1);
-        captures[0].SupportingEvidenceIds.Should().BeEmpty("PLAYER_EVENT는 보조 증거에서 제외됨");
-        captures[0].EvidenceTypes.Should().NotContain(LogEventTypes.PLAYER_EVENT);
+        captures[0].SupportingArtifactIds.Should().BeEmpty("PLAYER_EVENT는 보조 증거에서 제외됨");
+        captures[0].ArtifactTypes.Should().NotContain(LogEventTypes.PLAYER_EVENT);
     }
 
     [Fact]
@@ -152,16 +152,6 @@ public sealed class TelegramStrategyTests
     }
 
     [Fact]
-    public void Priority_Returns100()
-    {
-        // Act
-        var priority = _strategy.Priority;
-
-        // Assert
-        priority.Should().Be(100, "BaseStrategy(0)보다 높은 우선순위");
-    }
-
-    [Fact]
     public void DetectCaptures_SetsMetadata_DetectionStrategy()
     {
         // Arrange
@@ -181,8 +171,8 @@ public sealed class TelegramStrategyTests
         captures.Should().HaveCount(1);
         captures[0].Metadata.Should().ContainKey("detection_strategy");
         captures[0].Metadata["detection_strategy"].Should().Be("TelegramStrategy");
-        captures[0].Metadata.Should().ContainKey("primary_evidence_type");
-        captures[0].Metadata["primary_evidence_type"].Should().Be("VIBRATION_EVENT");
+        captures[0].Metadata.Should().ContainKey("key_artifact_type");
+        captures[0].Metadata["key_artifact_type"].Should().Be("VIBRATION_EVENT");
     }
 
     #region Usage Attribute Validation
@@ -316,9 +306,9 @@ public sealed class TelegramStrategyTests
     #region Confidence Threshold
 
     [Fact]
-    public void DetectCaptures_BelowMinConfidence_Excluded()
+    public void DetectCaptures_KeyArtifactExists_AlwaysDetects()
     {
-        // Arrange: 신뢰도가 임계값보다 낮음
+        // Arrange: 핵심 아티팩트 존재
         var baseTime = new DateTime(2025, 10, 6, 22, 54, 0);
         var events = new List<NormalizedLogEvent>
         {
@@ -328,24 +318,24 @@ public sealed class TelegramStrategyTests
         };
         var context = CreateContext(baseTime, baseTime.AddMinutes(1), "org.telegram.messenger", events);
         
-        // 높은 임계값 설정
-        var highThresholdOptions = new AnalysisOptions
+        // 임계값 제거됨
+        var options = new AnalysisOptions
         {
             EventCorrelationWindow = TimeSpan.FromSeconds(30),
-            MinConfidenceThreshold = 0.9, // VIBRATION_EVENT (0.4)보다 높음
+            MinConfidenceThreshold = 0.0, // 임계값 제거됨 (핵심 아티팩트 존재 여부만 체크)
             ScreenshotPathPatterns = new[] { "/Screenshots/" },
             DownloadPathPatterns = new[] { "/Download/" }
         };
 
         // Act
-        var captures = _strategy.DetectCaptures(context, highThresholdOptions);
+        var captures = _strategy.DetectCaptures(context, options);
 
         // Assert
-        captures.Should().BeEmpty("신뢰도가 임계값 미만이면 제외");
+        captures.Should().HaveCount(1, "핵심 아티팩트(VIBRATION_EVENT)가 있으면 항상 탐지됨");
     }
 
     [Fact]
-    public void DetectCaptures_WithSupportingEvidence_IncreasesConfidence()
+    public void DetectCaptures_WithSupportingArtifact_IncreasesConfidence()
     {
         // Arrange: 보조 증거가 있어 신뢰도 증가
         var baseTime = new DateTime(2025, 10, 6, 22, 54, 0);
@@ -357,9 +347,9 @@ public sealed class TelegramStrategyTests
                 new Dictionary<string, object> { ["usage"] = "TOUCH" }),
             
             // 보조 증거
-            CreateEvent(LogEventTypes.VIBRATION, baseTime.AddSeconds(37), 
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddSeconds(37), 
                 "org.telegram.messenger",
-                new Dictionary<string, object> { ["usage"] = "TOUCH" }),
+                new Dictionary<string, object> { ["status"] = "finished" }),
             
             CreateEvent(LogEventTypes.URI_PERMISSION_GRANT, baseTime.AddSeconds(39), 
                 "org.telegram.messenger",
@@ -372,8 +362,8 @@ public sealed class TelegramStrategyTests
 
         // Assert
         captures.Should().HaveCount(1);
-        captures[0].ConfidenceScore.Should().BeGreaterThan(0.4, "보조 증거가 있어 신뢰도 증가");
-        captures[0].SupportingEvidenceIds.Should().NotBeEmpty("보조 증거가 있어야 함");
+        captures[0].CaptureDetectionScore.Should().BeGreaterThan(0.4, "보조 증거가 있어 신뢰도 증가");
+        captures[0].SupportingArtifactIds.Should().NotBeEmpty("보조 증거가 있어야 함");
     }
 
     #endregion
@@ -381,7 +371,7 @@ public sealed class TelegramStrategyTests
     #region EventCorrelationWindow Tests
 
     [Fact]
-    public void DetectCaptures_SupportingEvidence_OutsideWindow_Excluded()
+    public void DetectCaptures_SupportingArtifact_OutsideWindow_Excluded()
     {
         // Arrange: 보조 증거가 correlation window 밖에 있음
         var baseTime = new DateTime(2025, 10, 6, 22, 54, 38);
@@ -393,9 +383,9 @@ public sealed class TelegramStrategyTests
                 new Dictionary<string, object> { ["usage"] = "TOUCH" }),
             
             // 보조 증거 (31초 전 - 윈도우 밖)
-            CreateEvent(LogEventTypes.VIBRATION, baseTime.AddSeconds(-31), 
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddSeconds(-31), 
                 "org.telegram.messenger",
-                new Dictionary<string, object> { ["usage"] = "TOUCH" }),
+                new Dictionary<string, object> { ["status"] = "finished" }),
             
             // 보조 증거 (31초 후 - 윈도우 밖)
             CreateEvent(LogEventTypes.URI_PERMISSION_GRANT, baseTime.AddSeconds(31), 
@@ -409,12 +399,12 @@ public sealed class TelegramStrategyTests
 
         // Assert
         captures.Should().HaveCount(1, "주 증거는 탐지됨");
-        captures[0].ConfidenceScore.Should().Be(0.4, "보조 증거가 윈도우 밖이므로 신뢰도 증가 없음");
-        captures[0].SupportingEvidenceIds.Should().BeEmpty();
+        captures[0].CaptureDetectionScore.Should().Be(0.4, "보조 증거가 윈도우 밖이므로 신뢰도 증가 없음");
+        captures[0].SupportingArtifactIds.Should().BeEmpty();
     }
 
     [Fact]
-    public void DetectCaptures_SupportingEvidence_InsideWindow_Included()
+    public void DetectCaptures_SupportingArtifact_InsideWindow_Included()
     {
         // Arrange: 보조 증거가 correlation window 안에 있음
         var baseTime = new DateTime(2025, 10, 6, 22, 54, 38);
@@ -426,9 +416,9 @@ public sealed class TelegramStrategyTests
                 new Dictionary<string, object> { ["usage"] = "TOUCH" }),
             
             // 보조 증거 (29초 전 - 윈도우 안)
-            CreateEvent(LogEventTypes.VIBRATION, baseTime.AddSeconds(-29), 
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddSeconds(-29), 
                 "org.telegram.messenger",
-                new Dictionary<string, object> { ["usage"] = "TOUCH" }),
+                new Dictionary<string, object> { ["status"] = "finished" }),
             
             // 보조 증거 (29초 후 - 윈도우 안)
             CreateEvent(LogEventTypes.URI_PERMISSION_GRANT, baseTime.AddSeconds(29), 
@@ -442,14 +432,14 @@ public sealed class TelegramStrategyTests
 
         // Assert
         captures.Should().HaveCount(1, "주 증거 탐지");
-        captures[0].ConfidenceScore.Should().BeGreaterThan(0.4, "보조 증거가 윈도우 안이므로 신뢰도 증가");
-        captures[0].SupportingEvidenceIds.Should().HaveCount(2);
-        captures[0].EvidenceTypes.Should().Contain(LogEventTypes.VIBRATION);
-        captures[0].EvidenceTypes.Should().Contain(LogEventTypes.URI_PERMISSION_GRANT);
+        captures[0].CaptureDetectionScore.Should().BeGreaterThan(0.4, "보조 증거가 윈도우 안이므로 신뢰도 증가");
+        captures[0].SupportingArtifactIds.Should().HaveCount(1, "PLAYER_EVENT는 BlackListedArtifactTypes로 제외됨");
+        captures[0].ArtifactTypes.Should().Contain(LogEventTypes.URI_PERMISSION_GRANT);
+        captures[0].ArtifactTypes.Should().NotContain(LogEventTypes.PLAYER_EVENT, "PLAYER_EVENT는 블랙리스트에 있음");
     }
 
     [Fact]
-    public void DetectCaptures_SupportingEvidence_ExactWindowBoundary_Included()
+    public void DetectCaptures_SupportingArtifact_ExactWindowBoundary_Included()
     {
         // Arrange: 보조 증거가 정확히 window 경계에 있음
         var baseTime = new DateTime(2025, 10, 6, 22, 54, 38);
@@ -461,9 +451,9 @@ public sealed class TelegramStrategyTests
                 new Dictionary<string, object> { ["usage"] = "TOUCH" }),
             
             // 보조 증거 (정확히 30초 전 - 경계)
-            CreateEvent(LogEventTypes.VIBRATION, baseTime.AddSeconds(-30), 
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddSeconds(-30), 
                 "org.telegram.messenger",
-                new Dictionary<string, object> { ["usage"] = "TOUCH" }),
+                new Dictionary<string, object> { ["status"] = "finished" }),
             
             // 보조 증거 (정확히 30초 후 - 경계)
             CreateEvent(LogEventTypes.URI_PERMISSION_GRANT, baseTime.AddSeconds(30), 
@@ -477,8 +467,10 @@ public sealed class TelegramStrategyTests
 
         // Assert
         captures.Should().HaveCount(1);
-        captures[0].SupportingEvidenceIds.Should().HaveCount(2, 
-            "정확히 경계에 있는 보조 증거도 포함 (>= windowStart && <= windowEnd)");
+        captures[0].SupportingArtifactIds.Should().HaveCount(1, 
+            "PLAYER_EVENT는 BlackListedArtifactTypes로 제외됨 (>= windowStart && <= windowEnd)");
+        captures[0].ArtifactTypes.Should().Contain(LogEventTypes.URI_PERMISSION_GRANT);
+        captures[0].ArtifactTypes.Should().NotContain(LogEventTypes.PLAYER_EVENT, "PLAYER_EVENT는 블랙리스트에 있음");
     }
 
     #endregion
@@ -501,7 +493,7 @@ public sealed class TelegramStrategyTests
     }
 
     [Fact]
-    public void DetectCaptures_ZeroCorrelationWindow_OnlyPrimaryEvidence()
+    public void DetectCaptures_ZeroCorrelationWindow_OnlyPrimaryArtifact()
     {
         // Arrange: correlation window가 0인 경우
         var baseTime = new DateTime(2025, 10, 6, 22, 54, 38);
@@ -511,9 +503,9 @@ public sealed class TelegramStrategyTests
                 "org.telegram.messenger",
                 new Dictionary<string, object> { ["usage"] = "TOUCH" }),
             
-            CreateEvent(LogEventTypes.VIBRATION, baseTime.AddSeconds(1), 
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddSeconds(1), 
                 "org.telegram.messenger",
-                new Dictionary<string, object> { ["usage"] = "TOUCH" })
+                new Dictionary<string, object> { ["status"] = "finished" })
         };
         var context = CreateContext(baseTime, baseTime.AddMinutes(1), "org.telegram.messenger", events);
         
@@ -530,8 +522,8 @@ public sealed class TelegramStrategyTests
 
         // Assert
         captures.Should().HaveCount(1);
-        captures[0].ConfidenceScore.Should().Be(0.4, "correlation window가 0이면 보조 증거 수집 안 됨");
-        captures[0].SupportingEvidenceIds.Should().BeEmpty();
+        captures[0].CaptureDetectionScore.Should().Be(0.4, "correlation window가 0이면 보조 증거 수집 안 됨");
+        captures[0].SupportingArtifactIds.Should().BeEmpty();
     }
 
     [Fact]
@@ -546,10 +538,10 @@ public sealed class TelegramStrategyTests
                 "org.telegram.messenger",
                 new Dictionary<string, object> { ["usage"] = "NOTIFICATION" }),
             
-            // VIBRATION이지만 VIBRATION_EVENT가 아님
-            CreateEvent(LogEventTypes.VIBRATION, baseTime.AddSeconds(39), 
+            // PLAYER_EVENT (약한 증거, VIBRATION_EVENT와 다른 타입)
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddSeconds(39), 
                 "org.telegram.messenger",
-                new Dictionary<string, object> { ["usage"] = "TOUCH" })
+                new Dictionary<string, object> { ["status"] = "finished" })
         };
         var context = CreateContext(baseTime, baseTime.AddMinutes(1), "org.telegram.messenger", events);
 
@@ -635,8 +627,8 @@ public sealed class TelegramStrategyTests
         capture.Metadata.Should().ContainKey("detection_strategy");
         capture.Metadata["detection_strategy"].Should().Be("TelegramStrategy");
         
-        capture.Metadata.Should().ContainKey("primary_evidence_type");
-        capture.Metadata["primary_evidence_type"].Should().Be("VIBRATION_EVENT");
+        capture.Metadata.Should().ContainKey("key_artifact_type");
+        capture.Metadata["key_artifact_type"].Should().Be("VIBRATION_EVENT");
         
         capture.Metadata.Should().ContainKey("usage");
         capture.Metadata["usage"].Should().Be("TOUCH");
@@ -649,7 +641,7 @@ public sealed class TelegramStrategyTests
     }
 
     [Fact]
-    public void DetectCaptures_SupportingEvidenceTypes_CorrectlyFiltered()
+    public void DetectCaptures_SupportingArtifactTypes_CorrectlyFiltered()
     {
         // Arrange: 다양한 보조 증거 타입 테스트
         var baseTime = new DateTime(2025, 10, 6, 22, 54, 38);
@@ -661,9 +653,9 @@ public sealed class TelegramStrategyTests
                 new Dictionary<string, object> { ["usage"] = "TOUCH" }),
             
             // 보조 증거 (포함)
-            CreateEvent(LogEventTypes.VIBRATION, baseTime.AddSeconds(1), 
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddSeconds(1), 
                 "org.telegram.messenger",
-                new Dictionary<string, object> { ["usage"] = "TOUCH" }),
+                new Dictionary<string, object> { ["status"] = "finished" }),
             
             CreateEvent(LogEventTypes.URI_PERMISSION_GRANT, baseTime.AddSeconds(2), 
                 "org.telegram.messenger",
@@ -685,10 +677,9 @@ public sealed class TelegramStrategyTests
 
         // Assert
         captures.Should().HaveCount(1);
-        captures[0].SupportingEvidenceIds.Should().HaveCount(2, "PLAYER_EVENT 제외");
-        captures[0].EvidenceTypes.Should().Contain(LogEventTypes.VIBRATION);
-        captures[0].EvidenceTypes.Should().Contain(LogEventTypes.URI_PERMISSION_GRANT);
-        captures[0].EvidenceTypes.Should().NotContain(LogEventTypes.PLAYER_EVENT, "PLAYER_EVENT는 제외됨");
+        captures[0].SupportingArtifactIds.Should().HaveCount(1, "URI_PERMISSION_GRANT만 보조 아티팩트");
+        captures[0].ArtifactTypes.Should().Contain(LogEventTypes.URI_PERMISSION_GRANT);
+        captures[0].ArtifactTypes.Should().NotContain(LogEventTypes.PLAYER_EVENT, "PLAYER_EVENT는 제외됨");
     }
 
     #endregion
@@ -708,7 +699,7 @@ public sealed class TelegramStrategyTests
             EndTime = endTime,
             PackageName = packageName,
             SourceLogTypes = new[] { "vibrator_manager" },
-            ConfidenceScore = 0.8,
+            SessionCompletenessScore = 0.8,
             SourceEventIds = Array.Empty<Guid>()
         };
 
@@ -716,10 +707,7 @@ public sealed class TelegramStrategyTests
         {
             Session = session,
             AllEvents = events ?? new List<NormalizedLogEvent>(),
-            ActivityResumedTime = null,
-            ActivityPausedTime = null,
             ForegroundServices = Array.Empty<ForegroundServiceInfo>(),
-            TimelineEvents = new Dictionary<DateTime, List<NormalizedLogEvent>>()
         };
     }
 

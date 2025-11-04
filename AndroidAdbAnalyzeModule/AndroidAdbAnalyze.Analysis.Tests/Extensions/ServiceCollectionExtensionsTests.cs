@@ -1,5 +1,6 @@
 using AndroidAdbAnalyze.Analysis.Extensions;
 using AndroidAdbAnalyze.Analysis.Interfaces;
+using AndroidAdbAnalyze.Analysis.Models.Options;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,6 +20,9 @@ public sealed class ServiceCollectionExtensionsTests
         // Arrange
         var services = new ServiceCollection();
         services.AddLogging(builder => builder.AddProvider(NullLoggerProvider.Instance));
+        
+        // AnalysisOptions 등록 (EventDeduplicator 의존성)
+        services.AddSingleton(new AnalysisOptions { DeduplicationSimilarityThreshold = 0.8 });
 
         // Act
         services.AddAndroidAdbAnalysis();
@@ -76,6 +80,10 @@ public sealed class ServiceCollectionExtensionsTests
         // Arrange
         var services = new ServiceCollection();
         services.AddLogging(builder => builder.AddProvider(NullLoggerProvider.Instance));
+        
+        // AnalysisOptions 등록 (EventDeduplicator 의존성)
+        services.AddSingleton(new AnalysisOptions { DeduplicationSimilarityThreshold = 0.8 });
+        
         services.AddAndroidAdbAnalysis();
         var serviceProvider = services.BuildServiceProvider();
 
@@ -93,6 +101,10 @@ public sealed class ServiceCollectionExtensionsTests
         // Arrange
         var services = new ServiceCollection();
         services.AddLogging(builder => builder.AddProvider(NullLoggerProvider.Instance));
+        
+        // AnalysisOptions 등록 (EventDeduplicator 의존성)
+        services.AddSingleton(new AnalysisOptions { DeduplicationSimilarityThreshold = 0.8 });
+        
         services.AddAndroidAdbAnalysis();
         var serviceProvider = services.BuildServiceProvider();
 

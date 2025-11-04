@@ -136,7 +136,7 @@ public sealed class TimelineBuilderTests
     public void BuildTimeline_WithHighConfidence_ReturnsGreenColorHint()
     {
         // Arrange
-        var session = CreateSession(1, new DateTime(2025, 1, 1, 12, 0, 0, DateTimeKind.Utc), confidenceScore: 0.9);
+        var session = CreateSession(1, new DateTime(2025, 1, 1, 12, 0, 0, DateTimeKind.Utc), score: 0.9);
         var result = CreateResult(new[] { session }, Array.Empty<CameraCaptureEvent>());
 
         // Act
@@ -150,7 +150,7 @@ public sealed class TimelineBuilderTests
     public void BuildTimeline_WithMediumConfidence_ReturnsYellowColorHint()
     {
         // Arrange
-        var session = CreateSession(1, new DateTime(2025, 1, 1, 12, 0, 0, DateTimeKind.Utc), confidenceScore: 0.6);
+        var session = CreateSession(1, new DateTime(2025, 1, 1, 12, 0, 0, DateTimeKind.Utc), score: 0.6);
         var result = CreateResult(new[] { session }, Array.Empty<CameraCaptureEvent>());
 
         // Act
@@ -164,7 +164,7 @@ public sealed class TimelineBuilderTests
     public void BuildTimeline_WithLowConfidence_ReturnsRedColorHint()
     {
         // Arrange
-        var session = CreateSession(1, new DateTime(2025, 1, 1, 12, 0, 0, DateTimeKind.Utc), confidenceScore: 0.3);
+        var session = CreateSession(1, new DateTime(2025, 1, 1, 12, 0, 0, DateTimeKind.Utc), score: 0.3);
         var result = CreateResult(new[] { session }, Array.Empty<CameraCaptureEvent>());
 
         // Act
@@ -215,7 +215,7 @@ public sealed class TimelineBuilderTests
         item.Metadata["Type"].Should().Be("Capture");
         item.Metadata["FilePath"].Should().Be("/storage/DCIM/IMG_001.jpg");
         item.Metadata["FileUri"].Should().Be("content://media/external/images/123");
-        item.Metadata.Should().ContainKey("EvidenceCount");
+        item.Metadata.Should().ContainKey("ArtifactCount");
     }
 
     [Fact]
@@ -242,10 +242,10 @@ public sealed class TimelineBuilderTests
     public void BuildTimeline_WithComplexScenario_ProducesCorrectTimeline()
     {
         // Arrange
-        var session1 = CreateSession(1, new DateTime(2025, 1, 1, 12, 0, 0, DateTimeKind.Utc), confidenceScore: 0.9);
-        var capture1 = CreateCapture(1, new DateTime(2025, 1, 1, 12, 1, 0, DateTimeKind.Utc), confidenceScore: 0.8);
-        var capture2 = CreateCapture(2, new DateTime(2025, 1, 1, 12, 2, 0, DateTimeKind.Utc), confidenceScore: 0.7);
-        var session2 = CreateSession(2, new DateTime(2025, 1, 1, 12, 5, 0, DateTimeKind.Utc), confidenceScore: 0.6, isIncomplete: true);
+        var session1 = CreateSession(1, new DateTime(2025, 1, 1, 12, 0, 0, DateTimeKind.Utc), score: 0.9);
+        var capture1 = CreateCapture(1, new DateTime(2025, 1, 1, 12, 1, 0, DateTimeKind.Utc), sessionCompletenessScore: 0.8);
+        var capture2 = CreateCapture(2, new DateTime(2025, 1, 1, 12, 2, 0, DateTimeKind.Utc), sessionCompletenessScore: 0.7);
+        var session2 = CreateSession(2, new DateTime(2025, 1, 1, 12, 5, 0, DateTimeKind.Utc), score: 0.6, isIncomplete: true);
 
         var result = CreateResult(
             new[] { session1, session2 },
@@ -324,7 +324,7 @@ public sealed class TimelineBuilderTests
         DateTime startTime,
         bool isIncomplete = false,
         SessionIncompleteReason? incompleteReason = null,
-        double confidenceScore = 0.8)
+        double score = 0.8)
     {
         return new CameraSession
         {
@@ -333,7 +333,7 @@ public sealed class TimelineBuilderTests
             StartTime = startTime,
             EndTime = isIncomplete ? null : startTime.AddMinutes(2),
             IncompleteReason = incompleteReason,
-            ConfidenceScore = confidenceScore,
+            SessionCompletenessScore = score,
             StartEventId = Guid.NewGuid(),
             EndEventId = isIncomplete ? null : Guid.NewGuid(),
             CaptureEventIds = Array.Empty<Guid>()
@@ -344,7 +344,7 @@ public sealed class TimelineBuilderTests
         int index,
         DateTime captureTime,
         bool isEstimated = false,
-        double confidenceScore = 0.8,
+        double sessionCompletenessScore = 0.8,
         string? filePath = null,
         string? fileUri = null)
     {
@@ -353,10 +353,10 @@ public sealed class TimelineBuilderTests
             CaptureId = Guid.NewGuid(),
             PackageName = "com.sec.android.app.camera",
             CaptureTime = captureTime,
-            ConfidenceScore = confidenceScore,
+            CaptureDetectionScore = sessionCompletenessScore,
             IsEstimated = isEstimated,
-            PrimaryEvidenceId = Guid.NewGuid(),
-            SupportingEvidenceIds = Array.Empty<Guid>(),
+            decisiveArtifact = Guid.NewGuid(),
+            SupportingArtifactIds = Array.Empty<Guid>(),
             FilePath = filePath,
             FileUri = fileUri
         };

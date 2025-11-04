@@ -13,27 +13,39 @@ namespace AndroidAdbAnalyze.Analysis.Services.Captures;
 /// <remarks>
 /// usagestats 기반 세션 컨텍스트를 구성하고,
 /// 앱별 Strategy를 선택하여 촬영 탐지를 위임합니다.
+/// 선택적으로 전송 탐지 기능을 통합합니다.
 /// </remarks>
 public sealed class CameraCaptureDetector : ICaptureDetector
 {
     private readonly ILogger<CameraCaptureDetector> _logger;
     private readonly ISessionContextProvider _contextProvider;
     private readonly IReadOnlyList<ICaptureDetectionStrategy> _strategies;
+    private readonly ITransmissionDetector? _transmissionDetector;
 
+    /// <summary>
+    /// CameraCaptureDetector 인스턴스를 생성합니다.
+    /// </summary>
+    /// <param name="logger">로거</param>
+    /// <param name="contextProvider">세션 컨텍스트 제공자</param>
+    /// <param name="strategies">촬영 탐지 전략 목록</param>
+    /// <param name="transmissionDetector">전송 탐지 서비스 (선택적)</param>
     public CameraCaptureDetector(
         ILogger<CameraCaptureDetector> logger,
         ISessionContextProvider contextProvider,
-        IEnumerable<ICaptureDetectionStrategy> strategies)
+        IEnumerable<ICaptureDetectionStrategy> strategies,
+        ITransmissionDetector? transmissionDetector = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _contextProvider = contextProvider ?? throw new ArgumentNullException(nameof(contextProvider));
-        _strategies = strategies?.OrderByDescending(s => s.Priority).ToList() 
-                     ?? throw new ArgumentNullException(nameof(strategies));
+        _strategies = strategies?.ToList() ?? throw new ArgumentNullException(nameof(strategies));
+        _transmissionDetector = transmissionDetector;
         
         _logger.LogInformation(
-            "[CameraCaptureDetector] 초기화 완료: Strategy {Count}개 등록 ({Strategies})",
+            "[CameraCaptureDetector] 초기화 완료: Strategy {Count}개 등록 ({Strategies}), " +
+            "TransmissionDetector={TransmissionEnabled}",
             _strategies.Count,
-            string.Join(", ", _strategies.Select(s => $"{s.GetType().Name}(Priority={s.Priority})")));
+            string.Join(", ", _strategies.Select(s => s.GetType().Name)),
+            _transmissionDetector != null ? "Enabled" : "Disabled");
     }
 
     /// <inheritdoc/>
@@ -62,11 +74,8 @@ public sealed class CameraCaptureDetector : ICaptureDetector
         
         _logger.LogDebug(
             "[CameraCaptureDetector] SessionContext 생성 완료: Session={SessionId}, " +
-            "AllEvents={AllEvents}, ActivityResumed={Resumed}, ActivityPaused={Paused}, ForegroundServices={Services}",
-            session.SessionId, context.AllEvents.Count, 
-            context.ActivityResumedTime?.ToString("HH:mm:ss.fff") ?? "N/A",
-            context.ActivityPausedTime?.ToString("HH:mm:ss.fff") ?? "N/A",
-            context.ForegroundServices.Count);
+            "AllEvents={AllEvents}, ForegroundServices={Services}",
+            session.SessionId, context.AllEvents.Count, context.ForegroundServices.Count);
         
         // 2단계: Strategy 선택
         var selectedStrategy = SelectStrategy(session.PackageName);
@@ -83,6 +92,73 @@ public sealed class CameraCaptureDetector : ICaptureDetector
             "Captures={Count}, Strategy={Strategy}",
             session.SessionId, session.PackageName, captures.Count, selectedStrategy.GetType().Name);
 
+        // 4단계: 전송 탐지 (선택적)
+        if (_transmissionDetector != null && options.EnableTransmissionDetection && captures.Count > 0)
+        {
+            _logger.LogDebug(
+                "[CameraCaptureDetector] 전송 탐지 시작: Session={SessionId}, Captures={Count}",
+                session.SessionId, captures.Count);
+
+            var capturesWithTransmission = new List<CameraCaptureEvent>();
+            
+            foreach (var capture in captures)
+            {
+                var transmissionResult = _transmissionDetector.DetectTransmission(
+                    capture,
+                    context.AllEvents,
+                    options);
+
+                // 전송 정보가 있으면 CameraCaptureEvent 업데이트
+                if (transmissionResult.IsTransmitted)
+                {
+                    _logger.LogInformation(
+                        "[CameraCaptureDetector] 전송 탐지: CaptureId={CaptureId}, " +
+                        "TransmissionTime={Time:HH:mm:ss.fff}, Packets={Packets}",
+                        capture.CaptureId, transmissionResult.TransmissionTime, 
+                        transmissionResult.TransmittedPackets);
+
+                    // 불변 객체이므로 새 인스턴스 생성 (기존 필드 보존)
+                    var updatedCapture = new CameraCaptureEvent
+                    {
+                        // 기존 필드 복사
+                        CaptureId = capture.CaptureId,
+                        ParentSessionId = capture.ParentSessionId,
+                        CaptureTime = capture.CaptureTime,
+                        PackageName = capture.PackageName,
+                        FilePath = capture.FilePath,
+                        FileUri = capture.FileUri,
+                        decisiveArtifact = capture.decisiveArtifact,
+                        SupportingArtifactIds = capture.SupportingArtifactIds,
+                        IsEstimated = capture.IsEstimated,
+                        CaptureDetectionScore = capture.CaptureDetectionScore,
+                        ArtifactTypes = capture.ArtifactTypes,
+                        SourceEventIds = capture.SourceEventIds,
+                        Metadata = capture.Metadata,
+                        
+                        // 전송 정보 추가
+                        IsTransmitted = true,
+                        TransmissionTime = transmissionResult.TransmissionTime,
+                        TransmittedPackets = transmissionResult.TransmittedPackets
+                    };
+                    
+                    capturesWithTransmission.Add(updatedCapture);
+                }
+                else
+                {
+                    // 전송 미탐지 - 기존 capture 그대로 사용
+                    capturesWithTransmission.Add(capture);
+                }
+            }
+            
+            _logger.LogInformation(
+                "[CameraCaptureDetector] 전송 탐지 완료: Session={SessionId}, " +
+                "Transmitted={TransmittedCount}/{TotalCount}",
+                session.SessionId, 
+                capturesWithTransmission.Count(c => c.IsTransmitted),
+                capturesWithTransmission.Count);
+
+            return capturesWithTransmission;
+        }
         return captures;
     }
     
@@ -90,16 +166,19 @@ public sealed class CameraCaptureDetector : ICaptureDetector
     /// 패키지명 기반 Strategy 선택
     /// </summary>
     /// <param name="packageName">앱 패키지명</param>
-    /// <returns>적용할 Strategy (우선순위순)</returns>
+    /// <returns>적용할 Strategy</returns>
+    /// <remarks>
+    /// PackageNamePattern이 매칭되는 첫 번째 Strategy를 선택합니다.
+    /// 매칭되지 않으면 기본 Strategy (PackageNamePattern == null)를 반환합니다.
+    /// </remarks>
     private ICaptureDetectionStrategy SelectStrategy(string packageName)
     {
-        // Priority 순으로 정렬된 Strategy 목록에서
         // PackageNamePattern이 매칭되는 첫 번째 Strategy 선택
         foreach (var strategy in _strategies)
         {
             if (strategy.PackageNamePattern == null)
             {
-                // 기본 Strategy (PackageNamePattern이 null)
+                // 기본 Strategy (PackageNamePattern이 null) - 나중에 처리
                 continue;
             }
             
@@ -126,5 +205,4 @@ public sealed class CameraCaptureDetector : ICaptureDetector
             packageName, defaultStrategy.GetType().Name);
         return defaultStrategy;
     }
-
 }

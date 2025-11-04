@@ -38,52 +38,6 @@ public sealed class SessionContextProviderTests
     }
 
     [Fact]
-    public void CreateContext_ExtractsActivityResumedTime()
-    {
-        // Arrange
-        var baseTime = new DateTime(2025, 10, 6, 22, 46, 0);
-        var resumedTime = baseTime.AddSeconds(5);
-        var session = CreateSession(baseTime, baseTime.AddMinutes(5));
-        
-        var events = new List<NormalizedLogEvent>
-        {
-            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime, "com.sec.android.app.camera"),
-            CreateActivityLifecycleEvent(resumedTime, "com.sec.android.app.camera", "ACTIVITY_RESUMED"),
-            CreateEvent(LogEventTypes.CAMERA_DISCONNECT, baseTime.AddMinutes(5), "com.sec.android.app.camera")
-        };
-
-        // Act
-        var context = _provider.CreateContext(session, events);
-
-        // Assert
-        context.ActivityResumedTime.Should().NotBeNull();
-        context.ActivityResumedTime.Should().Be(resumedTime);
-    }
-
-    [Fact]
-    public void CreateContext_ExtractsActivityPausedTime()
-    {
-        // Arrange
-        var baseTime = new DateTime(2025, 10, 6, 22, 46, 0);
-        var pausedTime = baseTime.AddMinutes(4);
-        var session = CreateSession(baseTime, baseTime.AddMinutes(5));
-        
-        var events = new List<NormalizedLogEvent>
-        {
-            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime, "com.sec.android.app.camera"),
-            CreateActivityLifecycleEvent(pausedTime, "com.sec.android.app.camera", "ACTIVITY_PAUSED"),
-            CreateEvent(LogEventTypes.CAMERA_DISCONNECT, baseTime.AddMinutes(5), "com.sec.android.app.camera")
-        };
-
-        // Act
-        var context = _provider.CreateContext(session, events);
-
-        // Assert
-        context.ActivityPausedTime.Should().NotBeNull();
-        context.ActivityPausedTime.Should().Be(pausedTime);
-    }
-
-    [Fact]
     public void CreateContext_ExtractsForegroundServices()
     {
         // Arrange
@@ -135,30 +89,6 @@ public sealed class SessionContextProviderTests
     }
 
     [Fact]
-    public void CreateContext_GroupsEventsByTimeline()
-    {
-        // Arrange
-        var baseTime = new DateTime(2025, 10, 6, 22, 46, 0);
-        var session = CreateSession(baseTime, baseTime.AddMinutes(5));
-        
-        var events = new List<NormalizedLogEvent>
-        {
-            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime, "com.sec.android.app.camera"),
-            CreateEvent(LogEventTypes.PLAYER_CREATED, baseTime.AddMilliseconds(100), "com.sec.android.app.camera"),
-            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddMilliseconds(500), "com.sec.android.app.camera"),
-            CreateEvent(LogEventTypes.DATABASE_INSERT, baseTime.AddSeconds(2), "com.sec.android.app.camera")
-        };
-
-        // Act
-        var context = _provider.CreateContext(session, events);
-
-        // Assert
-        context.TimelineEvents.Should().NotBeEmpty();
-        context.TimelineEvents.Should().ContainKey(new DateTime(2025, 10, 6, 22, 46, 0)); // baseTime (초 단위)
-        context.TimelineEvents[new DateTime(2025, 10, 6, 22, 46, 0)].Should().HaveCount(3, "같은 초 내 3개 이벤트");
-    }
-
-    [Fact]
     public void CreateContext_NoUsagestatsEvents_ReturnsEmptyActivityTimes()
     {
         // Arrange
@@ -176,8 +106,6 @@ public sealed class SessionContextProviderTests
         var context = _provider.CreateContext(session, events);
 
         // Assert
-        context.ActivityResumedTime.Should().BeNull("ACTIVITY_LIFECYCLE 이벤트가 없음");
-        context.ActivityPausedTime.Should().BeNull("ACTIVITY_LIFECYCLE 이벤트가 없음");
         context.ForegroundServices.Should().BeEmpty("FOREGROUND_SERVICE 이벤트가 없음");
     }
 
@@ -206,7 +134,7 @@ public sealed class SessionContextProviderTests
             EndTime = endTime,
             PackageName = packageName,
             SourceLogTypes = new[] { "media.camera" },
-            ConfidenceScore = 0.8,
+            SessionCompletenessScore = 0.8,
             SourceEventIds = Array.Empty<Guid>()
         };
     }
@@ -252,11 +180,9 @@ public sealed class SessionContextProviderTests
         string packageName,
         string activityState)
     {
-        return CreateEvent(LogEventTypes.ACTIVITY_LIFECYCLE, timestamp, packageName,
-            new Dictionary<string, object>
-            {
-                ["activityState"] = activityState
-            });
+        // Parser는 activityState를 EventType으로 직접 파싱합니다 (eventType: "{subType}")
+        // 예: ACTIVITY_RESUMED, ACTIVITY_PAUSED, ACTIVITY_STOPPED
+        return CreateEvent(activityState, timestamp, packageName);
     }
 
     private NormalizedLogEvent CreateForegroundServiceEvent(

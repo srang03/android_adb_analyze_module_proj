@@ -27,6 +27,17 @@ public sealed class AnalysisResult
         Array.Empty<CameraCaptureEvent>();
     
     /// <summary>
+    /// 감지된 재부팅 이벤트 목록
+    /// </summary>
+    /// <remarks>
+    /// 분석 시간 범위 내 발생한 재부팅 시점을 포함합니다.
+    /// 재부팅이 없으면 빈 리스트입니다.
+    /// CocktailBarService.log가 없으면 빈 리스트를 반환합니다.
+    /// </remarks>
+    public IReadOnlyList<NormalizedLogEvent> RebootEvents { get; init; } = 
+        Array.Empty<NormalizedLogEvent>();
+    
+    /// <summary>
     /// 원본 NormalizedLogEvent 목록 (참조용)
     /// </summary>
     public IReadOnlyList<NormalizedLogEvent> SourceEvents { get; init; } = 

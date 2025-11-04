@@ -1,0 +1,73 @@
+# ADB CocktailBarService Log Configuration
+# Version: 1.0
+# Description: Configuration for parsing Android CocktailBarService logs (boot events)
+
+configSchemaVersion: "1.0"
+
+metadata:
+  logType: "adb_cocktail"
+  supportedVersions: ["15"]
+  displayName: "ADB CocktailBarService Log (Android 15)"
+  description: "Parse ADB CocktailBarService logs for device boot completion events"
+  author: "System"
+  createdDate: "2025-10-25"
+
+# File matching patterns
+filePatterns:
+  - "CocktailBarService.log"
+  - "CocktailBarService*.log"
+  - "cocktail*.log"
+
+# Global parsing settings
+globalSettings:
+  encoding: "utf-8"
+  skipEmptyLines: true
+  skipComments: false
+  commentPrefix: "#"
+  timeSeriesOrder: "ascending"
+  timestampFormat: "MM-dd HH:mm:ss.fff"
+  
+# Performance settings
+performance:
+  maxFileSizeMB: 10
+  timeoutSeconds: 60
+  bufferSizeKB: 32
+  useStreamingParser: false
+  parallelProcessing: false
+
+# Error handling
+errorHandling:
+  onInvalidLine: "skip"
+  onMissingTimestamp: "skip"
+  onParsingError: "log"
+  validateSchema: true
+
+# Section definitions
+sections:
+  - id: "process_history"
+    name: "Process History"
+    enabled: true
+    startMarker: "[Process History] :"
+    endMarker: "  [CocktailBarManager Command History] :"
+    markerType: "text"
+
+# Line parsing rules
+parsers:
+  # Boot Completed Parser
+  - id: "boot_completed_parser"
+    name: "Boot Completed Events Parser"
+    enabled: true
+    targetSections: ["process_history"]
+    priority: 1
+    
+    linePatterns:
+      # Boot Completed pattern
+      # Example: 10-18 18:14:44.219: bootCompleted
+      # Note: This pattern will match all occurrences, but analysis layer will filter to use only the first one
+      - id: "boot_completed_pattern"
+        name: "Device Boot Completed"
+        regex: '^\s+(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}): bootCompleted$'
+        fields:
+          timestamp: { group: 1, type: "datetime", format: "MM-dd HH:mm:ss.fff" }
+        eventType: "DEVICE_BOOT_COMPLETED"
+

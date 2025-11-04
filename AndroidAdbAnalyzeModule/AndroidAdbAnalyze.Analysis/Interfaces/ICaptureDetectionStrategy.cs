@@ -27,15 +27,6 @@ public interface ICaptureDetectionStrategy
     string? PackageNamePattern { get; }
     
     /// <summary>
-    /// 우선순위 (높을수록 먼저 적용)
-    /// </summary>
-    /// <remarks>
-    /// 여러 전략이 매칭될 경우 우선순위가 높은 전략을 사용합니다.
-    /// 기본값: 0 (기본 전략)
-    /// </remarks>
-    int Priority { get; }
-    
-    /// <summary>
     /// 세션에서 촬영 이벤트 탐지
     /// </summary>
     /// <param name="context">세션 컨텍스트</param>

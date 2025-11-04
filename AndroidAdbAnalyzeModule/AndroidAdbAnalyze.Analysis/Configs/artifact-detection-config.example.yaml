@@ -1,0 +1,173 @@
+# 아티팩트 기반 촬영 탐지 설정
+# 이 파일은 런타임에 로드되어 빌드 없이 탐지 로직을 조정할 수 있습니다.
+# 파일명: artifact-detection-config.yaml (또는 원하는 이름)
+
+# =====================================================
+# 1. 아티팩트 가중치 (Artifact Weights)
+# =====================================================
+artifactWeights:
+  # 세션 관련 이벤트 가중치 (세션 완전성 점수 계산용)
+  session:
+    ACTIVITY_RESUMED: 0.7        # 카메라 앱 시작 (세션 시작 마커)
+    ACTIVITY_STOPPED: 0.25       # 카메라 앱 종료 (세션 종료 마커)
+    ACTIVITY_PAUSED: 0.25        # 카메라 앱 일시정지
+    CAMERA_CONNECT: 0.6          # HAL 카메라 연결
+    CAMERA_DISCONNECT: 0.25      # HAL 카메라 해제
+  
+  # 촬영 관련 이벤트 가중치 (탐지 점수 계산용, 총 13개)
+  capture:
+    # ========================================
+    # 확정 핵심 아티팩트 (0.5): 단독 존재로 촬영 확정
+    # ========================================
+    DATABASE_INSERT: 0.5         # MediaStore DB 삽입
+    DATABASE_EVENT: 0.5          # DB 이벤트
+    SILENT_CAMERA_CAPTURE: 0.5   # 무음 카메라 촬영 확정
+    
+    # ========================================
+    # 조건부 핵심 아티팩트 (0.3~0.4): 검증 통과 시 촬영 확정
+    # ========================================
+    VIBRATION_EVENT: 0.4         # 촬영 버튼 햅틱
+    PLAYER_EVENT: 0.35           # 셔터음 재생 (승격 2025-10-28)
+    FOREGROUND_SERVICE: 0.3      # 포그라운드 서비스 (usagestats 기반, 재부팅 휘발성 대응)
+    URI_PERMISSION_GRANT: 0.3    # URI 권한 부여
+    
+    # ========================================
+    # 보조 아티팩트 (0.15~0.25): 탐지 점수 향상 (신뢰도 등급 상승)
+    # ========================================
+    PLAYER_CREATED: 0.25         # 오디오 플레이어 생성
+    URI_PERMISSION_REVOKE: 0.22  # URI 권한 해제 (하향 2025-10-28: Exclusivity Medium 재평가)
+    SHUTTER_SOUND: 0.2           # 셔터음 파일 참조
+    MEDIA_EXTRACTOR: 0.2         # 미디어 코덱 추출
+    PLAYER_RELEASED: 0.15        # 오디오 플레이어 해제
+    CAMERA_ACTIVITY_REFRESH: 0.15 # 카메라 화면 갱신
+
+# =====================================================
+# 2. 전략별 아티팩트 분류 (Strategies)
+# =====================================================
+strategies:
+  # 기본 패턴 전략 (fallback)
+  base_pattern:
+    packagePattern: null  # null이면 fallback 전략
+    keyArtifacts:
+      - DATABASE_INSERT
+      - DATABASE_EVENT
+    conditionalKeyArtifacts:
+      - VIBRATION_EVENT
+      - PLAYER_EVENT                # 승격 (2025-10-28): 조건부 핵심 아티팩트
+      - SILENT_CAMERA_CAPTURE
+      - FOREGROUND_SERVICE          # 추가 (2025-10-26): usagestats 기반, 재부팅 휘발성 대응
+      - URI_PERMISSION_GRANT        # 조건부 핵심 (검증: 임시 파일 경로만)
+    supportingArtifacts:
+      - PLAYER_CREATED
+      - PLAYER_RELEASED
+      - MEDIA_EXTRACTOR
+      - SHUTTER_SOUND
+      - VIBRATION_EVENT             # 중복 허용 (보조로도 점수 기여)
+      - URI_PERMISSION_GRANT        # 중복 허용 (보조로도 점수 기여)
+      - URI_PERMISSION_REVOKE       # 추가 (2025-10-28): 보조 아티팩트
+      - CAMERA_ACTIVITY_REFRESH
+      - FOREGROUND_SERVICE          # 중복 허용 (보조로도 점수 기여)
+  
+  # Telegram 전략
+  telegram:
+    packagePattern: "org.telegram.messenger"
+    keyArtifacts:
+      - DATABASE_INSERT
+      - DATABASE_EVENT
+    conditionalKeyArtifacts:
+      - VIBRATION_EVENT
+      - SILENT_CAMERA_CAPTURE
+      # PLAYER_EVENT 제외 (Telegram 특징: 셔터음 없음)
+    supportingArtifacts:
+      - PLAYER_CREATED
+      # PLAYER_EVENT 제외됨!
+      - PLAYER_RELEASED
+      - MEDIA_EXTRACTOR
+      - SHUTTER_SOUND
+      - VIBRATION_EVENT             # 중복 허용
+      - URI_PERMISSION_GRANT        # 보조로만
+      - URI_PERMISSION_REVOKE       # 추가 (2025-10-28)
+      - CAMERA_ACTIVITY_REFRESH
+  
+  # KakaoTalk 전략
+  kakao_talk:
+    packagePattern: "com.kakao.talk"
+    keyArtifacts:
+      - VIBRATION_EVENT  # hapticType=50061 (촬영 버튼)
+    conditionalKeyArtifacts:
+      - PLAYER_EVENT                # 조건부 핵심
+      - URI_PERMISSION_GRANT        # 임시 파일 경로 (조건부 핵심)
+      - CAMERA_ACTIVITY_REFRESH     # activity.log
+      - FOREGROUND_SERVICE          # 추가
+    supportingArtifacts:
+      - PLAYER_CREATED
+      - PLAYER_RELEASED
+      - MEDIA_EXTRACTOR
+      - VIBRATION_EVENT             # 중복 허용
+      - URI_PERMISSION_GRANT        # 중복 허용
+      - URI_PERMISSION_REVOKE       # 추가 (2025-10-28)
+      - CAMERA_ACTIVITY_REFRESH
+      - FOREGROUND_SERVICE          # 중복 허용
+
+# =====================================================
+# 3. 검증 상수 (Validation Constants)
+# =====================================================
+validation:
+  hapticTypeCameraShutter: 50061           # 촬영 버튼 햅틱 타입
+  playerEventStateStarted: "started"       # PLAYER_EVENT 상태
+  playerTagCamera: "CAMERA"                # PLAYER_CREATED 태그
+  serviceClassPostProcess: "PostProcessService"  # Foreground Service 클래스명 (기존 호환성 유지)
+  
+  # 추가 (2025-10-26): usagestats 기반 촬영 탐지 서비스 클래스
+  serviceClassCaptureConfirmed:            # 촬영 확정 서비스 (부분 문자열 매칭)
+    - "PostProcessService"                 # 기본 카메라 (com.samsung.android.camera.core2.processor.PostProcessService)
+  serviceClassCapturePossible:             # 촬영 가능성 서비스 (부분 문자열 매칭)
+    - "NotificationService"                # 기본 카메라, 카카오톡 (com.sec.android.app.camera.service.NotificationService)
+
+# =====================================================
+# 4. 분석 옵션 기본값 (Analysis Options)
+# =====================================================
+analysisOptions:
+  # 임계값
+  thresholds:
+    minConfidence: 0.3                # 최소 신뢰도 (30%)
+    deduplicationSimilarity: 0.8      # 중복 제거 유사도 (80%)
+  
+  # 시간 윈도우
+  timeWindows:
+    maxSessionGapMinutes: 5           # 세션 간 최대 간격 (분)
+    eventCorrelationSeconds: 30       # 이벤트 상관관계 윈도우 (초)
+    captureDeduplicationSeconds: 1    # 촬영 중복 제거 윈도우 (초)
+  
+  # 패키지 필터
+  packages:
+    whitelist: null  # null이면 모든 패키지
+    blacklist: []    # 제외할 패키지 목록
+  
+  # 경로 패턴 (오탐 방지)
+  pathPatterns:
+    screenshot:
+      - "/Screenshots/"
+      - "/screenshot/"
+      - "Screenshot_"
+    download:
+      - "/Download/"
+      - "/download/"
+      - "Download_"
+
+# =====================================================
+# 사용 예시
+# =====================================================
+# 1. YAML 파일을 프로젝트 루트 또는 지정된 위치에 배치
+# 2. YamlConfigurationLoader.LoadFromFile("artifact-detection-config.yaml")
+# 3. DI 컨테이너에 등록 (optional)
+# 4. 런타임에 설정 변경 가능 (빌드 불필요)
+
+# =====================================================
+# 주의사항
+# =====================================================
+# - 이벤트 타입 이름은 LogEventTypes 클래스의 상수와 정확히 일치해야 합니다
+# - 가중치 범위: 0.0 ~ 1.0
+# - 임계값은 실측 데이터 기반으로 조정하세요
+# - 백업 파일을 유지하여 롤백 가능하도록 하세요
+

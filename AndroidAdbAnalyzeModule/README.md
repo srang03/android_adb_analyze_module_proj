@@ -76,17 +76,25 @@ if (result.Success)
 
 ### 3. 이벤트 분석 (`Analysis` DLL 사용)
 ```csharp
-using AndroidAdbAnalyze.Analysis.Services.Orchestration;
+using AndroidAdbAnalyze.Analysis.Extensions;
+using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Options;
+using Microsoft.Extensions.DependencyInjection;
 
-// 1. 분석 오케스트레이터 생성
-var orchestrator = new AnalysisOrchestrator();
+// 1. Dependency Injection 설정
+var services = new ServiceCollection();
+services.AddAnalysisServices();
+services.AddLogging();
+var provider = services.BuildServiceProvider();
 
-// 2. 분석 실행
+// 2. 분석 오케스트레이터 생성
+var orchestrator = provider.GetRequiredService<IAnalysisOrchestrator>();
+
+// 3. 분석 실행
 var analysisOptions = new AnalysisOptions();
 var analysisResult = await orchestrator.AnalyzeAsync(result.Events, analysisOptions);
 
-// 3. 결과 확인
+// 4. 결과 확인
 Console.WriteLine($"- 감지된 세션: {analysisResult.Sessions.Count}개");
 Console.WriteLine($"- 감지된 촬영: {analysisResult.Captures.Count}개");
 ```
@@ -94,15 +102,19 @@ Console.WriteLine($"- 감지된 촬영: {analysisResult.Captures.Count}개");
 ## 📚 문서
 
 -   **Parser 프로젝트 문서**
-    -   [API 사용 가이드](./AndroidAdbAnalyzeModule/AndroidAdbAnalyze.Parser/Docs/03_Usage_Guides/API_Usage_Guide.md)
-    -   [설정 가이드](./AndroidAdbAnalyzeModule/AndroidAdbAnalyze.Parser/Docs/03_Usage_Guides/Configuration_Guide.md)
-    -   [아키텍처](./AndroidAdbAnalyzeModule/AndroidAdbAnalyze.Parser/Docs/02_Architecture/Architecture.md)
+    -   [API 사용 가이드](./AndroidAdbAnalyze.Parser/Docs/03_Usage_Guides/API_Usage_Guide.md)
+    -   [설정 가이드](./AndroidAdbAnalyze.Parser/Docs/03_Usage_Guides/Configuration_Guide.md)
+    -   [아키텍처](./AndroidAdbAnalyze.Parser/Docs/02_Architecture/Architecture.md)
 -   **Analysis 프로젝트 문서**
-    -   [API 사용 가이드](./AndroidAdbAnalyzeModule/AndroidAdbAnalyze.Analysis/Docs/API_Usage_Guide.md)
-    -   [아키텍처](./AndroidAdbAnalyzeModule/AndroidAdbAnalyze.Analysis/Docs/Architecture_Overview.md)
+    -   [Introduction (개요 및 빠른 시작)](./AndroidAdbAnalyze.Analysis/Docs/01_Introduction/README.md)
+    -   [API 사용 가이드](./AndroidAdbAnalyze.Analysis/Docs/03_Usage_Guides/API_Usage_Guide.md)
+    -   [아키텍처 개요](./AndroidAdbAnalyze.Analysis/Docs/02_Architecture/Architecture_Overview.md)
+    -   [시스템 아키텍처 다이어그램](./AndroidAdbAnalyze.Analysis/Docs/02_Architecture/System_Architecture_Diagram.md)
+    -   [개발 계획서](./AndroidAdbAnalyze.Analysis/Docs/04_Project_Records/DevelopmentPlan.md)
+    -   [최종 분석 보고서](./AndroidAdbAnalyze.Analysis/Docs/04_Project_Records/Analysis_Module_Final_Report.md)
 -   **개발 가이드**
-    -   [AI 개발 가이드라인](./Doc/Contribution_Guide/AI_Development_Guidelines.md)
-    -   [AI 문서화 가이드라인](./Doc/Contribution_Guide/AI_Documentation_Guidelines.md)
+    -   [AI 개발 가이드라인](../Doc/Contribution_Guide/AI_Development_Guidelines.md)
+    -   [AI 문서화 가이드라인](../Doc/Contribution_Guide/AI_Documentation_Guidelines.md)
 
 ## 🎯 책임 범위
 

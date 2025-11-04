@@ -12,6 +12,8 @@ public sealed class TimestampNormalizer
     private readonly DeviceInfo _deviceInfo;
     private readonly bool _convertToUtc;
     private readonly TimeZoneInfo _deviceTimeZone;
+    private readonly DateTime? _startTime;
+    private readonly DateTime? _endTime;
 
     // 지원하는 타임스탬프 포맷들
     private static readonly string[] SupportedFormats = new[]
@@ -30,9 +32,24 @@ public sealed class TimestampNormalizer
     /// <param name="deviceInfo">연도 추론 및 시간대 변환에 사용될 디바이스 정보입니다.</param>
     /// <param name="convertToUtc">타임스탬프를 UTC로 변환할지 여부입니다. 기본값은 true입니다.</param>
     public TimestampNormalizer(DeviceInfo deviceInfo, bool convertToUtc = true)
+        : this(deviceInfo, convertToUtc, null, null)
+    {
+    }
+
+    /// <summary>
+    /// <see cref="TimestampNormalizer"/>의 새 인스턴스를 초기화합니다.
+    /// 시간 범위 정보를 제공하면 연도 추론 정확도가 향상됩니다 (특히 연말-연초 경계).
+    /// </summary>
+    /// <param name="deviceInfo">연도 추론 및 시간대 변환에 사용될 디바이스 정보입니다.</param>
+    /// <param name="convertToUtc">타임스탬프를 UTC로 변환할지 여부입니다. 기본값은 true입니다.</param>
+    /// <param name="startTime">분석 시작 시간입니다. 연도 추론에 사용됩니다.</param>
+    /// <param name="endTime">분석 종료 시간입니다. 연도 추론에 사용됩니다.</param>
+    public TimestampNormalizer(DeviceInfo deviceInfo, bool convertToUtc, DateTime? startTime, DateTime? endTime)
     {
         _deviceInfo = deviceInfo ?? throw new ArgumentNullException(nameof(deviceInfo));
         _convertToUtc = convertToUtc;
+        _startTime = startTime;
+        _endTime = endTime;
 
         // TimeZone 정보 파싱
         try
@@ -145,26 +162,122 @@ public sealed class TimestampNormalizer
 
     /// <summary>
     /// 연도 정보가 없는 <see cref="DateTime"/>에 연도를 추가합니다.
-    /// 디바이스의 현재 시간을 기준으로, 타임스탬프가 미래 시점이면 작년으로 간주하여 연도를 보정합니다.
+    /// 우선순위: 1) StartTime/EndTime 범위 기반, 2) StartTime 기준, 3) DeviceInfo.CurrentTime 기준
     /// </summary>
     private DateTime AddYearInformation(DateTime parsedTime)
     {
-        var deviceTime = _deviceInfo.CurrentTime;
-        var year = deviceTime.Year;
+        // 우선순위 1: StartTime과 EndTime이 모두 있으면 시간 범위 기반 추정
+        if (_startTime.HasValue && _endTime.HasValue)
+        {
+            return InferYearFromTimeRange(parsedTime, _startTime.Value, _endTime.Value);
+        }
 
-        // MM-dd가 디바이스 현재 시간보다 미래인 경우 작년으로 추정
-        var candidateTime = new DateTime(
-            year, 
-            parsedTime.Month, 
+        // 우선순위 2: StartTime만 있으면 StartTime 기준 추정
+        if (_startTime.HasValue)
+        {
+            return InferYearFromReferenceTime(parsedTime, _startTime.Value);
+        }
+
+        // 우선순위 3: 기존 로직 (DeviceInfo.CurrentTime 기준)
+        return InferYearFromDeviceTime(parsedTime, _deviceInfo.CurrentTime);
+    }
+
+    /// <summary>
+    /// 시간 범위(StartTime ~ EndTime)를 기반으로 연도를 추정합니다.
+    /// 연말-연초 경계(예: 2025-12-30 ~ 2026-01-02)를 정확히 처리합니다.
+    /// </summary>
+    private DateTime InferYearFromTimeRange(DateTime parsedTime, DateTime startTime, DateTime endTime)
+    {
+        int startYear = startTime.Year;
+        int endYear = endTime.Year;
+
+        // 같은 연도 범위인 경우
+        if (startYear == endYear)
+        {
+            return new DateTime(
+                startYear,
+                parsedTime.Month,
+                parsedTime.Day,
+                parsedTime.Hour,
+                parsedTime.Minute,
+                parsedTime.Second,
+                parsedTime.Millisecond);
+        }
+
+        // 연도가 다른 경우 (연말-연초 경계)
+        // 두 후보 연도를 생성
+        var candidateStart = new DateTime(
+            startYear,
+            parsedTime.Month,
             parsedTime.Day,
             parsedTime.Hour,
             parsedTime.Minute,
             parsedTime.Second,
             parsedTime.Millisecond);
 
-        if (candidateTime > deviceTime)
+        var candidateEnd = new DateTime(
+            endYear,
+            parsedTime.Month,
+            parsedTime.Day,
+            parsedTime.Hour,
+            parsedTime.Minute,
+            parsedTime.Second,
+            parsedTime.Millisecond);
+
+        // 시간 범위 내에 있는 후보 선택
+        if (candidateStart >= startTime && candidateStart <= endTime)
+            return candidateStart;
+
+        if (candidateEnd >= startTime && candidateEnd <= endTime)
+            return candidateEnd;
+
+        // 둘 다 범위에 없으면 더 가까운 것 선택
+        var distStart = Math.Abs((candidateStart - startTime).TotalDays);
+        var distEnd = Math.Abs((candidateEnd - endTime).TotalDays);
+
+        return distStart < distEnd ? candidateStart : candidateEnd;
+    }
+
+    /// <summary>
+    /// 참조 시간(referenceTime)을 기준으로 연도를 추정합니다.
+    /// 타임스탬프가 참조 시간보다 미래면 전년도로 보정합니다.
+    /// </summary>
+    private DateTime InferYearFromReferenceTime(DateTime parsedTime, DateTime referenceTime)
+    {
+        var candidateTime = new DateTime(
+            referenceTime.Year,
+            parsedTime.Month,
+            parsedTime.Day,
+            parsedTime.Hour,
+            parsedTime.Minute,
+            parsedTime.Second,
+            parsedTime.Millisecond);
+
+        if (candidateTime > referenceTime)
         {
-            // 미래 시간이면 작년으로 설정
+            candidateTime = candidateTime.AddYears(-1);
+        }
+
+        return candidateTime;
+    }
+
+    /// <summary>
+    /// 디바이스의 현재 시간을 기준으로 연도를 추정합니다 (기존 로직).
+    /// 타임스탬프가 디바이스 현재 시간보다 미래면 전년도로 보정합니다.
+    /// </summary>
+    private DateTime InferYearFromDeviceTime(DateTime parsedTime, DateTime deviceCurrentTime)
+    {
+        var candidateTime = new DateTime(
+            deviceCurrentTime.Year,
+            parsedTime.Month,
+            parsedTime.Day,
+            parsedTime.Hour,
+            parsedTime.Minute,
+            parsedTime.Second,
+            parsedTime.Millisecond);
+
+        if (candidateTime > deviceCurrentTime)
+        {
             candidateTime = candidateTime.AddYears(-1);
         }
 

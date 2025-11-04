@@ -4,7 +4,7 @@ using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using AndroidAdbAnalyze.Analysis.Services.Captures;
 using AndroidAdbAnalyze.Analysis.Services.Confidence;
-using AndroidAdbAnalyze.Analysis.Services.Strategies;
+using AndroidAdbAnalyze.Analysis.Services.DetectionStrategies;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -175,7 +175,7 @@ public sealed class CameraCaptureDetectorTests
         var events = new List<NormalizedLogEvent>
         {
             CreateEvent(LogEventTypes.DATABASE_INSERT, baseTime.AddSeconds(30), "com.sec.android.app.camera"),
-            CreateEvent(LogEventTypes.MEDIA_INSERT_END, baseTime.AddMinutes(2), "com.sec.android.app.camera")
+            CreateEvent(LogEventTypes.DATABASE_INSERT, baseTime.AddMinutes(2), "com.sec.android.app.camera")
         };
 
         var context = CreateContext(session, events);
@@ -265,7 +265,7 @@ public sealed class CameraCaptureDetectorTests
             EndTime = endTime,
             PackageName = packageName,
             SourceLogTypes = new[] { "media.camera" },
-            ConfidenceScore = 0.8,
+            SessionCompletenessScore = 0.8,
             SourceEventIds = Array.Empty<Guid>()
         };
     }
@@ -276,10 +276,7 @@ public sealed class CameraCaptureDetectorTests
         {
             Session = session,
             AllEvents = events,
-            ActivityResumedTime = null,
-            ActivityPausedTime = null,
             ForegroundServices = Array.Empty<ForegroundServiceInfo>(),
-            TimelineEvents = new Dictionary<DateTime, List<NormalizedLogEvent>>()
         };
     }
 

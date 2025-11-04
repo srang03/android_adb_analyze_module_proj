@@ -211,6 +211,9 @@ public sealed class EndToEndAnalysisTests
             builder.AddProvider(NullLoggerProvider.Instance);
         });
         
+        // AnalysisOptions 등록 (EventDeduplicator 의존성)
+        services.AddSingleton(new AnalysisOptions { DeduplicationSimilarityThreshold = 0.8 });
+        
         // AndroidAdbAnalysis 서비스 등록 (Phase 5)
         services.AddAndroidAdbAnalysis();
         
@@ -310,7 +313,7 @@ public sealed class EndToEndAnalysisTests
     public async Task PerformanceBaseline_Sample2_MeasuresExecutionTime()
     {
         // Arrange
-        var events = await ParseSampleLogsAsync("3차 샘플_기본카메라_카카오톡");
+        var events = await ParseSampleLogsAsync("1차 샘플_25_10_04");
         events.Should().NotBeEmpty();
 
         var orchestrator = CreateOrchestrator();
@@ -348,7 +351,7 @@ public sealed class EndToEndAnalysisTests
     public async Task HtmlReport_Sample2_GeneratesAndSaves()
     {
         // Arrange
-        var events = await ParseSampleLogsAsync("3차 샘플_기본카메라_카카오톡");
+        var events = await ParseSampleLogsAsync("1차 샘플_25_10_04");
         events.Should().NotBeEmpty();
 
         var orchestrator = CreateOrchestrator();
@@ -373,7 +376,7 @@ public sealed class EndToEndAnalysisTests
         htmlReport.Should().Contain("촬영 이벤트");
 
         // 파일 저장 (테스트 출력 디렉토리)
-        var outputPath = Path.Combine(Directory.GetCurrentDirectory(), "test_report_sample3.html");
+        var outputPath = Path.Combine(Directory.GetCurrentDirectory(), "test_report_sample1.html");
         await File.WriteAllTextAsync(outputPath, htmlReport);
 
         _output.WriteLine($"✓ HTML 보고서 생성 완료: {outputPath}");

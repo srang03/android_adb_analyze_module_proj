@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAdbAnalyze.Analysis"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAdbAnalyze.Analysis.Tests", "AndroidAdbAnalyze.Analysis.Tests\AndroidAdbAnalyze.Analysis.Tests.csproj", "{948CBABF-01CE-4D7E-B362-B3360CB6501A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAdbAnalyze.Console.Executor", "AndroidAdbAnalyze.Console.Executor\AndroidAdbAnalyze.Console.Executor.csproj", "{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAdbAnalyze.Console.Executor.Tests", "AndroidAdbAnalyze.Console.Executor.Tests\AndroidAdbAnalyze.Console.Executor.Tests.csproj", "{186CD48E-3637-22A5-5FE2-A08A4DE0424D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,30 @@ Global
 		{948CBABF-01CE-4D7E-B362-B3360CB6501A}.Release|x64.Build.0 = Release|Any CPU
 		{948CBABF-01CE-4D7E-B362-B3360CB6501A}.Release|x86.ActiveCfg = Release|Any CPU
 		{948CBABF-01CE-4D7E-B362-B3360CB6501A}.Release|x86.Build.0 = Release|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Debug|x64.Build.0 = Debug|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Debug|x86.Build.0 = Debug|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Release|x64.ActiveCfg = Release|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Release|x64.Build.0 = Release|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Release|x86.ActiveCfg = Release|Any CPU
+		{1E81B6B2-2CC2-4355-89E6-CBA9510A7AE1}.Release|x86.Build.0 = Release|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Debug|x64.Build.0 = Debug|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Debug|x86.Build.0 = Debug|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Release|x64.ActiveCfg = Release|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Release|x64.Build.0 = Release|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Release|x86.ActiveCfg = Release|Any CPU
+		{186CD48E-3637-22A5-5FE2-A08A4DE0424D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

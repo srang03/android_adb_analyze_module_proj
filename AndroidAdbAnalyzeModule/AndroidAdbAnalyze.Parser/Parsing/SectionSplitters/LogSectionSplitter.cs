@@ -134,9 +134,9 @@ public sealed class LogSectionSplitter : ISectionSplitter
 
         if (endLine == -1)
         {
-            endLine = lines.Length - 1; // 종료 마커가 없으면 파일 끝까지
+            endLine = lines.Length; // 종료 마커가 없으면 파일 끝까지 (전체 길이 사용)
             _logger?.LogDebug("End marker not found for section '{SectionId}', using EOF at line {LineNumber}",
-                definition.Id, endLine);
+                definition.Id, endLine - 1);
         }
 
         // 섹션 라인 추출 (시작 마커는 포함, 종료 마커는 제외)

@@ -1,0 +1,75 @@
+# ADB Media Metrics Log Configuration
+# Version: 1.0
+# Description: Configuration for parsing Android ADB media metrics logs (camera shutter audio events)
+
+configSchemaVersion: "1.0"
+
+metadata:
+  logType: "adb_media_metrics"
+  supportedVersions: ["15"]
+  displayName: "ADB Media Metrics Log (Android 15)"
+  description: "Parse ADB dumpsys media.metrics logs for camera shutter audio playback events"
+  author: "System"
+  createdDate: "2025-10-04"
+
+# File matching patterns
+filePatterns:
+  - "media.metrics.txt"
+  - "media_metrics*.txt"
+  - "adb_media_metrics*.log"
+  - "dumpsys_media_metrics*.txt"
+
+# Global parsing settings
+globalSettings:
+  encoding: "utf-8"
+  skipEmptyLines: true
+  skipComments: false
+  commentPrefix: "#"
+  timeSeriesOrder: "descending"  # most recent at top
+  timestampFormat: "MM-dd HH:mm:ss.fff"
+
+# Section splitting configuration
+sections:
+  - id: "media_events"
+    name: "Media Events"
+    enabled: true
+    startMarker: "^\\s*\\d+:\\s*\\{(extractor|audio\\.track)"
+    endMarker: "^\\s*$"  # Empty line marks end of section
+    markerType: "regex"
+
+# Parser configurations
+parsers:
+  - id: "media_metrics_parser"
+    name: "Media Metrics Events Parser"
+    enabled: true
+    priority: 1
+    targetSections:
+      - "media_events"
+    linePatterns:
+      # Pattern 1: extractor event (카메라 앱의 audio/ogg 셔터 사운드 파일 추출)
+      - id: "extractor_event"
+        name: "Media Extractor Event"
+        regex: "^\\s*(\\d+):\\s*\\{extractor,\\s*\\((\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}\\.\\d{3})\\),\\s*\\(([^,]+),\\s*(\\d+),\\s*(\\d+)\\),\\s*\\((.+)\\)\\}\\s*$"
+        fields:
+          lineNumber: { group: 1, type: "int" }
+          timestamp: { group: 2, type: "datetime", format: "MM-dd HH:mm:ss.fff" }
+          package: { group: 3, type: "string" }
+          pid: { group: 4, type: "int" }
+          uid: { group: 5, type: "int" }
+          attributes_raw: { group: 6, type: "string" }
+        eventType: "MEDIA_EXTRACTOR"
+
+      # Pattern 2: audio.track event (셔터 사운드 재생 이벤트)
+      - id: "audio_track_event"
+        name: "Audio Track Event"
+        regex: "^\\s*(\\d+):\\s*\\{audio\\.track\\.(\\d+),\\s*\\((\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}\\.\\d{3})\\),\\s*\\(([^,]+),\\s*(\\d+),\\s*(\\d+)\\),\\s*\\((.+)\\)\\}\\s*$"
+        fields:
+          lineNumber: { group: 1, type: "int" }
+          trackId: { group: 2, type: "string" }
+          timestamp: { group: 3, type: "datetime", format: "MM-dd HH:mm:ss.fff" }
+          package: { group: 4, type: "string" }
+          pid: { group: 5, type: "int" }
+          uid: { group: 6, type: "int" }
+          attributes_raw: { group: 7, type: "string" }
+        eventType: "AUDIO_TRACK"
+

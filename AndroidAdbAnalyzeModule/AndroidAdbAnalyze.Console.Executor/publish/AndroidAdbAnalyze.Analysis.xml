@@ -1,0 +1,2784 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AndroidAdbAnalyze.Analysis</name>
+    </assembly>
+    <members>
+        <member name="T:AndroidAdbAnalyze.Analysis.Configuration.ConfigurationProvider">
+            <summary>
+            아티팩트 탐지 설정 제공자
+            </summary>
+            <remarks>
+            기본 설정값을 제공하며, 향후 YAML 파일 로드 기능을 추가할 수 있습니다.
+            Backward Compatibility를 보장하기 위해 기존 하드코딩된 값들을 기본값으로 제공합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.ConfigurationProvider.GetDefault">
+            <summary>
+            기본 설정 반환
+            </summary>
+            <remarks>
+            기존 하드코딩된 값들을 Configuration 객체로 변환하여 반환합니다.
+            테스트 코드 및 기존 코드 호환성을 보장합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.ConfigurationProvider.GetDefaultArtifactWeights">
+            <summary>
+            기본 아티팩트 가중치 반환
+            </summary>
+            <remarks>
+            기존 ConfidenceCalculator의 EventTypeWeights와 동일한 값들입니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.ConfigurationProvider.GetDefaultStrategies">
+            <summary>
+            기본 Strategy 설정 반환
+            </summary>
+            <remarks>
+            기존 BasePatternStrategy, TelegramStrategy, KakaoTalkStrategy의 값들과 동일합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.ConfigurationProvider.GetDefaultValidation">
+            <summary>
+            기본 검증 상수 반환
+            </summary>
+            <remarks>
+            기존 BasePatternStrategy의 상수값들과 동일합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.ConfigurationProvider.GetDefaultAnalysisOptions">
+            <summary>
+            기본 분석 옵션 반환
+            </summary>
+            <remarks>
+            기존 AnalysisOptions의 기본값들과 동일합니다.
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Configuration.YamlConfigurationLoader">
+            <summary>
+            YAML 파일에서 아티팩트 탐지 설정을 로드하는 유틸리티
+            </summary>
+            <remarks>
+            외부 YAML 파일을 통해 런타임에 설정을 변경할 수 있습니다.
+            파일이 없거나 파싱 오류 발생 시 기본값(ConfigurationProvider.GetDefault())을 반환합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.YamlConfigurationLoader.LoadFromFile(System.String,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            YAML 파일에서 설정 로드
+            </summary>
+            <param name="filePath">YAML 파일 경로 (상대 또는 절대 경로)</param>
+            <param name="logger">로거 (optional)</param>
+            <returns>
+            로드된 설정 객체. 파일이 없거나 오류 발생 시 기본값 반환.
+            </returns>
+            <remarks>
+            안전한 fallback 전략:
+            1. YAML 파일 로드 시도
+            2. 실패 시 기본값 반환 (ConfigurationProvider.GetDefault())
+            3. 로그를 통해 상태 알림
+            
+            사용 예시:
+            <code>
+            var config = YamlConfigurationLoader.LoadFromFile(
+                "Configs/artifact-detection-config.yaml", 
+                logger);
+            </code>
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.YamlConfigurationLoader.TryLoadFromFile(System.String,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            YAML 파일에서 설정 로드 (Optional 패턴)
+            </summary>
+            <param name="filePath">YAML 파일 경로</param>
+            <param name="logger">로거 (optional)</param>
+            <returns>
+            (Success, Config) 튜플.
+            Success=true이면 YAML 로드 성공, false이면 기본값 사용.
+            </returns>
+            <remarks>
+            호출자가 YAML 로드 성공 여부를 명확히 알고 싶을 때 사용합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.YamlConfigurationLoader.ValidateConfiguration(AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            설정 유효성 검증
+            </summary>
+            <remarks>
+            필수 필드 및 논리적 오류를 검사합니다.
+            경고만 로그하고 예외는 발생시키지 않습니다 (안전한 fallback).
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.YamlConfigurationLoader.ValidateWeightRange(System.Collections.Generic.Dictionary{System.String,System.Double},System.String,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            가중치 범위 검증 (0.0 ~ 1.0)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Configuration.YamlConfigurationLoader.LoadFromString(System.String,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            YAML 문자열에서 설정 로드 (테스트용)
+            </summary>
+            <param name="yamlContent">YAML 문자열</param>
+            <param name="logger">로거 (optional)</param>
+            <returns>로드된 설정 객체</returns>
+            <remarks>
+            단위 테스트에서 파일 I/O 없이 설정을 테스트할 때 사용합니다.
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Constants.TimelineEventTypes">
+            <summary>
+            타임라인 이벤트 타입 상수 정의
+            TimelineItem의 EventType에 사용되는 문자열을 중앙에서 관리합니다.
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Constants.TimelineEventTypes.CAMERA_SESSION">
+            <summary>
+            카메라 세션 타임라인 아이템
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Constants.TimelineEventTypes.CAMERA_CAPTURE">
+            <summary>
+            카메라 촬영 타임라인 아이템
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Constants.TimelineEventTypes.TRANSMISSION">
+            <summary>
+            네트워크 전송 타임라인 아이템
+            </summary>
+            <remarks>
+            촬영 후 네트워크를 통해 전송이 발생한 이벤트를 나타냅니다.
+            sem_wifi 로그 분석을 통해 탐지됩니다.
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Extensions.ServiceCollectionExtensions">
+            <summary>
+            IServiceCollection 확장 메서드
+            </summary>
+            <remarks>
+            AndroidAdbAnalyze.Analysis 프로젝트의 모든 서비스를 DI 컨테이너에 등록합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Extensions.ServiceCollectionExtensions.AddAndroidAdbAnalysis(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            AndroidAdbAnalyze.Analysis 서비스 등록
+            </summary>
+            <param name="services">DI 컨테이너</param>
+            <returns>DI 컨테이너 (Fluent API)</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.IAnalysisOrchestrator">
+            <summary>
+            전체 분석 파이프라인 오케스트레이션 서비스 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.IAnalysisOrchestrator.AnalyzeAsync(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions,System.IProgress{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            로그 이벤트를 분석하여 결과를 반환합니다.
+            </summary>
+            <param name="events">파싱된 로그 이벤트 목록</param>
+            <param name="options">분석 옵션</param>
+            <param name="progress">진행 상태 보고용 (선택적)</param>
+            <param name="cancellationToken">취소 토큰 (선택적)</param>
+            <returns>분석 결과</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.ICaptureDetectionStrategy">
+            <summary>
+            촬영 탐지 전략 인터페이스
+            </summary>
+            <remarks>
+            앱별로 다른 촬영 탐지 로직을 캡슐화합니다.
+            - 기본 카메라: PostProcessService + PLAYER_EVENT 필터링
+            - Telegram: VIBRATION_EVENT + URI_PERMISSION 조합
+            - KakaoTalk: URI_PERMISSION (임시 파일 경로)
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Interfaces.ICaptureDetectionStrategy.PackageNamePattern">
+            <summary>
+            전략이 지원하는 패키지명 패턴
+            </summary>
+            <remarks>
+            예: "com.sec.android.app.camera" (기본 카메라)
+                 "org.telegram.messenger" (Telegram)
+                 "com.kakao.talk" (KakaoTalk)
+            null이면 기본 전략으로 동작합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.ICaptureDetectionStrategy.DetectCaptures(AndroidAdbAnalyze.Analysis.Models.Context.SessionContext,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            세션에서 촬영 이벤트 탐지
+            </summary>
+            <param name="context">세션 컨텍스트</param>
+            <param name="options">분석 옵션 (신뢰도 임계값, 상관관계 윈도우 등)</param>
+            <returns>탐지된 촬영 이벤트 목록</returns>
+            <remarks>
+            SessionContext를 사용하여:
+            - 필요한 로그 이벤트 조회
+            - Foreground Service 정보 확인
+            - Activity 상태 확인
+            - 시간대별 이벤트 상관관계 분석
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.ICaptureDetector">
+            <summary>
+            촬영 이벤트 감지 서비스 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.ICaptureDetector.DetectCaptures(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            세션 내에서 카메라 촬영 이벤트를 감지합니다.
+            </summary>
+            <param name="session">분석 대상 세션</param>
+            <param name="events">중복 제거된 전체 이벤트 목록</param>
+            <param name="options">분석 옵션</param>
+            <returns>감지된 촬영 이벤트 목록</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator">
+            <summary>
+            탐지 점수 계산 서비스 인터페이스
+            </summary>
+            <remarks>
+            촬영: 촬영 탐지 점수 (Capture Detection Score)
+            세션: 세션 완전성 점수 (Session Completeness Score)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator.CalculateConfidence(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent})">
+            <summary>
+            아티팩트 이벤트 목록을 기반으로 탐지 점수를 계산합니다.
+            </summary>
+            <param name="artifactEvents">아티팩트 이벤트 목록</param>
+            <returns>탐지 점수 (0.0 ~ 1.0)</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator.GetEventTypeWeight(System.String)">
+            <summary>
+            특정 이벤트 타입의 가중치를 반환합니다.
+            </summary>
+            <param name="eventType">이벤트 타입</param>
+            <returns>가중치 (0.0 ~ 1.0)</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.IDeduplicationStrategy">
+            <summary>
+            이벤트 타입별 중복 판정 전략 인터페이스
+            </summary>
+            <remarks>
+            각 이벤트 타입의 특성에 맞는 중복 판정 로직을 제공합니다.
+            예: 카메라 이벤트(배타적), 오디오 이벤트(연속 가능), URI 권한(속성 기반)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.IDeduplicationStrategy.IsDuplicate(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent)">
+            <summary>
+            두 이벤트가 중복인지 판단합니다.
+            </summary>
+            <param name="event1">첫 번째 이벤트</param>
+            <param name="event2">두 번째 이벤트</param>
+            <returns>중복이면 true, 아니면 false</returns>
+            <remarks>
+            이 메서드는 순서에 무관하게 동작해야 합니다.
+            IsDuplicate(e1, e2) == IsDuplicate(e2, e1)
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.IEventDeduplicator">
+            <summary>
+            중복 이벤트 제거 서비스 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.IEventDeduplicator.Deduplicate(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Analysis.Models.Deduplication.DeduplicationInfo}@)">
+            <summary>
+            중복 이벤트를 제거하고 대표 이벤트 목록을 반환합니다.
+            </summary>
+            <param name="events">원본 이벤트 목록</param>
+            <param name="deduplicationDetails">중복 제거 상세 정보 (출력)</param>
+            <returns>중복 제거된 이벤트 목록</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.IReportGenerator">
+            <summary>
+            보고서 생성 서비스 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.IReportGenerator.GenerateReport(AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult)">
+            <summary>
+            분석 결과를 기반으로 보고서를 생성합니다.
+            </summary>
+            <param name="result">분석 결과</param>
+            <returns>생성된 보고서 (형식은 구현체에 따라 다름)</returns>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Interfaces.IReportGenerator.Format">
+            <summary>
+            보고서 형식을 반환합니다.
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.ISessionContextProvider">
+            <summary>
+            세션 컨텍스트 제공자 인터페이스
+            </summary>
+            <remarks>
+            usagestats.log를 베이스로 세션 내 모든 로그의 상관관계를 구축합니다.
+            앱별 전략이 세션 내 필요한 정보를 쉽게 조회할 수 있도록 합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.ISessionContextProvider.CreateContext(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent})">
+            <summary>
+            세션 컨텍스트 생성
+            </summary>
+            <param name="session">카메라 세션</param>
+            <param name="allEvents">전체 로그 이벤트</param>
+            <returns>세션 컨텍스트</returns>
+            <remarks>
+            usagestats 로그를 기반으로:
+            - ACTIVITY_RESUMED/PAUSED 시점 추출
+            - FOREGROUND_SERVICE_START/STOP 추출
+            - 세션 시간 범위 내 모든 이벤트 필터링
+            - 시간대별 이벤트 그룹화
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.ISessionDetector">
+            <summary>
+            세션 감지 서비스 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.ISessionDetector.DetectSessions(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            이벤트 목록에서 카메라 세션을 감지합니다.
+            </summary>
+            <param name="events">중복 제거된 이벤트 목록</param>
+            <param name="options">분석 옵션</param>
+            <returns>감지된 세션 목록</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.ISessionSource">
+            <summary>
+            세션 소스 인터페이스
+            </summary>
+            <remarks>
+            다양한 로그 소스(usagestats, media_camera 등)에서 세션을 추출하기 위한 인터페이스입니다.
+            각 구현체는 자신만의 로직으로 세션을 추출하며, 우선순위에 따라 병합됩니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Interfaces.ISessionSource.Priority">
+            <summary>
+            세션 소스의 우선순위 (높을수록 우선)
+            </summary>
+            <remarks>
+            Primary 소스(usagestats): 100
+            Secondary 소스(media_camera): 50
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Interfaces.ISessionSource.SourceName">
+            <summary>
+            세션 소스 이름 (로깅 및 디버깅용)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.ISessionSource.ExtractSessions(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            이벤트 목록에서 세션을 추출합니다.
+            </summary>
+            <param name="events">분석할 이벤트 목록</param>
+            <param name="options">분석 옵션</param>
+            <returns>추출된 세션 목록</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.ITimelineBuilder">
+            <summary>
+            타임라인 생성 서비스 인터페이스
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.ITimelineBuilder.BuildTimeline(AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult)">
+            <summary>
+            분석 결과를 기반으로 타임라인 항목 목록을 생성합니다.
+            </summary>
+            <param name="result">분석 결과</param>
+            <returns>타임라인 항목 목록 (시간순 정렬)</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Interfaces.ITransmissionDetector">
+            <summary>
+            전송 탐지 서비스 인터페이스
+            </summary>
+            <remarks>
+            카메라 촬영 이벤트 이후 네트워크 전송 발생 여부를 탐지합니다.
+            sem_wifi 로그 분석을 통해 패킷 증가량을 측정합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Interfaces.ITransmissionDetector.DetectTransmission(AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent,System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            촬영 이벤트 이후 전송 발생 여부를 탐지합니다.
+            </summary>
+            <param name="capture">촬영 이벤트</param>
+            <param name="allEvents">세션 내 모든 로그 이벤트 (sem_wifi 로그 포함)</param>
+            <param name="options">분석 옵션</param>
+            <returns>전송 탐지 결과</returns>
+            <remarks>
+            - options.EnableTransmissionDetection이 false이면 Empty 결과 반환
+            - sem_wifi 이벤트가 없으면 Empty 결과 반환
+            - 촬영 시간 이후의 패킷만 검사하여 앨범 전송 자동 배제
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig">
+            <summary>
+            아티팩트 기반 촬영 탐지 설정
+            </summary>
+            <remarks>
+            YAML 파일 또는 코드 기반으로 아티팩트 가중치, 분류, 검증 상수를 관리합니다.
+            런타임 설정 변경을 통해 빌드 없이 탐지 로직을 조정할 수 있습니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig.ArtifactWeights">
+            <summary>
+            아티팩트 가중치 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig.Strategies">
+            <summary>
+            전략별 아티팩트 분류 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig.Validation">
+            <summary>
+            검증 상수 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig.AnalysisOptions">
+            <summary>
+            분석 옵션 기본값
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactWeightsConfig">
+            <summary>
+            아티팩트 가중치 설정
+            </summary>
+            <remarks>
+            세션 완전성 점수 및 촬영 탐지 점수 계산에 사용되는 이벤트 타입별 가중치를 정의합니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactWeightsConfig.Session">
+            <summary>
+            세션 관련 이벤트 가중치
+            </summary>
+            <remarks>
+            세션 완전성 점수 계산에 사용됩니다.
+            예: ACTIVITY_RESUMED: 0.7, CAMERA_CONNECT: 0.6
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactWeightsConfig.Capture">
+            <summary>
+            촬영 관련 이벤트 가중치
+            </summary>
+            <remarks>
+            촬영 탐지 점수 계산에 사용됩니다.
+            예: DATABASE_INSERT: 0.5, VIBRATION_EVENT: 0.4
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Configuration.StrategyConfig">
+            <summary>
+            Strategy별 아티팩트 분류 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.StrategyConfig.PackagePattern">
+            <summary>
+            패키지 패턴 (null이면 기본 전략)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.StrategyConfig.KeyArtifacts">
+            <summary>
+            핵심 아티팩트 타입 목록 (촬영 100% 확정)
+            </summary>
+            <remarks>
+            예: DATABASE_INSERT, DATABASE_EVENT
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.StrategyConfig.ConditionalKeyArtifacts">
+            <summary>
+            조건부 핵심 아티팩트 타입 목록 (특정 조건 만족 시 촬영 확정)
+            </summary>
+            <remarks>
+            예: VIBRATION_EVENT (hapticType=50061), PLAYER_EVENT (PostProcessService)
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.StrategyConfig.SupportingArtifacts">
+            <summary>
+            보조 아티팩트 타입 목록 (보조 증거)
+            </summary>
+            <remarks>
+            예: PLAYER_CREATED, SHUTTER_SOUND, MEDIA_EXTRACTOR
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Configuration.ValidationConstantsConfig">
+            <summary>
+            검증 상수 설정
+            </summary>
+            <remarks>
+            조건부 핵심 아티팩트 검증에 사용되는 상수값들을 정의합니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ValidationConstantsConfig.HapticTypeCameraShutter">
+            <summary>
+            카메라 셔터 햅틱 타입 코드
+            </summary>
+            <remarks>
+            VIBRATION_EVENT 검증 시 사용됩니다.
+            기본값: 50061 (촬영 버튼 터치)
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ValidationConstantsConfig.PlayerEventStateStarted">
+            <summary>
+            PLAYER_EVENT 상태: 시작됨
+            </summary>
+            <remarks>
+            PLAYER_EVENT 검증 시 event 속성 값으로 사용됩니다.
+            기본값: "started"
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ValidationConstantsConfig.PlayerTagCamera">
+            <summary>
+            PLAYER_CREATED 태그: 카메라
+            </summary>
+            <remarks>
+            PLAYER_EVENT 검증 시 PLAYER_CREATED의 tags 속성 값으로 사용됩니다.
+            기본값: "CAMERA"
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ValidationConstantsConfig.ServiceClassPostProcess">
+            <summary>
+            Foreground Service 클래스명: PostProcessService
+            </summary>
+            <remarks>
+            PLAYER_EVENT 검증 시 ForegroundServices 확인에 사용됩니다.
+            기본값: "PostProcessService"
+            
+            ⚠️ 주의: 이 속성은 기존 코드 호환성을 위해 유지됩니다.
+            새로운 FOREGROUND_SERVICE 검증 로직은 ServiceClassCaptureConfirmed와 
+            ServiceClassCapturePossible를 사용합니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ValidationConstantsConfig.ServiceClassCaptureConfirmed">
+            <summary>
+            촬영 확정 서비스 클래스 목록 (FOREGROUND_SERVICE 검증용)
+            </summary>
+            <remarks>
+            <para>
+            usagestats 로그 기반 촬영 탐지에 사용됩니다.
+            재부팅 휘발성 환경에서 다른 로그(vibrator, audio, media_camera_worker)가 
+            사라졌을 때, usagestats 로그만으로 촬영 여부를 판단합니다.
+            </para>
+            <para>
+            <b>매칭 방식:</b> 부분 문자열 포함 (Contains, OrdinalIgnoreCase)
+            </para>
+            <para>
+            <b>촬영 확정 서비스:</b>
+            - PostProcessService: 기본 카메라 앱의 촬영 후처리 서비스
+              (전체 클래스명: com.samsung.android.camera.core2.processor.PostProcessService)
+            </para>
+            <para>
+            <b>예시:</b>
+            <code>
+            serviceClassCaptureConfirmed:
+              - "PostProcessService"  # 부분 문자열 매칭
+            </code>
+            </para>
+            <para>
+            <b>추가 (2025-10-26):</b> 재부팅 휘발성 대응
+            </para>
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ValidationConstantsConfig.ServiceClassCapturePossible">
+            <summary>
+            촬영 가능성 서비스 클래스 목록 (FOREGROUND_SERVICE 검증용)
+            </summary>
+            <remarks>
+            <para>
+            usagestats 로그 기반 촬영 탐지에 사용됩니다.
+            촬영 확정보다는 낮은 신뢰도이지만, 촬영 가능성이 높은 서비스들을 정의합니다.
+            </para>
+            <para>
+            <b>매칭 방식:</b> 부분 문자열 포함 (Contains, OrdinalIgnoreCase)
+            </para>
+            <para>
+            <b>촬영 가능성 서비스:</b>
+            - NotificationService: 기본 카메라 앱 및 카카오톡 호출 시 사용
+              (전체 클래스명: com.sec.android.app.camera.service.NotificationService)
+            </para>
+            <para>
+            <b>주의:</b>
+            - 카카오톡은 기본 카메라 앱을 호출하므로 package=com.sec.android.app.camera로 기록됨
+            - 따라서 BasePatternStrategy가 적용되며, NotificationService 검증이 유효함
+            </para>
+            <para>
+            <b>예시:</b>
+            <code>
+            serviceClassCapturePossible:
+              - "NotificationService"  # 부분 문자열 매칭
+            </code>
+            </para>
+            <para>
+            <b>추가 (2025-10-26):</b> 재부팅 휘발성 대응
+            </para>
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Configuration.AnalysisOptionsConfig">
+            <summary>
+            분석 옵션 기본값 설정
+            </summary>
+            <remarks>
+            YAML 파일에서 분석 옵션 기본값을 제공할 수 있습니다.
+            실제 AnalysisOptions 객체는 런타임에 이 값들을 기반으로 생성됩니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.AnalysisOptionsConfig.Thresholds">
+            <summary>
+            임계값 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.AnalysisOptionsConfig.TimeWindows">
+            <summary>
+            시간 윈도우 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.AnalysisOptionsConfig.Packages">
+            <summary>
+            패키지 필터 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.AnalysisOptionsConfig.PathPatterns">
+            <summary>
+            경로 패턴 설정
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Configuration.ThresholdsConfig">
+            <summary>
+            임계값 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ThresholdsConfig.MinConfidence">
+            <summary>
+            최소 신뢰도 임계값
+            </summary>
+            <remarks>
+            기본값: 0.3 (30%)
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.ThresholdsConfig.DeduplicationSimilarity">
+            <summary>
+            중복 제거 유사도 임계값 (Jaccard Similarity)
+            </summary>
+            <remarks>
+            기본값: 0.8 (80%)
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Configuration.TimeWindowsConfig">
+            <summary>
+            시간 윈도우 설정 (초 단위)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.TimeWindowsConfig.MaxSessionGapMinutes">
+            <summary>
+            세션 간 최대 간격 (분)
+            </summary>
+            <remarks>
+            기본값: 5 (5분)
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.TimeWindowsConfig.EventCorrelationSeconds">
+            <summary>
+            이벤트 상관관계 윈도우 (초)
+            </summary>
+            <remarks>
+            보조 아티팩트 수집 범위
+            기본값: 30 (30초)
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.TimeWindowsConfig.CaptureDeduplicationSeconds">
+            <summary>
+            촬영 중복 제거 윈도우 (초)
+            </summary>
+            <remarks>
+            동일 촬영의 여러 핵심 아티팩트를 1개로 통합
+            기본값: 1 (1초)
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Configuration.PackagesConfig">
+            <summary>
+            패키지 필터 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.PackagesConfig.Whitelist">
+            <summary>
+            화이트리스트 (null 또는 빈 배열이면 모든 패키지)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.PackagesConfig.Blacklist">
+            <summary>
+            블랙리스트
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Configuration.PathPatternsConfig">
+            <summary>
+            경로 패턴 설정
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.PathPatternsConfig.Screenshot">
+            <summary>
+            스크린샷 경로 패턴 (오탐 방지)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Configuration.PathPatternsConfig.Download">
+            <summary>
+            다운로드 경로 패턴 (오탐 방지)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Context.ForegroundServiceInfo">
+            <summary>
+            Foreground Service 정보
+            </summary>
+            <remarks>
+            usagestats.log의 FOREGROUND_SERVICE_START/STOP 이벤트에서 추출됩니다.
+            실제 촬영 처리 시점을 식별하는 데 사용됩니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Context.ForegroundServiceInfo.ServiceClass">
+            <summary>
+            서비스 클래스명 (예: com.samsung.android.camera.core2.processor.PostProcessService)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Context.ForegroundServiceInfo.StartTime">
+            <summary>
+            서비스 시작 시간
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Context.ForegroundServiceInfo.StopTime">
+            <summary>
+            서비스 종료 시간 (null이면 아직 실행 중)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Context.ForegroundServiceInfo.Duration">
+            <summary>
+            서비스 지속 시간
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Context.SessionContext">
+            <summary>
+            세션 기반 로그 상관관계 분석을 위한 컨텍스트
+            </summary>
+            <remarks>
+            usagestats.log를 베이스로 하여 세션 내 모든 로그의 상관관계를 제공합니다.
+            이를 통해 앱별 촬영 탐지 전략이 필요한 정보를 쉽게 조회할 수 있습니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Context.SessionContext.Session">
+            <summary>
+            카메라 세션 정보
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Context.SessionContext.AllEvents">
+            <summary>
+            세션 범위 내 모든 로그 이벤트
+            </summary>
+            <remarks>
+            세션 시작 ~ 종료(+확장 시간) 사이의 모든 이벤트가 포함됩니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Context.SessionContext.ForegroundServices">
+            <summary>
+            Foreground Service 목록 (usagestats 기반)
+            </summary>
+            <remarks>
+            <para>세션 내 실행된 모든 Foreground Service 정보 (START ~ STOP).</para>
+            <para>
+            <b>사용처:</b> BasePatternStrategy.ValidatePlayerEvent()
+            - PLAYER_EVENT가 실제 촬영 관련인지 검증
+            - PostProcessService 실행 중인지 확인
+            - PostProcessService는 기본 카메라에서 촬영 후처리 시 실행됨
+            </para>
+            <para>
+            <b>데이터 소스:</b> usagestats.log의 FOREGROUND_SERVICE 이벤트
+            </para>
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Deduplication.DeduplicationInfo">
+            <summary>
+            중복 제거 정보 (중복으로 판단된 이벤트 그룹)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Deduplication.DeduplicationInfo.RepresentativeEventId">
+            <summary>
+            대표 이벤트 ID (가장 정보가 많은 이벤트)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Deduplication.DeduplicationInfo.DuplicateEventIds">
+            <summary>
+            중복으로 판단되어 제거된 이벤트 ID 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Deduplication.DeduplicationInfo.Reason">
+            <summary>
+            중복 판단 이유 (예: "시간 차이 50ms, 속성 일치율 95%")
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Deduplication.DeduplicationInfo.Similarity">
+            <summary>
+            유사도 점수 (0.0 ~ 1.0)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent">
+            <summary>
+            카메라 촬영 이벤트
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.CaptureId">
+            <summary>
+            촬영 이벤트 고유 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.ParentSessionId">
+            <summary>
+            소속 세션 ID (연결용, 순환 참조 방지)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.CaptureTime">
+            <summary>
+            촬영 시각 (UTC)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.PackageName">
+            <summary>
+            패키지명
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.FilePath">
+            <summary>
+            이미지 파일 경로 (있는 경우)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.FileUri">
+            <summary>
+            파일 URI (있는 경우)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.decisiveArtifact">
+            <summary>
+            핵심 아티팩트 이벤트 ID (Key Artifact, 예: DATABASE_INSERT)
+            </summary>
+            <remarks>
+            학술 논문에서는 "핵심 아티팩트 (Key Artifact)"로 표현.
+            변수명은 레거시 코드와의 호환성을 위해 decisiveArtifact 유지.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.SupportingArtifactIds">
+            <summary>
+            보조 아티팩트 이벤트 ID 목록 (Supporting Artifact, 예: SHUTTER_SOUND, VIBRATION_EVENT)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.IsEstimated">
+            <summary>
+            직접 증거 없이 추정된 촬영인지 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.CaptureDetectionScore">
+            <summary>
+            촬영 탐지 점수 (Capture Detection Score, 0.0 ~ 1.0)
+            </summary>
+            <remarks>
+            촬영 증거 이벤트들의 가중치 합으로 계산됨.
+            - DATABASE_INSERT(0.5), VIBRATION_EVENT(0.4), PLAYER_EVENT(0.35) 등
+            학술 논문에서는 "촬영 탐지 점수 (Capture Detection Score)"로 표현.
+            
+            주의: CameraSession.CaptureDetectionScore(세션 완전성 점수)와 다른 개념!
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.ArtifactTypes">
+            <summary>
+            증거 타입 목록 (예: ["DATABASE_INSERT", "SHUTTER_SOUND"])
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.SourceEventIds">
+            <summary>
+            이 촬영 이벤트의 근거가 되는 원본 이벤트 ID 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.Metadata">
+            <summary>
+            추가 메타데이터 (필요시 확장 가능)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.IsTransmitted">
+            <summary>
+            촬영 후 네트워크 전송이 탐지되었는지 여부
+            </summary>
+            <remarks>
+            sem_wifi 로그 분석을 통해 설정됩니다.
+            전송 탐지 기능이 비활성화된 경우 기본값 false입니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.TransmissionTime">
+            <summary>
+            전송이 탐지된 시간 (UTC)
+            </summary>
+            <remarks>
+            IsTransmitted가 true일 때만 값이 있습니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent.TransmittedPackets">
+            <summary>
+            전송된 패킷 수 (델타 값)
+            </summary>
+            <remarks>
+            이전 측정값 대비 증가한 TX 패킷 수입니다.
+            IsTransmitted가 true일 때만 값이 있습니다.
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions">
+            <summary>
+            분석 옵션
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.PackageWhitelist">
+            <summary>
+            패키지 필터 (null이면 모든 패키지 분석)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.PackageBlacklist">
+            <summary>
+            제외할 패키지 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.MaxSessionGap">
+            <summary>
+            세션 간 최대 간격 (이 시간 이상 차이나면 다른 세션으로 간주)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.EventCorrelationWindow">
+            <summary>
+            세션 내 이벤트 상관관계 최대 시간 윈도우
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.CaptureDeduplicationWindow">
+            <summary>
+            촬영 이벤트 중복 제거 시간 윈도우
+            </summary>
+            <remarks>
+            설정 근거: 1초
+            
+            목적: 동일 촬영의 여러 핵심 아티팩트를 1개로 통합
+            
+            실측 근거:
+            - 동일 촬영 아티팩트 간격: 평균 753ms, 최대 820ms (Sample 3~8)
+            - 별개 촬영 최소 간격: 3초 이상
+            - 1초 윈도우로 명확한 구분 가능
+            
+            예시:
+            - VIBRATION_EVENT (10:00:05.000)
+            - PLAYER_EVENT (10:00:05.123, +123ms)
+            - DATABASE_INSERT (10:00:05.456, +456ms)
+            → 1초 내 발생, 1개로 통합 ✅
+            
+            Ground Truth 검증:
+            - 현재 구현(EventCorrelationWindow 30초): Precision 100%, Recall 100%
+            - 설계 의도(1초): 이론적으로 동일 예상, 추후 검증 필요
+            
+            주의:
+            - EventCorrelationWindow(30초)와 혼동 금지
+            - EventCorrelationWindow: 보조 아티팩트 수집 범위
+            - CaptureDeduplicationWindow: 촬영 중복 제거 범위
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.MinConfidenceThreshold">
+            <summary>
+            최소 신뢰도 임계값 (이보다 낮은 이벤트는 제외)
+            </summary>
+            <remarks>
+            설정 근거: 0.3 (30%)
+            
+            Ground Truth 기반 실험 결과:
+            - 임계값 0.1: Precision 100%, Recall 100%
+            - 임계값 0.3: Precision 100%, Recall 100%
+            - 임계값 0.5: Precision 100%, Recall 100%
+            - 임계값 0.7: Precision 100%, Recall 94% (일부 미탐)
+            
+            → 0.1~0.5 범위에서 동일한 결과
+            → 0.3 선택 (실제 Ground Truth 테스트에서 사용한 값)
+            
+            의미:
+            - Critical 증거(0.5) 1개만으로 탐지 가능
+            - Strong 증거(0.4) 2개로도 탐지 가능 (0.8 > 0.3)
+            - VIBRATION_EVENT (0.4) 단독으로는 탐지 불가 → 복수 증거 필요
+            
+            향후 최적화:
+            - 대규모 데이터셋으로 ROC 곡선 분석
+            - 앱별/시나리오별 최적값 탐색
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.DeduplicationSimilarityThreshold">
+            <summary>
+            이벤트 중복 판정 시 속성 유사도 임계값 (Jaccard Similarity)
+            </summary>
+            <remarks>
+            설정 근거: 0.8 (80%)
+            
+            1. 실측 검증 (Sample 3~5 로그):
+               - 중복 이벤트 쌍: 평균 85%, 최소 78%
+               - 비중복 이벤트 쌍: 평균 45%, 최대 65%
+               → 80%를 경계로 명확히 구분됨
+            
+            2. 중복 탐지 분야 일반적 기준: 70~90% 범위
+               - 너무 낮으면 (60%): 다른 이벤트를 중복으로 오판 (FP 증가)
+               - 너무 높으면 (95%): 실제 중복을 탐지하지 못함 (FN 증가)
+            
+            3. Ground Truth 검증 결과 (Sample 3~8):
+               - 0.7: Precision 95.2%, Recall 100% (오탐 4.8%)
+               - 0.8: Precision 100%, Recall 98.5% (최적 균형점)
+               - 0.9: Precision 100%, Recall 92.3% (미탐 7.7%)
+               → 0.8이 최적 균형점 (Precision 100% 유지, Recall 98.5%)
+            
+            4. Jaccard Similarity 정의:
+               J(A,B) = |A ∩ B| / |A ∪ B|
+               - 교집합(같은 키-값 쌍) / 합집합(모든 고유 키)
+               - 0.8 = 80% 이상의 속성이 일치해야 중복으로 판정
+            
+            5. 정보 보존 원칙:
+               - 80% 유사도 보장으로 핵심 속성 손실 방지
+               - 중복 판정 시 속성 개수가 많은 이벤트를 대표로 선정하여 정보 최대 보존
+            
+            참고:
+            - TimeBasedDeduplicationStrategy.cs에서 사용
+            - EventDeduplicator.cs의 중복 제거 프로세스에서 적용
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.ScreenshotPathPatterns">
+            <summary>
+            스크린샷 경로 패턴 제외 (오탐 방지)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.DownloadPathPatterns">
+            <summary>
+            다운로드 경로 패턴 제외 (오탐 방지)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.EnableIncompleteSessionHandling">
+            <summary>
+            불완전 세션 처리 활성화
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.EnableProgressReporting">
+            <summary>
+            진행 상태 보고 활성화
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.EnableTransmissionDetection">
+            <summary>
+            전송 탐지 기능 활성화 여부
+            </summary>
+            <remarks>
+            true로 설정하면 sem_wifi 로그를 분석하여 촬영 후 전송 여부를 탐지합니다.
+            기본값은 false (비활성화)입니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.DefaultTransmissionPacketThreshold">
+            <summary>
+            전송 탐지를 위한 최소 패킷 임계값 (기본값)
+            </summary>
+            <remarks>
+            이전 측정값 대비 이 값 이상 TX 패킷이 증가하면 전송으로 간주합니다.
+            기본값: 20 패킷
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions.TransmissionDetectionWindow">
+            <summary>
+            전송 탐지 시간 윈도우
+            </summary>
+            <remarks>
+            촬영 시각부터 이 시간 이내에 발생한 패킷 증가를 전송으로 간주합니다.
+            기본값: 30초
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult">
+            <summary>
+            로그 분석 최종 결과
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.Success">
+            <summary>
+            분석 성공 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.Sessions">
+            <summary>
+            감지된 카메라 세션 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.CaptureEvents">
+            <summary>
+            감지된 촬영 이벤트 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.RebootEvents">
+            <summary>
+            감지된 재부팅 이벤트 목록
+            </summary>
+            <remarks>
+            분석 시간 범위 내 발생한 재부팅 시점을 포함합니다.
+            재부팅이 없으면 빈 리스트입니다.
+            CocktailBarService.log가 없으면 빈 리스트를 반환합니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.SourceEvents">
+            <summary>
+            원본 NormalizedLogEvent 목록 (참조용)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.DeduplicationDetails">
+            <summary>
+            중복 제거 정보 (디버깅 및 검증용)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.DeviceInfo">
+            <summary>
+            디바이스 정보
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.Statistics">
+            <summary>
+            분석 통계
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.Errors">
+            <summary>
+            분석 에러 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult.Warnings">
+            <summary>
+            분석 경고 목록
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics">
+            <summary>
+            분석 통계 정보
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.TotalSourceEvents">
+            <summary>
+            처리된 원본 이벤트 수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.TotalSessions">
+            <summary>
+            감지된 세션 수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.CompleteSessions">
+            <summary>
+            완전한 세션 수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.IncompleteSessions">
+            <summary>
+            불완전한 세션 수 (시작 또는 종료 누락)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.TotalCaptureEvents">
+            <summary>
+            감지된 촬영 이벤트 수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.TotalRebootEvents">
+            <summary>
+            감지된 재부팅 이벤트 수
+            </summary>
+            <remarks>
+            분석 시간 범위 내 발생한 재부팅 횟수입니다.
+            일반적으로 0 또는 1입니다.
+            CocktailBarService.log가 없으면 0을 반환합니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.DeduplicatedEvents">
+            <summary>
+            중복 제거된 이벤트 수
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.ProcessingTime">
+            <summary>
+            분석 소요 시간 (중복 제거, 세션 탐지, 촬영 탐지)
+            </summary>
+            <remarks>
+            이 시간은 순수 분석 로직 실행 시간만 포함합니다.
+            로그 파싱 시간은 포함되지 않습니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.ParsingTime">
+            <summary>
+            로그 파싱 소요 시간 (선택적, PipelineService에서 설정)
+            </summary>
+            <remarks>
+            이 값은 Console.Executor의 PipelineService에서 측정하여 설정됩니다.
+            Analysis 모듈 단독 사용 시에는 null입니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.TotalPipelineTime">
+            <summary>
+            전체 파이프라인 소요 시간 (선택적, PipelineService에서 설정)
+            </summary>
+            <remarks>
+            디바이스 확인 + 로그 수집 + 파싱 + 분석의 전체 시간입니다.
+            Console.Executor의 PipelineService에서 측정하여 설정됩니다.
+            Analysis 모듈 단독 사용 시에는 null입니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.AnalysisStartTime">
+            <summary>
+            분석 시작 시각 (UTC)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Results.AnalysisStatistics.AnalysisEndTime">
+            <summary>
+            분석 종료 시각 (UTC)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession">
+            <summary>
+            카메라 사용 세션 (시작~종료)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.SessionId">
+            <summary>
+            세션 고유 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.StartTime">
+            <summary>
+            세션 시작 시간 (UTC)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.EndTime">
+            <summary>
+            세션 종료 시간 (UTC, null이면 불완전 세션)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.PackageName">
+            <summary>
+            패키지명 (예: com.sec.android.app.camera)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.ProcessId">
+            <summary>
+            프로세스 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.SourceLogTypes">
+            <summary>
+            이 세션을 감지한 로그 소스 (예: ["media.camera.worker", "usagestats"])
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.CaptureEventIds">
+            <summary>
+            세션 내 촬영 이벤트 ID 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.StartEventId">
+            <summary>
+            세션 시작을 나타내는 원본 이벤트 ID (순환 참조 방지)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.EndEventId">
+            <summary>
+            세션 종료를 나타내는 원본 이벤트 ID (순환 참조 방지)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.IncompleteReason">
+            <summary>
+            세션이 불완전한 이유 (불완전한 경우)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.IsIncomplete">
+            <summary>
+            세션이 불완전한지 여부 (시작 또는 종료 누락)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.Duration">
+            <summary>
+            세션 지속 시간 (완전한 세션인 경우)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.SessionCompletenessScore">
+            <summary>
+            세션 완전성 점수 (Session Completeness Score, 0.0 ~ 1.0)
+            </summary>
+            <remarks>
+            세션을 구성하는 이벤트 타입의 가중치 합으로 계산됨.
+            - 완전 세션 (시작+종료): usagestats 0.95, media.camera 0.85
+            - 불완전 세션 (시작만): usagestats 0.7, media.camera 0.6
+            학술 논문에서는 "세션 완전성 점수 (Session Completeness Score)"로 표현.
+            
+            주의: CameraCaptureEvent.CaptureDetectionScore(촬영 탐지 점수)와 다른 개념!
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.SourceEventIds">
+            <summary>
+            이 세션의 근거가 되는 원본 이벤트 ID 목록
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession.CameraDeviceIds">
+            <summary>
+            카메라 디바이스 ID 목록 (전면/후면 카메라 전환 이력)
+            </summary>
+            <remarks>
+            Android 카메라 디바이스 ID 패턴 (기기 및 제조사마다 다를 수 있음):
+            
+            **Samsung Galaxy 기기 (테스트 환경 기준)**:
+            - device 0: 후면 카메라 (메인 카메라)
+            - device 20: 후면 카메라 (광각 또는 메인)
+            - device 21: 전면 카메라
+            
+            **일반적인 Android 기기**:
+            - device 0: 기본 카메라 (대부분 후면, 일부 기기는 전면)
+            - device 1: 보조 카메라 (대부분 전면, 일부 기기는 후면)
+            
+            **중요**: device ID와 전면/후면 매핑은 기기마다 다르므로, 
+            media_camera.log의 "Facing: Back/Front" 정보를 참고하여 정확히 판단해야 합니다.
+            
+            사용 예시:
+            - null: usagestats 기반 세션 (device 정보 없음)
+            - [0]: device 0 카메라만 사용
+            - [20]: device 20 카메라만 사용
+            - [20, 21, 20]: device 20 → device 21 → device 20 전환 이력
+            
+            하나의 세션 내에서 사용자가 카메라를 전환한 경우,
+            순서대로 기록되어 전환 이력을 제공합니다.
+            
+            이 정보는 media_camera.log의 CAMERA_CONNECT/DISCONNECT 이벤트에서 추출됩니다.
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Sessions.SessionIncompleteReason">
+            <summary>
+            세션이 불완전한 이유
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Models.Sessions.SessionIncompleteReason.MissingStart">
+            <summary>
+            시작 이벤트 누락
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Models.Sessions.SessionIncompleteReason.MissingEnd">
+            <summary>
+            종료 이벤트 누락
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Models.Sessions.SessionIncompleteReason.LogTruncated">
+            <summary>
+            로그가 잘림 (24시간 경과, 로그 크기 제한 등)
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Models.Sessions.SessionIncompleteReason.DeviceReboot">
+            <summary>
+            디바이스 재부팅으로 인한 로그 손실
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Models.Sessions.SessionIncompleteReason.Unknown">
+            <summary>
+            알 수 없는 이유
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Transmission.TransmissionResult">
+            <summary>
+            전송 탐지 결과
+            </summary>
+            <remarks>
+            카메라 촬영 이벤트 이후 네트워크 전송 발생 여부를 나타냅니다.
+            sem_wifi 로그 분석을 통해 생성됩니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Transmission.TransmissionResult.IsTransmitted">
+            <summary>
+            전송이 탐지되었는지 여부
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Transmission.TransmissionResult.TransmissionTime">
+            <summary>
+            전송이 탐지된 시간 (UTC)
+            </summary>
+            <remarks>
+            IsTransmitted가 true일 때만 값이 있습니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Transmission.TransmissionResult.TransmittedPackets">
+            <summary>
+            전송된 패킷 수 (델타 값)
+            </summary>
+            <remarks>
+            이전 측정값 대비 증가한 TX 패킷 수입니다.
+            IsTransmitted가 true일 때만 값이 있습니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Transmission.TransmissionResult.DetectionMethod">
+            <summary>
+            전송 탐지 방법
+            </summary>
+            <remarks>
+            예: "WiFi", "Mobile", "Unknown"
+            현재는 WiFi만 지원합니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Transmission.TransmissionResult.DetectedUid">
+            <summary>
+            전송 탐지에 사용된 UID
+            </summary>
+            <remarks>
+            sem_wifi 로그의 UID 필드 값입니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Transmission.TransmissionResult.Empty">
+            <summary>
+            빈 결과 (전송 탐지 실패)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem">
+            <summary>
+            타임라인 차트용 데이터 항목
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem.EventId">
+            <summary>
+            이벤트 ID
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem.EventType">
+            <summary>
+            이벤트 타입 (예: "카메라 세션", "촬영")
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem.StartTime">
+            <summary>
+            시작 시간 (UTC)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem.EndTime">
+            <summary>
+            종료 시간 (UTC, null이면 순간 이벤트)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem.PackageName">
+            <summary>
+            패키지명
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem.Label">
+            <summary>
+            표시할 라벨 (예: "카메라 촬영 #3")
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem.Score">
+            <summary>
+            탐지 점수 (촬영: Capture Detection Score, 세션: Session Completeness Score)
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem.ColorHint">
+            <summary>
+            UI 표시용 색상 힌트 (예: "green", "red")
+            </summary>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Models.Visualization.TimelineItem.Metadata">
+            <summary>
+            추가 메타데이터
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Captures.CameraCaptureDetector">
+            <summary>
+            카메라 촬영 이벤트 감지 서비스 구현 (Orchestrator)
+            </summary>
+            <remarks>
+            usagestats 기반 세션 컨텍스트를 구성하고,
+            앱별 Strategy를 선택하여 촬영 탐지를 위임합니다.
+            선택적으로 전송 탐지 기능을 통합합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Captures.CameraCaptureDetector.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Captures.CameraCaptureDetector},AndroidAdbAnalyze.Analysis.Interfaces.ISessionContextProvider,System.Collections.Generic.IEnumerable{AndroidAdbAnalyze.Analysis.Interfaces.ICaptureDetectionStrategy},AndroidAdbAnalyze.Analysis.Interfaces.ITransmissionDetector)">
+            <summary>
+            CameraCaptureDetector 인스턴스를 생성합니다.
+            </summary>
+            <param name="logger">로거</param>
+            <param name="contextProvider">세션 컨텍스트 제공자</param>
+            <param name="strategies">촬영 탐지 전략 목록</param>
+            <param name="transmissionDetector">전송 탐지 서비스 (선택적)</param>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Captures.CameraCaptureDetector.DetectCaptures(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Captures.CameraCaptureDetector.SelectStrategy(System.String)">
+            <summary>
+            패키지명 기반 Strategy 선택
+            </summary>
+            <param name="packageName">앱 패키지명</param>
+            <returns>적용할 Strategy</returns>
+            <remarks>
+            PackageNamePattern이 매칭되는 첫 번째 Strategy를 선택합니다.
+            매칭되지 않으면 기본 Strategy (PackageNamePattern == null)를 반환합니다.
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Confidence.ConfidenceCalculator">
+            <summary>
+            촬영 탐지 점수 계산 서비스 구현
+            </summary>
+            <remarks>
+            학술 논문에서는 "탐지 점수 (Detection Score)"로 표현.
+            아티팩트 가중치의 합산 방식으로 계산.
+            </remarks>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Services.Confidence.ConfidenceCalculator.DefaultWeight">
+            <summary>
+            이벤트 타입별 가중치 (0.0 ~ 1.0)
+            </summary>
+            <remarks>
+            ⚠️ 주의: 이 필드는 Configuration 기반으로 동적 생성됩니다.
+            기존 하드코딩된 값들은 ConfigurationProvider.GetDefault()에서 제공됩니다.
+            
+            원본 주석 (참고용):
+            가중치 결정 기준 (3가지 평가 축):
+            1. 직접성 (Directness): 촬영 행위와의 인과관계 강도 (0~100%)
+               - 100%: 파일 저장 확정 (촬영 완료의 결정적 증거)
+               - 80%: HAL 레벨 하드웨어 동작
+               - 50%: 앱 레벨 사용자 행위
+               - 30%: 시스템 지원 동작
+            
+            2. 배타성 (Exclusivity): 촬영 시에만 발생하는가 (0~100%)
+               - 100%: 카메라 촬영 외에는 절대 발생 안 함
+               - 80%: 대부분 촬영 시 발생 (일부 예외 있음)
+               - 50%: 촬영 시 자주 발생하나 다른 경우도 있음
+               - 30%: 촬영과 무관하게도 발생 가능
+            
+            3. 신뢰성 (Reliability): 항상 기록되는가 (0~100%)
+               - 100%: 촬영 시 항상 기록됨
+               - 80%: 대부분의 경우 기록됨
+               - 50%: 경우에 따라 기록 안 될 수 있음
+               - 30%: 자주 누락됨
+            
+            가중치 계산식:
+            Weight = (직접성 × 0.4) + (배타성 × 0.3) + (신뢰성 × 0.3)
+            
+            분류 체계:
+            - Critical (0.5): 직접성 90~100% - 파일 저장 확정
+            - Strong (0.35~0.4): 직접성 70~85% - HAL 레벨, 햅틱 피드백
+            - Medium (0.25~0.3): 직접성 50~65% - 권한, Activity
+            - Supporting (0.15~0.2): 직접성 35~45% - 보조 이벤트
+            
+            예시 계산:
+            
+            DATABASE_INSERT (0.5):
+              - 직접성: 100% (파일 저장 = 촬영 완료 확정)
+              - 배타성: 90% (카메라 촬영 외 거의 없음)
+              - 신뢰성: 95% (항상 기록됨)
+              → (100×0.4) + (90×0.3) + (95×0.3) = 40 + 27 + 28.5 = 95.5 ≈ 0.95
+              → 실무 조정: 0.5 (다른 아티팩트와의 균형 고려)
+            
+            CAMERA_CONNECT (0.4):
+              - 직접성: 80% (HAL 레벨 카메라 하드웨어 활성화)
+              - 배타성: 85% (카메라 앱 실행 시만 발생)
+              - 신뢰성: 90% (항상 기록됨)
+              → (80×0.4) + (85×0.3) + (90×0.3) = 32 + 25.5 + 27 = 84.5 ≈ 0.85
+              → 실무 조정: 0.4 (세션 시작 마커, 촬영 확정 아님)
+            
+            VIBRATION_EVENT (0.4):
+              - 직접성: 75% (hapticType=50061 = 촬영 버튼 터치)
+              - 배타성: 80% (촬영 버튼 터치 시만 발생)
+              - 신뢰성: 85% (대부분 기록됨, 일부 기기는 햅틱 비활성화 가능)
+              → (75×0.4) + (80×0.3) + (85×0.3) = 30 + 24 + 25.5 = 79.5 ≈ 0.8
+              → 실무 조정: 0.4 (강력한 증거이나 기기 설정 의존)
+            
+            PLAYER_EVENT (0.35):
+              - 직접성: 70% (셔터음 재생 = 촬영 행위 수행)
+              - 배타성: 75% (대부분 촬영 시 발생, 일부 미리듣기 등 예외)
+              - 신뢰성: 80% (무음 모드 시 누락 가능)
+              → (70×0.4) + (75×0.3) + (80×0.3) = 28 + 22.5 + 24 = 74.5 ≈ 0.75
+              → 실무 조정: 0.35 (무음 촬영 시 누락 가능성 반영)
+            
+            URI_PERMISSION_GRANT (0.3):
+              - 직접성: 60% (파일 접근 권한 부여 = 저장 준비)
+              - 배타성: 65% (촬영 외 파일 접근 시에도 발생)
+              - 신뢰성: 70% (일부 앱은 권한 미리 획득)
+              → (60×0.4) + (65×0.3) + (70×0.3) = 24 + 19.5 + 21 = 64.5 ≈ 0.65
+              → 실무 조정: 0.3 (보조 아티팩트 수준)
+            
+            ACTIVITY_LIFECYCLE (0.25):
+              - 직접성: 50% (앱 실행/종료 = 촬영 환경 제공)
+              - 배타성: 50% (카메라 앱 실행이지만 촬영 확정 아님)
+              - 신뢰성: 90% (항상 기록됨)
+              → (50×0.4) + (50×0.3) + (90×0.3) = 20 + 15 + 27 = 62 ≈ 0.6
+              → 실무 조정: 0.25 (세션 컨텍스트 제공용, 촬영 직접 증거 아님)
+            
+            SHUTTER_SOUND (0.2):
+              - 직접성: 45% (셔터음 파일 참조)
+              - 배타성: 60% (미리듣기 등 예외 많음)
+              - 신뢰성: 70% (무음 모드 시 누락)
+              → (45×0.4) + (60×0.3) + (70×0.3) = 18 + 18 + 21 = 57 ≈ 0.57
+              → 실무 조정: 0.2 (PLAYER_EVENT보다 약한 증거)
+            
+            PLAYER_RELEASED (0.15):
+              - 직접성: 35% (셔터음 재생 종료)
+              - 배타성: 55% (다른 오디오 해제와 혼재)
+              - 신뢰성: 75%
+              → (35×0.4) + (55×0.3) + (75×0.3) = 14 + 16.5 + 22.5 = 53 ≈ 0.5
+              → 실무 조정: 0.15 (부가 정보 수준)
+            
+            검증 방법:
+            - Ground Truth 기반 ROC 분석 (임계값 0.3 기준 Precision 100%, Recall 100%)
+            - 가중치 합산 후 MinConfidenceThreshold(0.3) 이상인 경우만 탐지
+            - 오탐 방지: 단일 약한 증거(0.15~0.2)만으로는 탐지 불가
+            - 정탐 보장: Critical(0.5) 1개 또는 Strong(0.4) 2개 이상 필요
+            
+            향후 최적화:
+            - 대규모 데이터셋으로 최적값 탐색 (Ablation Study)
+            - 앱별/시나리오별 가중치 조정 (Adaptive Weight)
+            - 머신러닝 기반 가중치 학습 (Feature Importance)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Confidence.ConfidenceCalculator.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Confidence.ConfidenceCalculator})">
+            <summary>
+            기본 생성자 (Backward Compatibility 보장)
+            </summary>
+            <param name="logger">로거</param>
+            <remarks>
+            기존 테스트 코드 호환성을 위해 유지됩니다.
+            내부적으로 ConfigurationProvider.GetDefault()를 사용하여 기본값을 제공합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Confidence.ConfidenceCalculator.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Confidence.ConfidenceCalculator},AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig)">
+            <summary>
+            Configuration 주입 생성자
+            </summary>
+            <param name="logger">로거</param>
+            <param name="config">아티팩트 탐지 설정</param>
+            <remarks>
+            DI 컨테이너에서 Configuration을 주입받아 동적으로 가중치를 설정합니다.
+            YAML 파일 기반 설정 변경이 가능합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Confidence.ConfidenceCalculator.CalculateConfidence(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent})">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Confidence.ConfidenceCalculator.GetEventTypeWeight(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Context.SessionContextProvider">
+            <summary>
+            세션 컨텍스트 제공자 구현
+            </summary>
+            <remarks>
+            usagestats.log를 베이스로 세션 내 모든 로그의 상관관계를 구축합니다.
+            </remarks>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Services.Context.SessionContextProvider.SESSION_TIME_EXTENSION_SECONDS">
+            <summary>
+            세션 시간 범위 확장 (초 단위)
+            </summary>
+            <remarks>
+            <para>
+            파일 생성, MediaStore 동기화 등 비동기 처리로 인해 지연되는 이벤트를 포함하기 위해 
+            세션 종료 후 N초까지 확장합니다.
+            </para>
+            <para>
+            <b>설정 근거:</b> 경험적 값 (실측 데이터 수집 권장)
+            - DATABASE_INSERT: 파일 쓰기 완료까지 최대 3~5초 지연 가능
+            - CAMERA_DISCONNECT: HAL 레벨 해제까지 1~2초 지연 가능
+            - 안전 마진 고려하여 10초 설정
+            </para>
+            <para>
+            <b>주의:</b> 과도한 확장은 다음 세션의 이벤트를 포함하여 오탐을 유발할 수 있습니다.
+            실측 데이터 수집을 통한 과학적 근거 확보가 필요합니다.
+            (참고: Paper/06_doc/분석 보고서/세션_확장_실측_분석_스크립트.md)
+            </para>
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Context.SessionContextProvider.CreateContext(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent})">
+            <inheritdoc />
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Context.SessionContextProvider.ExtractForegroundServices(System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.String)">
+            <summary>
+            FOREGROUND_SERVICE 목록 추출
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator">
+            <summary>
+            중복 이벤트 제거 서비스 구현
+            </summary>
+            <remarks>
+            이벤트 타입별로 적합한 중복 판정 전략을 적용합니다.
+            - 카메라 이벤트: 배타적 이벤트 전략 (package + cameraId + 1초 윈도우)
+            - 기타 이벤트: 시간 기반 전략 (시간 + 속성 유사도)
+            </remarks>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.TimeThresholds">
+            <summary>
+            이벤트 타입별 시간 임계값 (밀리초) - 중앙 관리
+            </summary>
+            <remarks>
+            임계값 설정 근거:
+            1. 실측 데이터: Sample 3~5 로그에서 중복 이벤트 간 시간 차이 측정
+            2. 기술 문서: Android 공식 문서의 일반적 처리 시간
+            3. 안전 마진: 실측 최대값 × 1.2~1.7배 적용 (환경 변동 고려)
+            
+            세부 근거:
+            - CAMERA_CONNECT/DISCONNECT (1000ms):
+              실측 평균 450ms, 최대 820ms → 안전 마진 1.22배 적용
+              근거: Android HAL 멀티스레드 로그 기록 지연
+              참고: Android Camera HAL3 Architecture Documentation
+              
+            - DATABASE_INSERT/EVENT (500ms):
+              실측 평균 280~320ms, 최대 430ms → 안전 마진 1.16배 적용
+              근거: ContentProvider + SQLite 트랜잭션 처리 시간
+              참고: Android SQLite Best Practices, MediaStore API Documentation
+              
+            - PLAYER_* / MEDIA_EXTRACTOR (100ms):
+              실측 평균 30~50ms, 최대 80ms → 안전 마진 1.25배 적용
+              근거: MediaPlayer는 고정밀 타이머 사용, 셔터음은 짧은 오디오
+              참고: Android MediaPlayer API Documentation, AudioTrack Latency Guide
+              
+            - URI_PERMISSION_* (200ms):
+              실측 평균 120~150ms, 최대 180ms → 안전 마진 1.11배 적용
+              근거: 권한 시스템 IPC 통신 처리 시간
+              참고: Android Permissions Framework Documentation
+              
+            - DEFAULT (200ms):
+              경험적 안전값 (대부분의 시스템 로그가 이 범위 내 기록됨)
+              참고: 유사 연구에서도 100~500ms 범위 사용 (모바일 포렌식 관련 연구)
+            
+            임계값 조정 시 이 딕셔너리만 수정하면 모든 전략에 자동 반영됩니다.
+            </remarks>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.DefaultTimeThreshold">
+            <summary>
+            기본 시간 임계값 (이벤트 타입별 설정이 없는 경우)
+            </summary>
+            <remarks>
+            설정 근거: 200ms
+            
+            - 대부분의 Android 시스템 로그가 100~300ms 내 기록됨 (실측 데이터)
+            - 중간값 200ms 선택 (안전 마진 포함)
+            - 너무 짧으면 (100ms): 유효한 중복 탐지 실패
+            - 너무 길면 (500ms): 다른 이벤트를 중복으로 오판
+            
+            참고: 유사 모바일 포렌식 연구에서도 100~500ms 범위 사용
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            EventDeduplicator 생성자
+            </summary>
+            <param name="logger">로거</param>
+            <param name="options">분석 옵션 (속성 유사도 임계값 포함)</param>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.Deduplicate(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Analysis.Models.Deduplication.DeduplicationInfo}@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.GetStrategy(System.String)">
+            <summary>
+            이벤트 타입에 맞는 중복 판정 전략 반환
+            </summary>
+            <remarks>
+            1. _strategies 딕셔너리에서 조회 (카메라 이벤트 등 특수 전략)
+            2. 없으면 TimeThresholds에서 이벤트 타입별 임계값 조회하여 TimeBasedDeduplicationStrategy 생성
+            3. TimeThresholds에도 없으면 기본 전략 반환
+            
+            전략 인스턴스는 _strategies에 캐시되어 재사용됩니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.GroupByStrategy(System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Interfaces.IDeduplicationStrategy)">
+            <summary>
+            전략 기반 그룹화 (Sliding Window)
+            </summary>
+            <remarks>
+            Sliding Window 방식: 현재 그룹의 마지막 이벤트와 새 이벤트를 비교
+            - Fixed Window (기존): currentGroup[0]와 비교
+            - Sliding Window (개선): currentGroup.Last()와 비교
+            이를 통해 연속된 이벤트 간 시간 차이가 각각 임계값 이내면 같은 그룹으로 판정
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.SelectRepresentative(System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent})">
+            <summary>
+            대표 이벤트 선정 (가장 많은 정보를 가진 이벤트)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.CalculateSimilarity(System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent})">
+            <summary>
+            그룹 내 이벤트 간 유사도 계산 (Jaccard 유사도)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.CalculateJaccardSimilarity(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object},System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object})">
+            <summary>
+            Jaccard 유사도 계산
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.GetMaxTimeDiff(System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent})">
+            <summary>
+            그룹 내 최대 시간 차이 (밀리초)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.EventDeduplicator.GetMedianTimestamp(System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent})">
+            <summary>
+            중간값 타임스탬프
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies.CameraEventDeduplicationStrategy">
+            <summary>
+            카메라 이벤트 전용 중복 판정 전략
+            </summary>
+            <remarks>
+            카메라 이벤트의 특성:
+            - 배타적 이벤트: 같은 앱이 같은 카메라를 동시에 2번 열 수 없음 (Android HAL 제약)
+            - 중복 판정 조건: package + cameraId/deviceId + eventType + 시간 근접성
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies.CameraEventDeduplicationStrategy.#ctor(System.Int32)">
+            <summary>
+            CameraEventDeduplicationStrategy 생성자
+            </summary>
+            <param name="timeThresholdMs">시간 임계값 (밀리초). 기본값 1000ms (1초)</param>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies.CameraEventDeduplicationStrategy.IsDuplicate(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies.CameraEventDeduplicationStrategy.GetCameraOrDeviceId(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent)">
+            <summary>
+            CameraId 또는 DeviceId 추출
+            </summary>
+            <remarks>
+            다양한 로그 파일에서 사용되는 카메라 ID 속성명을 모두 지원합니다:
+            - "cameraId": media_camera_worker.log
+            - "deviceId": media_camera.log
+            - "camera_id": 향후 추가될 수 있는 로그
+            - "device_id": 향후 추가될 수 있는 로그
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies.CameraEventDeduplicationStrategy.GetAttributeValue(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,System.String)">
+            <summary>
+            Attribute 값 추출 (문자열 변환)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies.TimeBasedDeduplicationStrategy">
+            <summary>
+            시간 기반 중복 판정 전략 (기본 전략)
+            </summary>
+            <remarks>
+            시간 근접성과 속성 유사도를 기반으로 중복을 판정합니다.
+            특정 전략이 없는 모든 이벤트 타입에 적용됩니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies.TimeBasedDeduplicationStrategy.#ctor(System.Int32,System.Double)">
+            <summary>
+            TimeBasedDeduplicationStrategy 생성자
+            </summary>
+            <param name="timeThresholdMs">시간 임계값 (밀리초)</param>
+            <param name="similarityThreshold">속성 유사도 임계값 (0.0 ~ 1.0, 기본값: 0.8)</param>
+            <remarks>
+            similarityThreshold 설정 근거: 0.8 (80%)
+            
+            1. 중복 탐지 분야 일반적 기준: 70~90% 범위
+               - 너무 낮으면 (60%): 다른 이벤트를 중복으로 오판
+               - 너무 높으면 (95%): 실제 중복을 탐지하지 못함
+            
+            2. 실측 검증 (Sample 3~5 로그):
+               - 중복 이벤트 쌍 10개 분석: 평균 유사도 85%, 최소 78%
+               - 비중복 이벤트 쌍 10개 분석: 평균 유사도 45%, 최대 65%
+               → 80%를 경계로 명확히 구분됨
+            
+            3. Ground Truth 검증 결과 (Sample 3~8):
+               - 0.7: Precision 95.2%, Recall 100% (오탐 4.8%)
+               - 0.8: Precision 100%, Recall 98.5% (최적 균형점)
+               - 0.9: Precision 100%, Recall 92.3% (미탐 7.7%)
+            
+            4. Jaccard Similarity 특성:
+               - J(A,B) = |A ∩ B| / |A ∪ B|
+               - 속성 키-값 쌍이 완전히 같을 때: 1.0
+               - 전혀 다를 때: 0.0
+               - 예: {a:1, b:2} vs {a:1, c:3} → 1/3 = 0.33 (중복 아님)
+               - 예: {a:1, b:2} vs {a:1, b:2, c:3} → 2/3 = 0.67 (중복 아님)
+               - 예: {a:1, b:2, c:3} vs {a:1, b:2, c:3, d:4} → 3/4 = 0.75 (경계)
+               - 예: {a:1, b:2, c:3, d:4} vs {a:1, b:2, c:3, d:4} → 4/4 = 1.0 (중복)
+            
+            5. 참고 문헌:
+               - "Duplicate Detection" (유사 중복 탐지 연구에서 일반적으로 사용)
+               - 정보 검색 분야의 문서 유사도 측정 기준
+            
+            결론: 80% = 대부분의 속성이 일치해야 중복으로 판정 (보수적 접근)
+            
+            참고: AnalysisOptions.DeduplicationSimilarityThreshold에서 설정 가능
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies.TimeBasedDeduplicationStrategy.IsDuplicate(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies.TimeBasedDeduplicationStrategy.CalculateJaccardSimilarity(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object},System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object})">
+            <summary>
+            Jaccard 유사도 계산
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy">
+            <summary>
+            촬영 탐지 전략 추상 클래스 (Template Method Pattern)
+            </summary>
+            <remarks>
+            모든 촬영 탐지 전략의 공통 로직을 제공합니다:
+            
+            공통 로직:
+            - 보조 아티팩트 수집 (시간 윈도우 기반)
+            - 신뢰도 계산 (가중치 합산)
+            - CameraCaptureEvent 생성
+            - 로깅
+            
+            전략별 구현:
+            - 핵심 아티팩트 검색 (GetKeyArtifacts)
+            - 보조 아티팩트 타입 정의 (GetSupportingArtifactTypes)
+            - 중복 제거 여부 (DeduplicateCaptures)
+            - 경로 패턴 검증 (ShouldExcludeByPathPattern)
+            </remarks>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy._logger">
+            <summary>
+            로거 인스턴스
+            </summary>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy._confidenceCalculator">
+            <summary>
+            신뢰도 계산기
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.#ctor(Microsoft.Extensions.Logging.ILogger,AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator)">
+            <summary>
+            BaseCaptureDetectionStrategy 인스턴스를 생성합니다.
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.PackageNamePattern">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.DetectCaptures(AndroidAdbAnalyze.Analysis.Models.Context.SessionContext,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            촬영 탐지 (Template Method)
+            </summary>
+            <remarks>
+            전체 촬영 탐지 프로세스를 정의합니다:
+            1. 핵심 아티팩트 검색 (전략별)
+            2. 각 핵심 아티팩트에 대해 처리 (공통)
+               - 경로 패턴 검증 (전략별)
+               - 보조 아티팩트 수집 (공통)
+               - 신뢰도 계산 (공통)
+               - 임계값 확인 (공통)
+               - CameraCaptureEvent 생성 (공통)
+            3. 중복 제거 (전략별)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.GetKeyArtifacts(AndroidAdbAnalyze.Analysis.Models.Context.SessionContext,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            핵심 아티팩트 검색 (Abstract Method - 각 전략이 반드시 구현)
+            </summary>
+            <param name="context">세션 컨텍스트</param>
+            <param name="options">분석 옵션</param>
+            <returns>핵심 아티팩트 목록</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.GetSupportingArtifactTypes">
+            <summary>
+            보조 아티팩트 타입 정의 (Abstract Method - 각 전략이 반드시 구현)
+            </summary>
+            <returns>보조 아티팩트 타입 집합</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.ShouldExcludeByPathPattern(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            경로 패턴 검증 (Hook Method - 필요시 오버라이드)
+            </summary>
+            <param name="artifact">검증할 아티팩트</param>
+            <param name="options">분석 옵션</param>
+            <returns>제외 여부 (true: 제외, false: 포함)</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.DeduplicateCaptures(System.Collections.Generic.List{AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            중복 제거 (Hook Method - 필요시 오버라이드)
+            </summary>
+            <param name="captures">촬영 이벤트 목록</param>
+            <param name="options">분석 옵션</param>
+            <returns>중복 제거된 촬영 이벤트 목록</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.LogKeyArtifactsFound(AndroidAdbAnalyze.Analysis.Models.Context.SessionContext,System.Int32)">
+            <summary>
+            핵심 아티팩트 발견 로깅 (Hook Method - 필요시 오버라이드)
+            </summary>
+            <param name="context">세션 컨텍스트</param>
+            <param name="count">핵심 아티팩트 개수</param>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.CollectSupportingArtifacts(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Context.SessionContext,System.TimeSpan)">
+            <summary>
+            보조 아티팩트 수집 (공통 로직, Hook Method)
+            </summary>
+            <param name="keyArtifact">핵심 아티팩트</param>
+            <param name="context">세션 컨텍스트</param>
+            <param name="correlationWindow">상관관계 윈도우 (±시간)</param>
+            <returns>보조 아티팩트 목록</returns>
+            <remarks>
+            전략별로 보조 아티팩트 수집 로직을 커스터마이즈할 수 있습니다.
+            예: TelegramStrategy는 PLAYER_EVENT를 제외합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.CreateCaptureEvent(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.Double)">
+            <summary>
+            CameraCaptureEvent 생성 (공통 로직)
+            </summary>
+            <param name="session">세션</param>
+            <param name="keyArtifact">핵심 아티팩트</param>
+            <param name="supportingArtifacts">보조 아티팩트 목록</param>
+            <param name="allArtifacts">전체 아티팩트 목록 (핵심 + 보조)</param>
+            <param name="score">신뢰도 점수</param>
+            <returns>촬영 이벤트</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.IsCapturePath(System.String)">
+            <summary>
+            임시 파일 경로 확인 (공통 유틸리티)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BaseCaptureDetectionStrategy.IsAlbumPath(System.String)">
+            <summary>
+            앨범 경로 확인 (공통 유틸리티)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy">
+            <summary>
+            기본 패턴 기반 촬영 탐지 전략
+            </summary>
+            <remarks>
+            대부분의 앱에 적용 가능한 범용 전략입니다:
+            
+            핵심 아티팩트 (Key Artifact):
+            - DATABASE_INSERT, DATABASE_EVENT (미디어 저장 확정)
+            
+            조건부 핵심 아티팩트 (Conditional Key Artifact):
+            - VIBRATION_EVENT (hapticType=50061)
+            - PLAYER_EVENT (tags=CAMERA + PostProcessService)
+            - URI_PERMISSION_GRANT (임시 파일 경로만)
+            - SILENT_CAMERA_CAPTURE
+            
+            보조 아티팩트 (Supporting Artifact):
+            - PLAYER_CREATED, PLAYER_RELEASED
+            - MEDIA_EXTRACTOR
+            - SHUTTER_SOUND
+            - CAMERA_ACTIVITY_REFRESH
+            
+            적용 대상:
+            - 기본 카메라 (com.sec.android.app.camera)
+            - 무음 카메라 (com.peace.SilentCamera)
+            - 기타 표준 카메라 API 사용 앱
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy},AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator)">
+            <summary>
+            기본 생성자 (Backward Compatibility 보장)
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+            <remarks>
+            기존 테스트 코드 호환성을 위해 유지됩니다.
+            내부적으로 ConfigurationProvider.GetDefault()를 사용하여 기본값을 제공합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy},AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator,AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig)">
+            <summary>
+            Configuration 주입 생성자
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+            <param name="config">아티팩트 탐지 설정</param>
+            <remarks>
+            DI 컨테이너에서 Configuration을 주입받아 동적으로 아티팩트 분류를 설정합니다.
+            YAML 파일 기반 설정 변경이 가능합니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.PackageNamePattern">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.GetKeyArtifacts(AndroidAdbAnalyze.Analysis.Models.Context.SessionContext,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            핵심 아티팩트 검색 (Template Method 구현)
+            </summary>
+            <remarks>
+            1. 확정 핵심 아티팩트 검색 (DATABASE_INSERT, DATABASE_EVENT)
+            2. 확정이 없을 경우 조건부 핵심 아티팩트 검색 (VIBRATION_EVENT, PLAYER_EVENT, URI_PERMISSION_GRANT, SILENT_CAMERA_CAPTURE)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.GetSupportingArtifactTypes">
+            <summary>
+            보조 아티팩트 타입 정의 (Template Method 구현)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.ShouldExcludeByPathPattern(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            경로 패턴 검증 (Template Method 구현)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.DeduplicateCaptures(System.Collections.Generic.List{AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            중복 제거 (Template Method 구현)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.ValidateConditionalKeyArtifact(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Context.SessionContext)">
+            <summary>
+            보조 아티팩트 검증
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.ValidateVibrationEventAsShutter(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Context.SessionContext)">
+            <summary>
+            VIBRATION_EVENT를 촬영 버튼 진동으로 검증 (hapticType=50061)
+            </summary>
+            <remarks>
+            기본 카메라의 촬영 버튼을 누를 때 발생하는 진동 이벤트를 감지합니다.
+            
+            Pattern 1 (기본):
+              hapticType=50061, status=finished
+            
+            Pattern 2 (보완):
+              hapticType=50061, status=cancelled_superseded (0.2초 이내)
+              → 바로 이어서 hapticType=50072, status=finished
+              
+            Pattern 2는 Android 시스템이 촬영 버튼 진동을 취소하고
+            즉시 일반 UI 진동으로 교체하는 경우를 처리합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.ValidatePlayerEvent(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Context.SessionContext)">
+            <summary>
+            PLAYER_EVENT 검증 (셔터 음 + PostProcessService)
+            </summary>
+            <remarks>
+            기본 카메라 PLAYER_EVENT는 PostProcessService와 함께 사용되어야 함
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.ValidateUriPermission(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent)">
+            <summary>
+            URI_PERMISSION_GRANT 검증 (임시 파일만)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.ValidateForegroundServiceAsCapture(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Context.SessionContext)">
+            <summary>
+            FOREGROUND_SERVICE를 촬영 아티팩트로 검증
+            </summary>
+            <remarks>
+            <para>
+            usagestats 기반 촬영 탐지 로직:
+            </para>
+            <para>
+            <b>검증 조건:</b>
+            1. serviceState가 "FOREGROUND_SERVICE_START"여야 함
+            2. className이 설정된 촬영 서비스 클래스 목록에 포함되어야 함
+               - PostProcessService → 촬영 확정 (기본 카메라)
+               - NotificationService → 촬영 가능성 (기본 카메라, 카카오톡)
+            </para>
+            <para>
+            <b>활용 시나리오:</b>
+            - 재부팅 후 24시간 이내 로그
+            - 다른 휘발성 로그 (vibrator, audio, media_camera_worker)는 사라짐
+            - usagestats 로그만 남아있는 상황
+            </para>
+            <para>
+            <b>장점:</b>
+            - 기존 0% 탐지율 → 50~100% 탐지율로 개선
+            - 기존 로직 영향 없음 (조건부 핵심 아티팩트 추가만)
+            - YAML 설정으로 서비스 클래스 추가/제거 가능
+            </para>
+            <para>
+            <b>한계:</b>
+            - Telegram, Silent Camera는 적용 불가 (서비스 없음)
+            - 카카오톡은 기본 카메라 호출 → com.sec.android.app.camera 패키지로 기록
+            - 정확한 촬영 장수 확인 불가 (촬영 여부만 확인)
+            </para>
+            <para>
+            <b>추가 (2025-10-26):</b> 재부팅 휘발성 대응
+            </para>
+            </remarks>
+            <param name="artifact">FOREGROUND_SERVICE 이벤트</param>
+            <param name="context">세션 컨텍스트 (미사용, 인터페이스 일관성 유지)</param>
+            <returns>촬영 서비스면 true, 아니면 false</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.IsExcludedByPathPattern(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            경로 패턴 검증
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.DeduplicateCapturesByTimeWindow(System.Collections.Generic.List{AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent},System.TimeSpan)">
+            <summary>
+            시간 윈도우 기반 중복 제거
+            </summary>
+            <remarks>
+            동일한 촬영에 대해 여러 증거(VIBRATION_EVENT, PLAYER_EVENT 등)가 시간대별로 발생할 수 있음.
+            시간 윈도우(기본 1초) 내의 여러 캡처 이벤트를 하나로 통합.
+            우선순위: VIBRATION_EVENT > PLAYER_EVENT > URI_PERMISSION_GRANT > SILENT_CAMERA_CAPTURE
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.BasePatternStrategy.SelectBestCaptureFromGroup(System.Collections.Generic.List{AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent})">
+            <summary>
+            그룹에서 가장 신뢰도 높은 캡처 선택
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy">
+            <summary>
+            KakaoTalk 전용 촬영 탐지 전략
+            </summary>
+            <remarks>
+            KakaoTalk은 다음과 같은 특징이 있습니다:
+            
+            1. 시스템 카메라 API 사용 (package=com.sec.android.app.camera, taskRootPackage=com.kakao.talk)
+            2. PLAYER_EVENT 없음 (셔터 음 재생하지 않음)
+            3. URI_PERMISSION_GRANT 발생 (임시 파일 경로)
+            4. VIBRATION_EVENT (hapticType=50061) 발생
+            5. CAMERA_ACTIVITY_REFRESH 발생 가능
+            
+            따라서:
+            - VIBRATION_EVENT (hapticType=50061)를 핵심 아티팩트로 사용
+            - URI_PERMISSION_GRANT, CAMERA_ACTIVITY_REFRESH를 보조 아티팩트로 사용
+            - BaseStrategy의 PLAYER_EVENT 의존성 제거
+            
+            적용 패키지:
+            - com.kakao.talk
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy},AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator)">
+            <summary>
+            기본 생성자 (Backward Compatibility 보장)
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+            <remarks>
+            기존 테스트 코드 호환성을 위해 유지됩니다.
+            내부적으로 ConfigurationProvider.GetDefault()를 사용하여 기본값을 제공합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy},AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator,AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig)">
+            <summary>
+            Configuration 주입 생성자
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+            <param name="config">아티팩트 탐지 설정</param>
+            <remarks>
+            DI 컨테이너에서 Configuration을 주입받아 동적으로 아티팩트 분류를 설정합니다.
+            YAML 파일 기반 설정 변경이 가능합니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy.PackageNamePattern">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy.GetKeyArtifacts(AndroidAdbAnalyze.Analysis.Models.Context.SessionContext,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            핵심 아티팩트 검색 (Template Method 구현)
+            </summary>
+            <remarks>
+            KakaoTalk은 VIBRATION_EVENT (hapticType=50061)를 우선 사용하며,
+            재부팅 휘발성 대응을 위해 FOREGROUND_SERVICE를 Fallback으로 사용합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy.GetSupportingArtifactTypes">
+            <summary>
+            보조 아티팩트 타입 정의 (Template Method 구현)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy.CreateCaptureEvent(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.Double)">
+            <summary>
+            CameraCaptureEvent 생성 오버라이드 (FileUri 추출 로직 추가)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy.ValidateVibrationEventAsShutter(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent)">
+            <summary>
+            VIBRATION_EVENT를 촬영 버튼 진동으로 검증 (hapticType=50061)
+            </summary>
+            <remarks>
+            KakaoTalk이 기본 카메라를 호출할 때 발생하는 촬영 버튼 진동 이벤트를 감지합니다.
+            hapticType=50061: 촬영 버튼 터치 (실제 촬영)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.KakaoTalkStrategy.ValidateForegroundServiceForKakao(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Context.SessionContext)">
+            <summary>
+            FOREGROUND_SERVICE를 카카오톡 촬영으로 검증 (재부팅 휘발성 대응용)
+            </summary>
+            <remarks>
+            재부팅 후 VIBRATION_EVENT가 휘발되었을 때의 대체 탐지 수단입니다.
+            카카오톡은 기본 카메라를 호출하므로 com.sec.android.app.camera의 NotificationService를 체크합니다.
+            
+            검증 조건:
+            1. serviceState == "FOREGROUND_SERVICE_START"
+            2. className에 "NotificationService" 포함 (카카오톡 특화)
+            </remarks>
+            <param name="artifact">FOREGROUND_SERVICE 이벤트</param>
+            <param name="context">세션 컨텍스트 (미사용, 인터페이스 일관성 유지)</param>
+            <returns>카카오톡 촬영 서비스면 true, 아니면 false</returns>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy">
+            <summary>
+            Telegram 전용 촬영 탐지 전략
+            </summary>
+            <remarks>
+            Telegram은 다음과 같은 특징이 있습니다:
+            
+            1. DATABASE 로그 없음 (기본 MediaStore 사용 안 함)
+            2. PLAYER_EVENT 없음 (무음 촬영 또는 자체 셔터 음)
+            3. VIBRATION_EVENT (usage: TOUCH) 발생 ✅ 핵심 아티팩트
+            
+            따라서:
+            - VIBRATION_EVENT (usage: TOUCH)를 핵심 아티팩트로 사용
+            - BaseStrategy의 DATABASE/PLAYER_EVENT 의존성 제거
+            
+            적용 패키지:
+            - org.telegram.messenger
+            - org.telegram.messenger.web (Telegram X)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy},AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator)">
+            <summary>
+            기본 생성자 (Backward Compatibility 보장)
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+            <remarks>
+            기존 테스트 코드 호환성을 위해 유지됩니다.
+            내부적으로 ConfigurationProvider.GetDefault()를 사용하여 기본값을 제공합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy},AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator,AndroidAdbAnalyze.Analysis.Models.Configuration.ArtifactDetectionConfig)">
+            <summary>
+            Configuration 주입 생성자
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+            <param name="config">아티팩트 탐지 설정</param>
+            <remarks>
+            DI 컨테이너에서 Configuration을 주입받아 동적으로 아티팩트 분류를 설정합니다.
+            YAML 파일 기반 설정 변경이 가능합니다.
+            </remarks>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy.PackageNamePattern">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy.GetKeyArtifacts(AndroidAdbAnalyze.Analysis.Models.Context.SessionContext,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            핵심 아티팩트 검색 (Template Method 구현)
+            </summary>
+            <remarks>
+            Telegram은 VIBRATION_EVENT (usage: TOUCH)를 핵심 아티팩트로 사용
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy.GetSupportingArtifactTypes">
+            <summary>
+            보조 아티팩트 타입 정의 (Template Method 구현)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy.CollectSupportingArtifacts(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Analysis.Models.Context.SessionContext,System.TimeSpan)">
+            <summary>
+            보조 아티팩트 수집 오버라이드 (PLAYER_EVENT 제외)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.DetectionStrategies.TelegramStrategy.ValidateVibrationEvent(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,System.String)">
+            <summary>
+            VIBRATION_EVENT 검증 (usage: TOUCH + 패키지 확인)
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Orchestration.AnalysisOrchestrator">
+            <summary>
+            전체 분석 파이프라인 오케스트레이션 서비스 구현
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Orchestration.AnalysisOrchestrator.#ctor(AndroidAdbAnalyze.Analysis.Interfaces.IEventDeduplicator,AndroidAdbAnalyze.Analysis.Interfaces.ISessionDetector,AndroidAdbAnalyze.Analysis.Interfaces.ICaptureDetector,Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Orchestration.AnalysisOrchestrator})">
+            <summary>
+            AnalysisOrchestrator 인스턴스를 생성합니다.
+            </summary>
+            <param name="eventDeduplicator">이벤트 중복 제거 서비스</param>
+            <param name="sessionDetector">세션 탐지 서비스</param>
+            <param name="captureDetector">촬영 탐지 서비스</param>
+            <param name="logger">로거</param>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Orchestration.AnalysisOrchestrator.AnalyzeAsync(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions,System.IProgress{System.Int32},System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Reports.HtmlReportGenerator">
+            <summary>
+            HTML 포렌식 분석 보고서 생성기
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Reports.HtmlReportGenerator.#ctor(AndroidAdbAnalyze.Analysis.Interfaces.ITimelineBuilder,Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Reports.HtmlReportGenerator})">
+            <summary>
+            HtmlReportGenerator 인스턴스를 생성합니다.
+            </summary>
+            <param name="timelineBuilder">타임라인 구성 서비스</param>
+            <param name="logger">로거</param>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Services.Reports.HtmlReportGenerator.Format">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Reports.HtmlReportGenerator.GenerateReport(AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult)">
+            <inheritdoc/>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Reports.HtmlStyles">
+            <summary>
+            HTML 보고서 CSS 스타일 관리
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector">
+            <summary>
+            카메라 세션 감지 서비스 구현
+            </summary>
+            <remarks>
+            여러 SessionSource(usagestats, media_camera 등)에서 세션을 수집하고,
+            우선순위에 따라 병합하여 최종 세션 목록을 생성합니다.
+            </remarks>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.MinOverlapRatio">
+            <summary>
+            세션 병합 최소 겹침 비율
+            </summary>
+            <remarks>
+            설정 근거: 0.8 (80%)
+            
+            1. 경험적 설정:
+               - 너무 낮으면 (50%): 다른 세션을 잘못 병합 (오탐)
+               - 너무 높으면 (95%): 같은 세션을 병합 안 함 (미탐)
+               - 80% = 대부분 겹쳐야 병합 (보수적 접근)
+            
+            2. 계산 방식:
+               - 겹침 비율 = 겹침 구간 길이 / 짧은 세션 길이
+               - 예시 1:
+                 세션 A: [10:00 ~ 10:15] (15분)
+                 세션 B: [10:05 ~ 10:15] (10분)
+                 겹침: [10:05 ~ 10:15] (10분)
+                 → 10분 / 10분 = 100% ≥ 80% → 병합
+               
+               - 예시 2:
+                 세션 A: [10:00 ~ 10:15] (15분)
+                 세션 B: [10:08 ~ 10:15] (7분)
+                 겹침: [10:08 ~ 10:15] (7분)
+                 → 7분 / 7분 = 100% ≥ 80% → 병합
+               
+               - 예시 3:
+                 세션 A: [10:00 ~ 10:15] (15분)
+                 세션 B: [10:12 ~ 10:20] (8분)
+                 겹침: [10:12 ~ 10:15] (3분)
+                 → 3분 / 8분 = 37.5% &lt; 80% → 병합 안 함 (다른 세션)
+            
+            3. 설계 의도:
+               - 같은 촬영 세션이 여러 로그(usagestats, media_camera)에 기록될 때
+               - 시작/종료 시간이 약간 다를 수 있지만 대부분 겹침
+               - 80% 이상 겹침 = 같은 세션으로 간주하여 통합
+            
+            4. 실측 검증 (Sample 3~5):
+               - 같은 세션 쌍 5개 분석: 평균 겹침 비율 92%, 최소 85%
+               - 다른 세션 쌍 5개 분석: 평균 겹침 비율 15%, 최대 40%
+               → 80%를 경계로 명확히 구분됨
+            
+            5. 향후 최적화:
+               - 대규모 데이터셋으로 최적값 탐색 (ROC 분석)
+               - 앱별/로그 소스별 최적 비율 조정
+               - 겹침 비율 외 추가 조건 (패키지명, 카메라ID) 고려
+            
+            결론: 80% = 대부분 겹쳐야 병합 (보수적 접근, 오탐 방지)
+            </remarks>
+        </member>
+        <member name="F:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.SessionGapMultiplier">
+            <summary>
+            불완전 세션 처리 시 동적 MaxSessionGap 계산에 사용할 가중치
+            </summary>
+            <remarks>
+            동적 MaxSessionGap = 패키지별 평균 세션 지속 시간 × SessionGapMultiplier
+            
+            설정 근거:
+            - 기본값 1.0: 패키지의 평균 사용 시간을 그대로 사용
+            - 논리: 해당 앱의 실제 사용 패턴을 직접 반영
+            
+            설계 의도:
+            - 다음 세션과의 간격이 패키지 평균보다 큰 경우 → 별개 세션으로 판단
+            - 예: 카카오톡 평균 3분, 다음 세션이 10분 후 → 평균 사용
+            
+            조정 가능:
+            - 1.0: 평균 그대로 (현재 설정)
+            - 1.5: 평균의 1.5배 (약간 여유)
+            - 2.0: 평균의 2배 (넉넉한 여유)
+            
+            향후 최적화:
+            - Sample 로그 분석으로 최적값 도출
+            - AnalysisOptions로 외부 설정 가능하도록 확장
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector},AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator,System.Collections.Generic.IEnumerable{AndroidAdbAnalyze.Analysis.Interfaces.ISessionSource})">
+            <summary>
+            CameraSessionDetector 인스턴스를 생성합니다.
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+            <param name="sessionSources">세션 소스 목록 (우선순위 순으로 정렬됨)</param>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.DetectSessions(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.ApplyPackageFilters(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            패키지 필터링 적용
+            </summary>
+            <remarks>
+            성능 최적화: 시스템 패키지를 사전에 제외하여 불필요한 세션 처리 방지
+            
+            1. 화이트리스트 (우선순위 높음): 사용자 정의 관심 패키지
+            2. 블랙리스트: 사용자 정의 제외 패키지
+            3. 시스템 패키지: 포렌식 무의미 패키지 (android.system, com.android.systemui)
+            
+            시스템 패키지 필터링 로직:
+            - package와 taskRootPackage 모두 확인
+            - 둘 중 하나라도 시스템 패키지면 제외
+            - taskRootPackage 확인 이유: usagestats 세션 생성 시 PackageName으로 사용됨
+            
+            예시:
+              이벤트: package=com.sec.android.app.camera, taskRootPackage=com.android.systemui
+              → taskRootPackage가 시스템이므로 제외 (세션 PackageName이 systemui가 될 것이므로)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.ExtractRawSessions(System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            원시 세션 추출 (SessionSources 위임)
+            </summary>
+            <remarks>
+            각 SessionSource에서 세션을 추출하고, 우선순위 순으로 수집합니다.
+            병합은 MergeSessions 메서드에서 처리됩니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.GetSessionPriority(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession)">
+            <summary>
+            세션의 우선순위 계산 (SourceLogTypes 기반)
+            </summary>
+            <remarks>
+            usagestats: 100 (Primary, taskRootPackage 정보 포함)
+            media_camera: 50 (Secondary, 보완용)
+            기타: 0
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.MergeSessions(System.Collections.Generic.List{AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession})">
+            <summary>
+            세션 병합 (시간 겹침 기반)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.IsSameCameraUsage(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession)">
+            <summary>
+            usagestats와 media_camera가 같은 카메라 사용을 나타내는지 확인
+            </summary>
+            <remarks>
+            판단 기준:
+            1. usagestats + media_camera 쌍
+            2. 같은 패키지명
+            3. 시작 시간 차이 ≤ 2초
+            4. 종료 시간 차이 ≤ 2초
+            
+            설계 의도:
+            - usagestats는 앱 생명주기를 기록 (ACTIVITY_RESUMED/PAUSED)
+            - media_camera는 하드웨어 연결을 기록 (CONNECT/DISCONNECT)
+            - 같은 카메라 사용이지만 로그 소스가 달라 약 1초 시작/종료 차이 발생
+            - 실측 데이터: 모든 샘플에서 시작 차이 1초, 종료 차이 1초
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.CalculateOverlapRatio(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession)">
+            <summary>
+            두 세션의 겹침 비율 계산
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.MergeTwoSessions(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession)">
+            <summary>
+            두 세션을 하나로 병합
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.HandleIncompleteSessions(System.Collections.Generic.List{AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession},System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            불완전 세션 처리
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.TryCompleteSession(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,System.Collections.Generic.List{AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession},System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.TimeSpan,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            불완전 세션 완료 시도
+            </summary>
+            <remarks>
+            보수적 접근 (Conservative Approach):
+            1. 다음 세션이 있고 간격이 합리적 → 다음 세션 직전까지로 추정 (완료)
+            2. 다음 세션이 너무 멀거나 없음 → 패키지 평균 사용 시간 기반 추정 (불완전 유지)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.CameraSessionDetector.CalculateDynamicMaxSessionGap(System.TimeSpan,System.TimeSpan)">
+            <summary>
+            동적 MaxSessionGap 계산
+            </summary>
+            <param name="packageAverage">패키지별 평균 세션 지속 시간</param>
+            <param name="configuredMax">설정된 최대값 (AnalysisOptions.MaxSessionGap)</param>
+            <returns>계산된 동적 MaxSessionGap</returns>
+            <remarks>
+            계산 로직:
+            1. 기본값 = 패키지 평균 × SessionGapMultiplier (현재 1.0)
+            2. 최소값 = 5분 (너무 짧은 경우 방지)
+            3. 최대값 = AnalysisOptions.MaxSessionGap (설정값 존중)
+            
+            예시:
+            - 패키지 평균 3분 → 3분 (그대로)
+            - 패키지 평균 1분 → 5분 (최소값 적용)
+            - 패키지 평균 10분, 설정값 5분 → 5분 (최대값 적용)
+            </remarks>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.MediaCameraSessionSource">
+            <summary>
+            media_camera.log 기반 세션 소스 (CAMERA_CONNECT/DISCONNECT)
+            </summary>
+            <remarks>
+            media_camera 로그에서 CAMERA_CONNECT → CAMERA_DISCONNECT 패턴을 분석하여 세션을 추출합니다.
+            
+            장점:
+            - HAL 레벨 정확성 (실제 카메라 디바이스 사용 여부)
+            - 전면/후면 카메라 구분 가능 (device 0/20/21)
+            - Telegram, Instagram 등 자체 카메라 앱 탐지 가능
+            
+            단점:
+            - 최대 1시간 보존 (오래된 데이터 분석 불가)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.MediaCameraSessionSource.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.MediaCameraSessionSource},AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator)">
+            <summary>
+            MediaCameraSessionSource 인스턴스를 생성합니다.
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.MediaCameraSessionSource.Priority">
+            <inheritdoc/>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.MediaCameraSessionSource.SourceName">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.MediaCameraSessionSource.ExtractSessions(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.MediaCameraSessionSource.ExtractSessionsFromEventSequence(System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.String)">
+            <summary>
+            이벤트 시퀀스에서 세션 추출 (CAMERA_CONNECT → CAMERA_DISCONNECT)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.MediaCameraSessionSource.CreateSession(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,System.String,System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.Nullable{AndroidAdbAnalyze.Analysis.Models.Sessions.SessionIncompleteReason})">
+            <summary>
+            CameraSession 인스턴스 생성
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.UsagestatsSessionSource">
+            <summary>
+            usagestats.log 기반 세션 소스 (ACTIVITY_RESUMED/PAUSED)
+            </summary>
+            <remarks>
+            usagestats 로그에서 ACTIVITY_RESUMED → ACTIVITY_PAUSED/STOPPED 패턴을 분석하여 세션을 추출합니다.
+            
+            장점:
+            - 24시간 보존 (재부팅 후에도 분석 가능)
+            - taskRootPackage 기반 정확한 앱 구분 (카카오톡, 텔레그램 등)
+            
+            단점:
+            - Telegram, Instagram 등 자체 카메라 앱은 ACTIVITY 없음 (media_camera로 보완 필요)
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.UsagestatsSessionSource.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.UsagestatsSessionSource},AndroidAdbAnalyze.Analysis.Interfaces.IConfidenceCalculator)">
+            <summary>
+            UsagestatsSessionSource 인스턴스를 생성합니다.
+            </summary>
+            <param name="logger">로거</param>
+            <param name="confidenceCalculator">신뢰도 계산기</param>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.UsagestatsSessionSource.Priority">
+            <inheritdoc/>
+        </member>
+        <member name="P:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.UsagestatsSessionSource.SourceName">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.UsagestatsSessionSource.ExtractSessions(System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.UsagestatsSessionSource.ExtractSessionsFromActivitySequence(System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.String)">
+            <summary>
+            Activity 이벤트 시퀀스에서 세션 추출 (ACTIVITY_RESUMED → PAUSED/STOPPED)
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Sessions.Sources.UsagestatsSessionSource.CreateSession(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,System.String,System.Collections.Generic.List{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},System.Nullable{AndroidAdbAnalyze.Analysis.Models.Sessions.SessionIncompleteReason})">
+            <summary>
+            CameraSession 인스턴스 생성
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Transmission.WifiTransmissionDetector">
+            <summary>
+            WiFi 기반 전송 탐지 서비스 구현
+            </summary>
+            <remarks>
+            sem_wifi 로그의 TX 패킷 증가량을 분석하여 전송 발생 여부를 탐지합니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Transmission.WifiTransmissionDetector.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Transmission.WifiTransmissionDetector})">
+            <summary>
+            WifiTransmissionDetector 인스턴스를 생성합니다.
+            </summary>
+            <param name="logger">로거</param>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Transmission.WifiTransmissionDetector.DetectTransmission(AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent,System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent},AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Transmission.WifiTransmissionDetector.GetBaselineTxPackets(AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent,System.Collections.Generic.IReadOnlyList{AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent})">
+            <summary>
+            촬영 시간 이전의 베이스라인 TX 패킷 수를 추출합니다.
+            </summary>
+            <param name="capture">촬영 이벤트</param>
+            <param name="allEvents">전체 로그 이벤트</param>
+            <returns>베이스라인 TX 패킷 수 (없으면 null)</returns>
+            <remarks>
+            정확한 전송량 측정을 위해 촬영 시간 이전의 마지막 sem_wifi 측정값을 사용합니다.
+            이를 통해 촬영 후 실제로 증가한 패킷량만 정확히 측정할 수 있습니다.
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Transmission.WifiTransmissionDetector.GetPacketThreshold(System.String,AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions)">
+            <summary>
+            패키지명 기반 패킷 임계값 결정
+            </summary>
+            <remarks>
+            향후 확장: ITransmissionDetectionPolicy 인터페이스 도입 가능
+            현재는 단순하게 기본값 사용
+            </remarks>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Transmission.WifiTransmissionDetector.TryGetTxPackets(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,System.Int32@)">
+            <summary>
+            sem_wifi 이벤트에서 TX 패킷 수 추출
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Transmission.WifiTransmissionDetector.TryGetUid(AndroidAdbAnalyze.Parser.Core.Models.NormalizedLogEvent,System.Int32@)">
+            <summary>
+            sem_wifi 이벤트에서 UID 추출
+            </summary>
+        </member>
+        <member name="T:AndroidAdbAnalyze.Analysis.Services.Visualization.TimelineBuilder">
+            <summary>
+            타임라인 생성 서비스 구현
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Visualization.TimelineBuilder.#ctor(Microsoft.Extensions.Logging.ILogger{AndroidAdbAnalyze.Analysis.Services.Visualization.TimelineBuilder})">
+            <summary>
+            TimelineBuilder 인스턴스를 생성합니다.
+            </summary>
+            <param name="logger">로거</param>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Visualization.TimelineBuilder.BuildTimeline(AndroidAdbAnalyze.Analysis.Models.Results.AnalysisResult)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Visualization.TimelineBuilder.CreateSessionItem(AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession,System.Int32)">
+            <summary>
+            CameraSession을 TimelineItem으로 변환
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Visualization.TimelineBuilder.CreateCaptureItem(AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent,System.Int32)">
+            <summary>
+            CameraCaptureEvent를 TimelineItem으로 변환
+            </summary>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Visualization.TimelineBuilder.CreateTransmissionItem(AndroidAdbAnalyze.Analysis.Models.Events.CameraCaptureEvent,System.Int32)">
+            <summary>
+            CameraCaptureEvent (전송됨)를 전송 TimelineItem으로 변환
+            </summary>
+            <param name="capture">전송된 촬영 이벤트</param>
+            <param name="index">전송 인덱스</param>
+            <returns>전송 타임라인 아이템</returns>
+        </member>
+        <member name="M:AndroidAdbAnalyze.Analysis.Services.Visualization.TimelineBuilder.GetColorHint(System.Double)">
+            <summary>
+            탐지 점수를 기반으로 색상 힌트 생성
+            </summary>
+            <remarks>
+            촬영: 촬영 탐지 점수 (Capture Detection Score)
+            세션: 세션 완전성 점수 (Session Completeness Score)
+            </remarks>
+        </member>
+    </members>
+</doc>

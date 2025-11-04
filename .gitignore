@@ -83,3 +83,39 @@ coverage.*.xml
 
 # Research Paper files
 Paper/
+Doc/
+sample_logs/
+lab/
+.tmp.driveupload/
+.tmp.drivedownload/
+
+# Specstory AI history
+.specstory/history/
+
+# Korean documentation and reports
+**/*_분석_*.md
+**/*_테스트_*.md
+**/*_보고서*.md
+**/*_검증_*.md
+**/*_수정_*.md
+**/*_종합_*.md
+**/*_요약*.md
+**/*_결과*.md
+**/*_원인_*.md
+**/*vs_*.md
+
+# Test output files
+test_*.txt
+test_*.ps1
+**/test_*.txt
+**/test_output*.txt
+sample*_test*.txt
+sample*_output*.txt
+sample*_session*.txt
+
+# Phase reports
+PHASE_*_REPORT.md
+**/PHASE_*.md
+
+# Temporary test data
+**/TestConstants/

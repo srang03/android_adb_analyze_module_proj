@@ -251,11 +251,216 @@ internal static class HtmlStyles
             position: relative;
         }
         
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
+        .chart-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-reset-zoom {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-reset-zoom:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-reset-zoom:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+        }
+        
+        .zoom-hint {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        /* 타임라인 헤더 (스크롤 밖) */
+        .timeline-header {
+            text-align: center;
             margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            margin: 0 0 8px 0;
+        }
+        
+        .timeline-date {
+            font-size: 15px;
+            color: #f0f0f0;
+            margin: 0;
+        }
+        
+        /* 타임라인 범례 컨테이너 (스크롤 밖) */
+        .timeline-legend-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .legend-box {
+            width: 20px;
+            height: 14px;
+            border-radius: 3px;
+            border: 2px solid;
+        }
+        
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid;
+        }
+        
+        .scroll-hint {
+            color: #7f8c8d;
+            font-size: 14px;
+            font-style: italic;
+        }
+        
+        /* 차트 메인 래퍼 (Flexbox) */
+        .chart-main-wrapper {
+            display: flex;
+            width: 100%;
+            margin: 20px 0;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+        
+        /* Y축 + 범례 고정 영역 (왼쪽 150px) */
+        .timeline-y-axis-fixed {
+            width: 150px;
+            min-width: 150px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-right: 3px solid #dee2e6;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        /* Y축 제목 */
+        .y-axis-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        /* Y축 레이블 영역 */
+        .y-axis-labels {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 20px 0;
+        }
+        
+        /* 개별 Y축 레이블 */
+        .y-label-item {
+            font-size: 12px;
+            font-weight: 600;
+            color: #34495e;
+            text-align: right;
+            padding: 8px 10px 8px 5px;
+            border-right: 3px solid #3498db;
+            border-radius: 4px 0 0 4px;
+        }
+        
+        /* 왼쪽 범례 영역 */
+        .timeline-legend-left {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #dee2e6;
+        }
+        
+        .timeline-legend-left .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .timeline-legend-left .legend-box {
+            width: 16px;
+            height: 10px;
+            border-radius: 2px;
+            border: 2px solid;
+            flex-shrink: 0;
+        }
+        
+        .timeline-legend-left .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 2px solid;
+            flex-shrink: 0;
+        }
+        
+        .timeline-legend-left .legend-label {
+            line-height: 1.2;
+        }
+        
+        /* 차트 스크롤 영역 (오른쪽) */
+        .chart-scroll-area {
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: hidden;
+            position: relative;
+        }
+        
+        /* 차트 컨테이너 (고정 크기) */
+        .chart-container-fixed {
+            width: 3000px;
+            height: 400px;
+            position: relative;
         }
         
         /* ========== 알림 박스 ========== */

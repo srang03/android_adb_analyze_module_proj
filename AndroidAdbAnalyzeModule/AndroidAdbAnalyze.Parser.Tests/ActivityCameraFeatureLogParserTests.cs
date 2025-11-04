@@ -538,9 +538,9 @@ public class ActivityCameraFeatureLogParserTests
         {
             _output.WriteLine($"\n✅ Silent Camera Activity Detected!");
             _output.WriteLine($"   Count: {silentCameraEvents.Count}");
-            _output.WriteLine($"   💡 This can be used as supporting evidence for capture detection");
+            _output.WriteLine($"   💡 This can be used as supporting artifact for capture detection");
             
-            silentCameraEvents.Should().NotBeEmpty("Should detect silent camera activity refresh as supporting evidence");
+            silentCameraEvents.Should().NotBeEmpty("Should detect silent camera activity refresh as supporting artifact");
         }
         else
         {

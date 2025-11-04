@@ -17,6 +17,13 @@ public sealed class AnalysisOrchestrator : IAnalysisOrchestrator
     private readonly ICaptureDetector _captureDetector;
     private readonly ILogger<AnalysisOrchestrator> _logger;
 
+    /// <summary>
+    /// AnalysisOrchestrator 인스턴스를 생성합니다.
+    /// </summary>
+    /// <param name="eventDeduplicator">이벤트 중복 제거 서비스</param>
+    /// <param name="sessionDetector">세션 탐지 서비스</param>
+    /// <param name="captureDetector">촬영 탐지 서비스</param>
+    /// <param name="logger">로거</param>
     public AnalysisOrchestrator(
         IEventDeduplicator eventDeduplicator,
         ISessionDetector sessionDetector,
@@ -109,7 +116,7 @@ public sealed class AnalysisOrchestrator : IAnalysisOrchestrator
                     StartEventId = session.StartEventId,
                     EndEventId = session.EndEventId,
                     IncompleteReason = session.IncompleteReason,
-                    ConfidenceScore = session.ConfidenceScore,
+                    SessionCompletenessScore = session.SessionCompletenessScore,
                     SourceEventIds = session.SourceEventIds
                 };
                 updatedSessions.Add(updatedSession);
@@ -126,9 +133,22 @@ public sealed class AnalysisOrchestrator : IAnalysisOrchestrator
             _logger.LogInformation("촬영 감지 완료: {Count}개 촬영 이벤트", allCaptures.Count);
             progress?.Report(80);
 
-            // Phase 4: 통계 계산 (80-100%)
+            // Phase 3.5: 재부팅 이벤트 추출 (80-85%)
             cancellationToken.ThrowIfCancellationRequested();
-            _logger.LogDebug("Phase 4/4: 통계 계산 시작");
+            _logger.LogDebug("Phase 3.5/5: 재부팅 이벤트 추출 시작");
+
+            var rebootEvents = uniqueEvents
+                .Where(e => e.EventType == "DEVICE_BOOT_COMPLETED")
+                .OrderBy(e => e.Timestamp)
+                .Take(1)  // 첫 번째 bootCompleted만 추출
+                .ToList();
+
+            _logger.LogInformation("재부팅 이벤트 추출 완료: {Count}개", rebootEvents.Count);
+            progress?.Report(85);
+
+            // Phase 4: 통계 계산 (85-100%)
+            cancellationToken.ThrowIfCancellationRequested();
+            _logger.LogDebug("Phase 4/5: 통계 계산 시작");
 
             stopwatch.Stop();
             var endTime = DateTime.UtcNow;
@@ -140,6 +160,7 @@ public sealed class AnalysisOrchestrator : IAnalysisOrchestrator
                 CompleteSessions = updatedSessions.Count(s => !s.IsIncomplete),
                 IncompleteSessions = updatedSessions.Count(s => s.IsIncomplete),
                 TotalCaptureEvents = allCaptures.Count,
+                TotalRebootEvents = rebootEvents.Count,
                 DeduplicatedEvents = events.Count - uniqueEvents.Count,
                 AnalysisStartTime = startTime,
                 AnalysisEndTime = endTime,
@@ -155,6 +176,7 @@ public sealed class AnalysisOrchestrator : IAnalysisOrchestrator
                 Success = true,
                 Sessions = updatedSessions,
                 CaptureEvents = allCaptures,
+                RebootEvents = rebootEvents,
                 SourceEvents = events,
                 DeduplicationDetails = deduplicationInfo,
                 DeviceInfo = events.FirstOrDefault()?.DeviceInfo,

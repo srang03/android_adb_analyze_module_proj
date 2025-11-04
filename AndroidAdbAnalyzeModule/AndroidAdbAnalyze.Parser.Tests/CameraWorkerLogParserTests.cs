@@ -139,8 +139,8 @@ public class CameraWorkerLogParserTests
         var result = await parser.ParseAsync(logPath, options);
 
         // Assert
-        var insertEndEvents = result.Events.Where(e => e.EventType == LogEventTypes.MEDIA_INSERT_END).ToList();
-        insertEndEvents.Should().NotBeEmpty("Should parse MEDIA_INSERT_END events (capture confirmed)");
+        var insertEndEvents = result.Events.Where(e => e.EventType == LogEventTypes.DATABASE_INSERT).ToList();
+        insertEndEvents.Should().NotBeEmpty("Should parse DATABASE_INSERT events (capture confirmed)");
 
         // Verify event structure
         var firstInsert = insertEndEvents.First();
@@ -186,7 +186,7 @@ public class CameraWorkerLogParserTests
         // Assert
         var connectEvents = result.Events.Where(e => e.EventType == LogEventTypes.CAMERA_CONNECT).ToList();
         var disconnectEvents = result.Events.Where(e => e.EventType == LogEventTypes.CAMERA_DISCONNECT).ToList();
-        var insertEndEvents = result.Events.Where(e => e.EventType == LogEventTypes.MEDIA_INSERT_END).ToList();
+        var insertEndEvents = result.Events.Where(e => e.EventType == LogEventTypes.DATABASE_INSERT).ToList();
 
         // Camera app usage periods
         var cameraConnectEvents = connectEvents.Where(e => 
@@ -255,7 +255,7 @@ public class CameraWorkerLogParserTests
         var result = await parser.ParseAsync(logPath, options);
 
         // Assert
-        var insertEndEvents = result.Events.Where(e => e.EventType == LogEventTypes.MEDIA_INSERT_END)
+        var insertEndEvents = result.Events.Where(e => e.EventType == LogEventTypes.DATABASE_INSERT)
             .OrderBy(e => e.Timestamp)
             .ToList();
 
@@ -340,7 +340,7 @@ public class CameraWorkerLogParserTests
                                e.Attributes["package"].ToString()!.Contains("camera"));
 
         var sampleInsert = result.Events
-            .FirstOrDefault(e => e.EventType == LogEventTypes.MEDIA_INSERT_END);
+            .FirstOrDefault(e => e.EventType == LogEventTypes.DATABASE_INSERT);
 
         sampleConnect.Should().NotBeNull("Should have at least one camera connect event");
         sampleInsert.Should().NotBeNull("Should have at least one media insert event");
@@ -370,7 +370,7 @@ public class CameraWorkerLogParserTests
         // Demonstrate correlation approach
         _output.WriteLine($"\n  ⚠️  Note: Upper application can correlate these events:");
         _output.WriteLine($"    1. Find camera Connect/Disconnect pairs → Usage periods");
-        _output.WriteLine($"    2. Filter MEDIA_INSERT_END within usage periods → Actual captures");
+        _output.WriteLine($"    2. Filter DATABASE_INSERT within usage periods → Actual captures");
         _output.WriteLine($"    3. Combine with audio.txt (shutter sound) → 99.99% accuracy");
     }
 
@@ -471,7 +471,7 @@ public class CameraWorkerLogParserTests
 
         // Assert - Media insert events (pid, tid, mediaId)
         var insertEvents = result.Events
-            .Where(e => e.EventType == LogEventTypes.MEDIA_INSERT_END)
+            .Where(e => e.EventType == LogEventTypes.DATABASE_INSERT)
             .ToList();
 
         insertEvents.Should().NotBeEmpty("Should have media insert events");
@@ -611,12 +611,12 @@ public class CameraWorkerLogParserTests
         var connectEvents = result.Events.Count(e => e.EventType == LogEventTypes.CAMERA_CONNECT);
         var disconnectEvents = result.Events.Count(e => e.EventType == LogEventTypes.CAMERA_DISCONNECT);
         var insertStartEvents = result.Events.Count(e => e.EventType == LogEventTypes.MEDIA_INSERT_START);
-        var insertEndEvents = result.Events.Count(e => e.EventType == LogEventTypes.MEDIA_INSERT_END);
+        var insertEndEvents = result.Events.Count(e => e.EventType == LogEventTypes.DATABASE_INSERT);
 
         connectEvents.Should().BeGreaterThan(0, "Should have CAMERA_CONNECT events");
         disconnectEvents.Should().BeGreaterThan(0, "Should have CAMERA_DISCONNECT events");
         insertStartEvents.Should().BeGreaterThan(0, "Should have MEDIA_INSERT_START events");
-        insertEndEvents.Should().BeGreaterThan(0, "Should have MEDIA_INSERT_END events");
+        insertEndEvents.Should().BeGreaterThan(0, "Should have DATABASE_INSERT events");
 
         // CONNECT와 DISCONNECT 비율 검증
         // 로그 시작 시점에 이전 세션의 DISCONNECT 이벤트가 있을 수 있으므로
@@ -636,7 +636,7 @@ public class CameraWorkerLogParserTests
         _output.WriteLine($"  CAMERA_DISCONNECT: {disconnectEvents}");
         _output.WriteLine($"  CONNECT/DISCONNECT Ratio: {connectDisconnectRatio:F2}");
         _output.WriteLine($"\n  MEDIA_INSERT_START: {insertStartEvents}");
-        _output.WriteLine($"  MEDIA_INSERT_END: {insertEndEvents}");
+        _output.WriteLine($"  DATABASE_INSERT: {insertEndEvents}");
         _output.WriteLine($"  INSERT_START/INSERT_END Match: {insertStartEvents == insertEndEvents}");
     }
 
@@ -667,12 +667,12 @@ public class CameraWorkerLogParserTests
             .ToList();
 
         var insertEndEvents = result.Events
-            .Where(e => e.EventType == LogEventTypes.MEDIA_INSERT_END)
+            .Where(e => e.EventType == LogEventTypes.DATABASE_INSERT)
             .OrderBy(e => e.Timestamp)
             .ToList();
 
         insertStartEvents.Should().NotBeEmpty("Should have MEDIA_INSERT_START events");
-        insertEndEvents.Should().NotBeEmpty("Should have MEDIA_INSERT_END events");
+        insertEndEvents.Should().NotBeEmpty("Should have DATABASE_INSERT events");
 
         // PID/TID별로 START-END 페어 매칭
         var pairedInserts = new List<(DateTime startTime, DateTime endTime, int pid, int tid, long mediaId, double durationMs)>();
@@ -703,7 +703,7 @@ public class CameraWorkerLogParserTests
         // 로그 경계에서 일부 이벤트는 페어가 없을 수 있음
         var pairingRate = (double)pairedInserts.Count / insertStartEvents.Count;
         pairingRate.Should().BeGreaterThan(0.9, 
-            "Most MEDIA_INSERT_START events should have a matching MEDIA_INSERT_END");
+            "Most MEDIA_INSERT_START events should have a matching DATABASE_INSERT");
 
         _output.WriteLine($"✓ INSERT_START-END pairing validated");
         _output.WriteLine($"  Total START Events: {insertStartEvents.Count}");
@@ -804,7 +804,7 @@ public class CameraWorkerLogParserTests
         // database_event 섹션에서 파싱된 이벤트
         var databaseEvents = result.Events
             .Where(e => e.EventType == LogEventTypes.MEDIA_INSERT_START || 
-                       e.EventType == LogEventTypes.MEDIA_INSERT_END)
+                       e.EventType == LogEventTypes.DATABASE_INSERT)
             .ToList();
 
         cameraLifecycleEvents.Should().NotBeEmpty("Should parse camera lifecycle events from camera_event section");
@@ -835,7 +835,7 @@ public class CameraWorkerLogParserTests
         _output.WriteLine($"    CAMERA_DISCONNECT: {cameraLifecycleEvents.Count(e => e.EventType == LogEventTypes.CAMERA_DISCONNECT)}");
         _output.WriteLine($"\n  database_event section: {databaseEvents.Count} events");
         _output.WriteLine($"    MEDIA_INSERT_START: {databaseEvents.Count(e => e.EventType == LogEventTypes.MEDIA_INSERT_START)}");
-        _output.WriteLine($"    MEDIA_INSERT_END: {databaseEvents.Count(e => e.EventType == LogEventTypes.MEDIA_INSERT_END)}");
+        _output.WriteLine($"    DATABASE_INSERT: {databaseEvents.Count(e => e.EventType == LogEventTypes.DATABASE_INSERT)}");
     }
 
     [Fact]

@@ -1,0 +1,124 @@
+# ADB Vibrator Manager Log Configuration
+# Version: 1.0
+# Description: Configuration for parsing Android ADB vibrator manager system logs
+
+configSchemaVersion: "1.0"
+
+metadata:
+  logType: "adb_vibrator"
+  supportedVersions: ["15"]
+  displayName: "ADB Vibrator Manager Log (Android 15)"
+  description: "Parse ADB dumpsys vibrator logs for haptic feedback and vibration events"
+  author: "System"
+  createdDate: "2025-10-04"
+
+# File matching patterns
+filePatterns:
+  - "vibrator_manager.txt"
+  - "vibrator*.txt"
+  - "adb_vibrator*.log"
+  - "dumpsys_vibrator*.txt"
+
+# Global parsing settings
+globalSettings:
+  encoding: "utf-8"
+  skipEmptyLines: true
+  skipComments: false
+  commentPrefix: "#"
+  timeSeriesOrder: "ascending"  # ascending, descending, none
+  timestampFormat: "MM-dd HH:mm:ss.fff"
+  
+# Performance settings
+performance:
+  maxFileSizeMB: 500
+  timeoutSeconds: 300
+  bufferSizeKB: 64
+  useStreamingParser: false
+  parallelProcessing: false
+
+# Error handling
+errorHandling:
+  onInvalidLine: "skip"  # skip, abort, log
+  onMissingTimestamp: "skip"
+  onParsingError: "log"
+  validateSchema: true
+
+# Section definitions - divide log into manageable sections
+sections:
+  - id: "recent_vibrations"
+    name: "Recent Vibrations"
+    enabled: true
+    startMarker: "Recent vibrations:"
+    endMarker: "Aggregated vibration history:"
+    markerType: "text"
+    
+  - id: "aggregated_history"
+    name: "Aggregated Vibration History"
+    enabled: true
+    startMarker: "Aggregated vibration history:"
+    endMarker: "VibratorControlService:"
+    markerType: "text"
+
+# Line parsing rules for each section
+parsers:
+  # Recent Vibrations Parser
+  - id: "vibration_parser"
+    name: "Vibration Events Parser"
+    enabled: true
+    targetSections: ["recent_vibrations", "aggregated_history"]
+    priority: 1
+    
+    linePatterns:
+      # Main vibration event pattern (SemHaptic format)
+      # Example: 09-04 15:11:20.979 |   effect |             finished | duration:   122ms | start: 15:11:20.980 | end: 15:11:21.101 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | com.sec.android.app.camera (uid=10123, deviceId=0) | reason: null | played: SemHaptic: mType=50061, mMagnitude=-1 | original: null
+      - id: "vibration_event_pattern"
+        name: "Vibration Effect Event (SemHaptic)"
+        regex: '^\s+(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}) \|\s+effect\s+\|\s+(\w+(?:_\w+)*)\s+\| duration:\s+(\d+)ms \| start: ([\d:.]+) \| end: ([\d:.]+) \| scale:\s+(.+?) \| flags:\s+(\d+) \| usage: (\w+) \| ([\w\.]+) \(uid=(\d+), deviceId=(\d+)\) \| reason: (.+?) \| played: SemHaptic: mType=(\d+), mMagnitude=([-\d]+)'
+        fields:
+          timestamp: { group: 1, type: "datetime", format: "MM-dd HH:mm:ss.fff" }
+          status: { group: 2, type: "string" }  # finished, cancelled_by_user
+          durationMs: { group: 3, type: "int" }
+          startTime: { group: 4, type: "string" }
+          endTime: { group: 5, type: "string" }
+          scale: { group: 6, type: "string" }  # NONE (adaptive=1.00)
+          flags: { group: 7, type: "int" }
+          usage: { group: 8, type: "string" }  # TOUCH, ALARM, RINGTONE, NOTIFICATION
+          package: { group: 9, type: "string" }
+          uid: { group: 10, type: "int" }
+          deviceId: { group: 11, type: "int" }
+          reason: { group: 12, type: "string" }  # null, Virtual Key - Press, etc.
+          hapticType: { group: 13, type: "int" }  # mType value
+          magnitude: { group: 14, type: "int" }  # mMagnitude value
+        eventType: "VIBRATION_EVENT"
+      
+      # Step-based vibration event pattern (Telegram format)
+      # Example: 10-06 22:54:38.567 |   effect |             finished | duration:    52ms | start: 22:54:38.570 | end: 22:54:38.620 | scale:     NONE (adaptive=1.00) | flags:    0 | usage: TOUCH | org.telegram.messenger (uid=10366, deviceId=0) | reason: null | played: [Step=0ms(amplitude=0.00),Step=1ms(amplitude=-1.00)] | original: null
+      - id: "vibration_event_step_pattern"
+        name: "Vibration Effect Event (Step-based)"
+        regex: '^\s+(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}) \|\s+effect\s+\|\s+(\w+(?:_\w+)*)\s+\| duration:\s+(\d+)ms \| start: ([\d:.]+) \| end: ([\d:.]+) \| scale:\s+(.+?) \| flags:\s+(\d+) \| usage: (\w+) \| ([\w\.]+) \(uid=(\d+), deviceId=(\d+)\) \| reason: (.+?) \| played: \[(.+?)\]'
+        fields:
+          timestamp: { group: 1, type: "datetime", format: "MM-dd HH:mm:ss.fff" }
+          status: { group: 2, type: "string" }  # finished, cancelled_by_user
+          durationMs: { group: 3, type: "int" }
+          startTime: { group: 4, type: "string" }
+          endTime: { group: 5, type: "string" }
+          scale: { group: 6, type: "string" }  # NONE (adaptive=1.00)
+          flags: { group: 7, type: "int" }
+          usage: { group: 8, type: "string" }  # TOUCH, ALARM, RINGTONE, NOTIFICATION
+          package: { group: 9, type: "string" }
+          uid: { group: 10, type: "int" }
+          deviceId: { group: 11, type: "int" }
+          reason: { group: 12, type: "string" }  # null
+          steps: { group: 13, type: "string" }  # Step sequence
+        eventType: "VIBRATION_EVENT"
+
+      # Usage type section headers (for context, but not parsed as events)
+      # These are: "    ALARM:", "    TOUCH:", etc.
+      # We can skip these or parse them for context
+      - id: "usage_section_header"
+        name: "Usage Type Section Header"
+        regex: '^\s+(ALARM|TOUCH|RINGTONE|NOTIFICATION):\s*$'
+        fields:
+          usageType: { group: 1, type: "string" }
+        eventType: "SECTION_MARKER"
+

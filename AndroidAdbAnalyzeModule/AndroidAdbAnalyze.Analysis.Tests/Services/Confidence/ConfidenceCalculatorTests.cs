@@ -65,7 +65,7 @@ public sealed class ConfidenceCalculatorTests
         var events = new[]
         {
             CreateEvent(LogEventTypes.DATABASE_INSERT),    // 0.5
-            CreateEvent(LogEventTypes.CAMERA_CONNECT),        // 0.4
+            CreateEvent(LogEventTypes.VIBRATION_EVENT),    // 0.4
             CreateEvent(LogEventTypes.PLAYER_EVENT)         // 0.35
         };
 
@@ -73,7 +73,7 @@ public sealed class ConfidenceCalculatorTests
         var result = _calculator.CalculateConfidence(events);
 
         // Assert
-        result.Should().BeApproximately(1.0, 0.01, "0.5 + 0.4 + 0.35 = 1.25, 하지만 최대값 1.0으로 제한");
+        result.Should().BeApproximately(1.25, 0.01, "0.5 + 0.4 + 0.35 = 1.25 (MaxConfidence 캡핑 제거)");
     }
 
     [Fact]
@@ -82,35 +82,35 @@ public sealed class ConfidenceCalculatorTests
         // Arrange
         var events = new[]
         {
-            CreateEvent(LogEventTypes.CAMERA_CONNECT),
-            CreateEvent(LogEventTypes.CAMERA_CONNECT),
-            CreateEvent(LogEventTypes.CAMERA_CONNECT)
+            CreateEvent(LogEventTypes.VIBRATION_EVENT),
+            CreateEvent(LogEventTypes.VIBRATION_EVENT),
+            CreateEvent(LogEventTypes.VIBRATION_EVENT)
         };
 
         // Act
         var result = _calculator.CalculateConfidence(events);
 
         // Assert
-        result.Should().Be(0.4, "동일 타입은 한 번만 계산");
+        result.Should().Be(0.4, "동일 타입은 한 번만 계산 (VIBRATION_EVENT 가중치 0.4)");
     }
 
     [Fact]
-    public void CalculateConfidence_MaxValueCapped_ReturnsOne()
+    public void CalculateConfidence_MultipleHighWeights_ReturnsActualSum()
     {
         // Arrange
         var events = new[]
         {
-            CreateEvent(LogEventTypes.DATABASE_INSERT),    // 0.5
-            CreateEvent(LogEventTypes.DATABASE_EVENT),     // 0.5
-            CreateEvent(LogEventTypes.CAMERA_CONNECT),        // 0.4
-            CreateEvent(LogEventTypes.CAMERA_DISCONNECT)        // 0.4
+            CreateEvent(LogEventTypes.DATABASE_INSERT),       // 0.5
+            CreateEvent(LogEventTypes.SILENT_CAMERA_CAPTURE), // 0.5
+            CreateEvent(LogEventTypes.VIBRATION_EVENT),        // 0.4
+            CreateEvent(LogEventTypes.PLAYER_EVENT)           // 0.35
         };
 
         // Act
         var result = _calculator.CalculateConfidence(events);
 
         // Assert
-        result.Should().Be(1.0, "최대값은 1.0으로 제한됨");
+        result.Should().Be(1.75, "MaxConfidence 캡핑 제거, 실제 합계 반환: 0.5+0.5+0.4+0.35 = 1.75");
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public sealed class ConfidenceCalculatorTests
         // Arrange
         var events = new[]
         {
-            CreateEvent(LogEventTypes.CAMERA_CONNECT),  // 0.4
+            CreateEvent(LogEventTypes.CAMERA_CONNECT),  // 0.6
             CreateEvent("UNKNOWN_EVENT")             // 0.1
         };
 
@@ -143,34 +143,34 @@ public sealed class ConfidenceCalculatorTests
         var result = _calculator.CalculateConfidence(events);
 
         // Assert
-        result.Should().BeApproximately(0.5, 0.01);
+        result.Should().BeApproximately(0.7, 0.01);
     }
 
     [Fact]
     public void GetEventTypeWeight_KnownTypes_ReturnsCorrectWeights()
     {
-        // Assert - 가장 강력한 증거
+        // Assert - 가장 강력한 증거 (Critical)
         _calculator.GetEventTypeWeight(LogEventTypes.DATABASE_INSERT).Should().Be(0.5);
         _calculator.GetEventTypeWeight(LogEventTypes.DATABASE_EVENT).Should().Be(0.5);
-        _calculator.GetEventTypeWeight(LogEventTypes.MEDIA_INSERT_END).Should().Be(0.5);
+        _calculator.GetEventTypeWeight(LogEventTypes.SILENT_CAMERA_CAPTURE).Should().Be(0.5);
         
-        // 강력한 증거
-        _calculator.GetEventTypeWeight(LogEventTypes.CAMERA_CONNECT).Should().Be(0.4);
-        _calculator.GetEventTypeWeight(LogEventTypes.CAMERA_DISCONNECT).Should().Be(0.4);
+        // 세션 마커 (세션 신뢰도 계산용)
+        _calculator.GetEventTypeWeight(LogEventTypes.CAMERA_CONNECT).Should().Be(0.6);
+        _calculator.GetEventTypeWeight(LogEventTypes.CAMERA_DISCONNECT).Should().Be(0.25);
         
         // 중간 증거
         _calculator.GetEventTypeWeight(LogEventTypes.PLAYER_EVENT).Should().Be(0.35);
         _calculator.GetEventTypeWeight(LogEventTypes.URI_PERMISSION_GRANT).Should().Be(0.3);
-        _calculator.GetEventTypeWeight(LogEventTypes.URI_PERMISSION_REVOKE).Should().Be(0.3);
-        _calculator.GetEventTypeWeight(LogEventTypes.ACTIVITY_LIFECYCLE).Should().Be(0.25);
+        // _calculator.GetEventTypeWeight(LogEventTypes.ACTIVITY_LIFECYCLE).Should().Be(0.25);
         _calculator.GetEventTypeWeight(LogEventTypes.PLAYER_CREATED).Should().Be(0.25);
+        _calculator.GetEventTypeWeight(LogEventTypes.URI_PERMISSION_REVOKE).Should().Be(0.22); // 하향 조정 (2025-10-28)
         
         // 보조 증거
         _calculator.GetEventTypeWeight(LogEventTypes.SHUTTER_SOUND).Should().Be(0.2);
         _calculator.GetEventTypeWeight(LogEventTypes.MEDIA_EXTRACTOR).Should().Be(0.2);
         _calculator.GetEventTypeWeight(LogEventTypes.PLAYER_RELEASED).Should().Be(0.15);
-        _calculator.GetEventTypeWeight(LogEventTypes.VIBRATION).Should().Be(0.15);
         _calculator.GetEventTypeWeight(LogEventTypes.VIBRATION_EVENT).Should().Be(0.4);
+        _calculator.GetEventTypeWeight(LogEventTypes.CAMERA_ACTIVITY_REFRESH).Should().Be(0.15);
     }
 
     [Fact]
@@ -185,9 +185,9 @@ public sealed class ConfidenceCalculatorTests
 
     [Theory]
     [InlineData(LogEventTypes.DATABASE_INSERT, LogEventTypes.DATABASE_EVENT, 1.0)]
-    [InlineData(LogEventTypes.CAMERA_CONNECT, LogEventTypes.CAMERA_DISCONNECT, 0.8)]
-    [InlineData(LogEventTypes.CAMERA_CONNECT, LogEventTypes.PLAYER_EVENT, 0.75)]  // 0.4 + 0.35
-    [InlineData(LogEventTypes.CAMERA_CONNECT, LogEventTypes.VIBRATION, 0.55)]
+    [InlineData(LogEventTypes.CAMERA_CONNECT, LogEventTypes.CAMERA_DISCONNECT, 0.85)]  // 0.6 + 0.25
+    [InlineData(LogEventTypes.CAMERA_CONNECT, LogEventTypes.PLAYER_EVENT, 0.95)]      // 0.6 + 0.35
+    [InlineData(LogEventTypes.CAMERA_CONNECT, LogEventTypes.VIBRATION_EVENT, 1.0)]    // 0.6 + 0.4
     public void CalculateConfidence_CommonCombinations_ReturnsExpectedScores(
         string type1, string type2, double expectedScore)
     {
@@ -206,7 +206,7 @@ public sealed class ConfidenceCalculatorTests
     }
 
     [Fact]
-    public void CalculateConfidence_StrongEvidenceOnly_HighConfidence()
+    public void CalculateConfidence_StrongArtifactOnly_HighConfidence()
     {
         // Arrange
         var events = new[]
@@ -224,13 +224,13 @@ public sealed class ConfidenceCalculatorTests
     }
 
     [Fact]
-    public void CalculateConfidence_WeakEvidenceOnly_LowConfidence()
+    public void CalculateConfidence_WeakArtifactOnly_LowConfidence()
     {
         // Arrange
         var events = new[]
         {
-            CreateEvent(LogEventTypes.VIBRATION),           // 0.15
-            CreateEvent(LogEventTypes.PLAYER_RELEASED)      // 0.15
+            CreateEvent(LogEventTypes.PLAYER_RELEASED),      // 0.15
+            CreateEvent(LogEventTypes.CAMERA_ACTIVITY_REFRESH)  // 0.15
         };
 
         // Act
@@ -241,21 +241,22 @@ public sealed class ConfidenceCalculatorTests
     }
 
     [Fact]
-    public void CalculateConfidence_MixedEvidence_ModerateConfidence()
+    public void CalculateConfidence_MixedArtifact_ModerateConfidence()
     {
         // Arrange
         var events = new[]
         {
-            CreateEvent(LogEventTypes.CAMERA_CONNECT),        // 0.4 - 강력한 증거
-            CreateEvent(LogEventTypes.PLAYER_EVENT),          // 0.35 - 중간 증거
-            CreateEvent(LogEventTypes.VIBRATION)              // 0.15 - 약한 증거
+            CreateEvent(LogEventTypes.VIBRATION_EVENT),        // 0.4
+            CreateEvent(LogEventTypes.PLAYER_EVENT),          // 0.35
+            CreateEvent(LogEventTypes.CAMERA_ACTIVITY_REFRESH)  // 0.15
         };
 
         // Act
         var result = _calculator.CalculateConfidence(events);
 
         // Assert
-        result.Should().BeInRange(0.5, 0.95, "혼합 증거는 중간-높은 신뢰도 (0.9)");
+        // 0.4 + 0.35 + 0.15 = 0.9 (MaxConfidence 캡핑 제거)
+        result.Should().BeApproximately(0.9, 0.01, "혼합 증거 합산 (캡핑 없음)");
     }
 
     // Helper method

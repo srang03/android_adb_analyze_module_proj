@@ -3,7 +3,7 @@ using AndroidAdbAnalyze.Analysis.Models.Context;
 using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
 using AndroidAdbAnalyze.Analysis.Services.Confidence;
-using AndroidAdbAnalyze.Analysis.Services.Strategies;
+using AndroidAdbAnalyze.Analysis.Services.DetectionStrategies;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
@@ -42,16 +42,6 @@ public sealed class KakaoTalkStrategyTests
     }
 
     #region Basic Properties
-
-    [Fact]
-    public void Priority_ReturnsCorrectValue()
-    {
-        // Act
-        var priority = _strategy.Priority;
-
-        // Assert
-        priority.Should().Be(90, "KakaoTalkStrategy는 Telegram(100)보다 낮고 Base(0)보다 높은 우선순위");
-    }
 
     [Fact]
     public void PackageNamePattern_ReturnsCorrectValue()
@@ -148,10 +138,10 @@ public sealed class KakaoTalkStrategyTests
     #endregion
 
 
-    #region Supporting Evidence
+    #region Supporting Artifact
 
     [Fact]
-    public void DetectCaptures_WithSupportingEvidence_IncreasesConfidence()
+    public void DetectCaptures_WithSupportingArtifact_IncreasesConfidence()
     {
         // Arrange
         var baseTime = new DateTime(2025, 10, 6, 22, 49, 56);
@@ -187,8 +177,8 @@ public sealed class KakaoTalkStrategyTests
 
         // Assert
         captures.Should().HaveCount(1, "VIBRATION_EVENT (hapticType=50061)만 주 증거");
-        captures[0].ConfidenceScore.Should().BeGreaterThan(0.4, "보조 증거가 있으면 신뢰도 증가");
-        captures[0].EvidenceTypes.Should().HaveCountGreaterThan(1, "주 증거 + 보조 증거");
+        captures[0].CaptureDetectionScore.Should().BeGreaterThan(0.4, "보조 증거가 있으면 신뢰도 증가");
+        captures[0].ArtifactTypes.Should().HaveCountGreaterThan(1, "주 증거 + 보조 증거");
         captures[0].FileUri.Should().NotBeNull("URI_PERMISSION_GRANT에서 URI 추출");
     }
 
@@ -239,7 +229,7 @@ public sealed class KakaoTalkStrategyTests
     #region Confidence Threshold
 
     [Fact]
-    public void DetectCaptures_BelowMinConfidence_Excluded()
+    public void DetectCaptures_KeyArtifactExists_AlwaysDetects()
     {
         // Arrange
         var baseTime = new DateTime(2025, 10, 6, 22, 48, 0);
@@ -256,20 +246,20 @@ public sealed class KakaoTalkStrategyTests
         };
         var context = CreateContext(baseTime, baseTime.AddMinutes(1), "com.kakao.talk", events);
         
-        // 높은 임계값 설정
-        var highThresholdOptions = new AnalysisOptions
+        // 임계값 제거됨
+        var options = new AnalysisOptions
         {
             EventCorrelationWindow = TimeSpan.FromSeconds(30),
-            MinConfidenceThreshold = 0.9, // VIBRATION_EVENT (0.4)보다 높음
+            MinConfidenceThreshold = 0.0, // 임계값 제거됨 (핵심 아티팩트 존재 여부만 체크)
             ScreenshotPathPatterns = new[] { "/Screenshots/" },
             DownloadPathPatterns = new[] { "/Download/" }
         };
 
         // Act
-        var captures = _strategy.DetectCaptures(context, highThresholdOptions);
+        var captures = _strategy.DetectCaptures(context, options);
 
         // Assert
-        captures.Should().BeEmpty("신뢰도가 임계값 미만이면 제외");
+        captures.Should().HaveCount(1, "핵심 아티팩트(VIBRATION_EVENT)가 있으면 항상 탐지됨");
     }
 
     #endregion
@@ -355,7 +345,7 @@ public sealed class KakaoTalkStrategyTests
     #region EventCorrelationWindow Tests
 
     [Fact]
-    public void DetectCaptures_SupportingEvidence_OutsideWindow_Excluded()
+    public void DetectCaptures_SupportingArtifact_OutsideWindow_Excluded()
     {
         // Arrange: 보조 증거가 correlation window 밖에 있음
         var baseTime = new DateTime(2025, 10, 6, 22, 49, 56);
@@ -387,11 +377,11 @@ public sealed class KakaoTalkStrategyTests
 
         // Assert
         captures.Should().HaveCount(1, "주 증거는 탐지됨");
-        captures[0].ConfidenceScore.Should().Be(0.4, "보조 증거가 윈도우 밖이므로 신뢰도 증가 없음");
+        captures[0].CaptureDetectionScore.Should().Be(0.4, "보조 증거가 윈도우 밖이므로 신뢰도 증가 없음");
     }
 
     [Fact]
-    public void DetectCaptures_SupportingEvidence_InsideWindow_Included()
+    public void DetectCaptures_SupportingArtifact_InsideWindow_Included()
     {
         // Arrange: 보조 증거가 correlation window 안에 있음
         var baseTime = new DateTime(2025, 10, 6, 22, 49, 56);
@@ -423,13 +413,13 @@ public sealed class KakaoTalkStrategyTests
 
         // Assert
         captures.Should().HaveCount(1, "주 증거 탐지");
-        captures[0].ConfidenceScore.Should().BeGreaterThan(0.4, "보조 증거가 윈도우 안이므로 신뢰도 증가");
-        captures[0].EvidenceTypes.Should().Contain(LogEventTypes.URI_PERMISSION_GRANT);
-        captures[0].EvidenceTypes.Should().Contain(LogEventTypes.CAMERA_ACTIVITY_REFRESH);
+        captures[0].CaptureDetectionScore.Should().BeGreaterThan(0.4, "보조 증거가 윈도우 안이므로 신뢰도 증가");
+        captures[0].ArtifactTypes.Should().Contain(LogEventTypes.URI_PERMISSION_GRANT);
+        captures[0].ArtifactTypes.Should().Contain(LogEventTypes.CAMERA_ACTIVITY_REFRESH);
     }
 
     [Fact]
-    public void DetectCaptures_SupportingEvidence_ExactWindowBoundary_Included()
+    public void DetectCaptures_SupportingArtifact_ExactWindowBoundary_Included()
     {
         // Arrange: 보조 증거가 정확히 window 경계에 있음
         var baseTime = new DateTime(2025, 10, 6, 22, 49, 56);
@@ -461,7 +451,7 @@ public sealed class KakaoTalkStrategyTests
 
         // Assert
         captures.Should().HaveCount(1);
-        captures[0].EvidenceTypes.Should().Contain(LogEventTypes.URI_PERMISSION_GRANT, 
+        captures[0].ArtifactTypes.Should().Contain(LogEventTypes.URI_PERMISSION_GRANT, 
             "정확히 경계에 있는 보조 증거도 포함 (>= windowStart && <= windowEnd)");
     }
 
@@ -501,12 +491,12 @@ public sealed class KakaoTalkStrategyTests
                     ["usage"] = "TOUCH"
                 }),
             
-            // VIBRATION이지만 VIBRATION_EVENT가 아님
-            CreateEvent(LogEventTypes.VIBRATION, baseTime.AddSeconds(52), 
+            // PLAYER_EVENT (약한 증거, VIBRATION_EVENT와 다른 타입)
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddSeconds(52), 
                 "com.kakao.talk",
                 new Dictionary<string, object> 
                 { 
-                    ["usage"] = "TOUCH"
+                    ["status"] = "finished"
                 })
         };
         var context = CreateContext(baseTime, baseTime.AddMinutes(1), "com.kakao.talk", events);
@@ -519,7 +509,7 @@ public sealed class KakaoTalkStrategyTests
     }
 
     [Fact]
-    public void DetectCaptures_ZeroCorrelationWindow_OnlyPrimaryEvidence()
+    public void DetectCaptures_ZeroCorrelationWindow_OnlyKeyArtifact()
     {
         // Arrange: correlation window가 0인 경우
         var baseTime = new DateTime(2025, 10, 6, 22, 49, 56);
@@ -552,7 +542,7 @@ public sealed class KakaoTalkStrategyTests
 
         // Assert
         captures.Should().HaveCount(1);
-        captures[0].ConfidenceScore.Should().Be(0.4, "correlation window가 0이면 보조 증거 수집 안 됨");
+        captures[0].CaptureDetectionScore.Should().Be(0.4, "correlation window가 0이면 보조 증거 수집 안 됨");
     }
 
     #endregion
@@ -588,8 +578,8 @@ public sealed class KakaoTalkStrategyTests
         capture.Metadata.Should().ContainKey("detection_strategy");
         capture.Metadata["detection_strategy"].Should().Be("KakaoTalkStrategy");
         
-        capture.Metadata.Should().ContainKey("primary_evidence_type");
-        capture.Metadata["primary_evidence_type"].Should().Be("VIBRATION_EVENT (hapticType=50061)");
+        capture.Metadata.Should().ContainKey("key_artifact_type");
+        capture.Metadata["key_artifact_type"].Should().Be("VIBRATION_EVENT (hapticType=50061)");
         
         capture.Metadata.Should().ContainKey("hapticType");
         capture.Metadata["hapticType"].Should().Be("50061");
@@ -782,7 +772,7 @@ public sealed class KakaoTalkStrategyTests
             ProcessId = null,
             SourceLogTypes = new[] { "usagestats" },
             IncompleteReason = null,
-            ConfidenceScore = 1.0,
+            SessionCompletenessScore = 1.0,
             SourceEventIds = events.Select(e => e.EventId).ToList()
         };
 
@@ -790,10 +780,7 @@ public sealed class KakaoTalkStrategyTests
         {
             Session = session,
             AllEvents = events,
-            ActivityResumedTime = startTime,
-            ActivityPausedTime = endTime,
             ForegroundServices = Array.Empty<ForegroundServiceInfo>(),
-            TimelineEvents = new Dictionary<DateTime, List<NormalizedLogEvent>>()
         };
     }
 

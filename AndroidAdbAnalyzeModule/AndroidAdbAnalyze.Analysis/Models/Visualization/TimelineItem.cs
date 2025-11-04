@@ -36,9 +36,9 @@ public sealed class TimelineItem
     public string Label { get; init; } = string.Empty;
     
     /// <summary>
-    /// 신뢰도 점수
+    /// 탐지 점수 (촬영: Capture Detection Score, 세션: Session Completeness Score)
     /// </summary>
-    public double ConfidenceScore { get; init; }
+    public double Score { get; init; }
     
     /// <summary>
     /// UI 표시용 색상 힌트 (예: "green", "red")

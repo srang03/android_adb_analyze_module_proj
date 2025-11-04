@@ -1,3 +1,4 @@
+using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Services.Deduplication;
 using AndroidAdbAnalyze.Parser.Core.Constants;
 using AndroidAdbAnalyze.Parser.Core.Models;
@@ -13,10 +14,17 @@ namespace AndroidAdbAnalyze.Analysis.Tests.Services.Deduplication;
 public sealed class EventDeduplicatorTests
 {
     private readonly EventDeduplicator _deduplicator;
+    private readonly AnalysisOptions _defaultOptions;
 
     public EventDeduplicatorTests()
     {
-        _deduplicator = new EventDeduplicator(NullLogger<EventDeduplicator>.Instance);
+        _defaultOptions = new AnalysisOptions
+        {
+            DeduplicationSimilarityThreshold = 0.8
+        };
+        _deduplicator = new EventDeduplicator(
+            NullLogger<EventDeduplicator>.Instance,
+            _defaultOptions);
     }
 
     [Fact]

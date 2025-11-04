@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 using AndroidAdbAnalyze.Parser.Core.Constants;
 using AndroidAdbAnalyze.Parser.Core.Models;
+using AndroidAdbAnalyze.Analysis.Services.Sessions.Sources;
 
 namespace AndroidAdbAnalyze.Analysis.Tests.Services.Sessions;
 

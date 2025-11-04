@@ -453,10 +453,10 @@ public sealed class HtmlReportGeneratorTests
             CaptureId = Guid.NewGuid(),
             PackageName = "com.sec.android.app.camera",
             CaptureTime = DateTime.UtcNow.AddMinutes(-7),
-            ConfidenceScore = 0.95,
+            CaptureDetectionScore = 0.95,
             IsEstimated = false,
-            PrimaryEvidenceId = Guid.NewGuid(),
-            SupportingEvidenceIds = Array.Empty<Guid>(),
+            decisiveArtifact = Guid.NewGuid(),
+            SupportingArtifactIds = Array.Empty<Guid>(),
             FilePath = null,  // null FilePath
             FileUri = null
         };
@@ -664,7 +664,7 @@ public sealed class HtmlReportGeneratorTests
             StartTime = DateTime.UtcNow.AddMinutes(-10),
             EndTime = DateTime.UtcNow.AddMinutes(-5),
             IncompleteReason = null,
-            ConfidenceScore = 0.9,
+            SessionCompletenessScore = 0.9,
             StartEventId = Guid.NewGuid(),
             EndEventId = Guid.NewGuid(),
             CaptureEventIds = Array.Empty<Guid>()
@@ -680,7 +680,7 @@ public sealed class HtmlReportGeneratorTests
             StartTime = DateTime.UtcNow.AddMinutes(-10),
             EndTime = null,
             IncompleteReason = SessionIncompleteReason.MissingEnd,
-            ConfidenceScore = 0.6,
+            SessionCompletenessScore = 0.6,
             StartEventId = Guid.NewGuid(),
             EndEventId = null,
             CaptureEventIds = Array.Empty<Guid>()
@@ -694,10 +694,10 @@ public sealed class HtmlReportGeneratorTests
             CaptureId = Guid.NewGuid(),
             PackageName = "com.sec.android.app.camera",
             CaptureTime = DateTime.UtcNow.AddMinutes(-7),
-            ConfidenceScore = 0.95,
+            CaptureDetectionScore = 0.95,
             IsEstimated = false,
-            PrimaryEvidenceId = Guid.NewGuid(),
-            SupportingEvidenceIds = Array.Empty<Guid>(),
+            decisiveArtifact = Guid.NewGuid(),
+            SupportingArtifactIds = Array.Empty<Guid>(),
             FilePath = "/storage/DCIM/IMG_001.jpg",
             FileUri = "content://media/external/images/1"
         };
@@ -713,7 +713,7 @@ public sealed class HtmlReportGeneratorTests
             EndTime = null,
             PackageName = "com.sec.android.app.camera",
             Label = "촬영 #1",
-            ConfidenceScore = 0.95,
+            Score = 0.95,
             ColorHint = "green",
             Metadata = new Dictionary<string, string>()
         };

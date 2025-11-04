@@ -1,4 +1,5 @@
 using AndroidAdbAnalyze.Analysis.Interfaces;
+using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Services.Captures;
 using AndroidAdbAnalyze.Analysis.Services.Confidence;
 using AndroidAdbAnalyze.Analysis.Services.Context;
@@ -7,9 +8,12 @@ using AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies;
 using AndroidAdbAnalyze.Analysis.Services.Orchestration;
 using AndroidAdbAnalyze.Analysis.Services.Reports;
 using AndroidAdbAnalyze.Analysis.Services.Sessions;
-using AndroidAdbAnalyze.Analysis.Services.Strategies;
+using AndroidAdbAnalyze.Analysis.Services.Sessions.Sources;
+using AndroidAdbAnalyze.Analysis.Services.DetectionStrategies;
+using AndroidAdbAnalyze.Analysis.Services.Transmission;
 using AndroidAdbAnalyze.Analysis.Services.Visualization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace AndroidAdbAnalyze.Analysis.Extensions;
 
@@ -33,10 +37,10 @@ public static class ServiceCollectionExtensions
         // Session Context Provider (usagestats 베이스)
         services.AddSingleton<ISessionContextProvider, SessionContextProvider>();
         
-        // Capture Detection Strategies (Priority 순으로 자동 정렬됨)
-        services.AddSingleton<ICaptureDetectionStrategy, BasePatternStrategy>();  // Priority: 0 (기본)
-        services.AddSingleton<ICaptureDetectionStrategy, KakaoTalkStrategy>();    // Priority: 90
-        services.AddSingleton<ICaptureDetectionStrategy, TelegramStrategy>();     // Priority: 100
+        // Capture Detection Strategies
+        services.AddSingleton<ICaptureDetectionStrategy, TelegramStrategy>();    // 특화 전략
+        services.AddSingleton<ICaptureDetectionStrategy, KakaoTalkStrategy>();   // 특화 전략
+        services.AddSingleton<ICaptureDetectionStrategy, BasePatternStrategy>(); // 기본 전략 (fallback)
         
         // Capture Detector (Orchestrator)
         services.AddSingleton<ICaptureDetector, CameraCaptureDetector>();
@@ -53,12 +57,22 @@ public static class ServiceCollectionExtensions
         
         // ===== Deduplication Services =====
         
-        // Event Deduplicator
-        services.AddSingleton<IEventDeduplicator, EventDeduplicator>();
+        // Event Deduplicator (AnalysisOptions 의존성 주입)
+        services.AddSingleton<IEventDeduplicator>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<EventDeduplicator>>();
+            var options = sp.GetRequiredService<AnalysisOptions>();
+            return new EventDeduplicator(logger, options);
+        });
         
         // Deduplication Strategies
         services.AddSingleton<IDeduplicationStrategy, TimeBasedDeduplicationStrategy>();
         services.AddSingleton<IDeduplicationStrategy, CameraEventDeduplicationStrategy>();
+        
+        // ===== Transmission Detection Services =====
+        
+        // Transmission Detector (선택적 기능, AnalysisOptions.EnableTransmissionDetection으로 제어)
+        services.AddSingleton<ITransmissionDetector, WifiTransmissionDetector>();
         
         // ===== Reporting Services =====
         

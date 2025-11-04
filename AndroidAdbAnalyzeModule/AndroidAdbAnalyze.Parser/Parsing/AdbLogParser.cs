@@ -209,7 +209,11 @@ public sealed class AdbLogParser : ILogParser
 
             // 3. 정규화 및 NormalizedLogEvent 생성
             _logger?.LogDebug("Normalizing events");
-            var normalizedEvents = NormalizeEvents(parsedEntries, options, errors);
+            var normalizedEvents = NormalizeEvents(
+                parsedEntries, 
+                options, 
+                errors,
+                Path.GetFileName(logFilePath));
             _logger?.LogInformation("Normalized {EventCount} events", normalizedEvents.Count);
 
             // 4. 통계 생성
@@ -434,14 +438,22 @@ public sealed class AdbLogParser : ILogParser
     /// 파싱된 <see cref="ParsedLogEntry"/> 목록을 <see cref="NormalizedLogEvent"/> 목록으로 변환합니다.
     /// 이 과정에는 타임스탬프 정규화, 시간 범위 필터링, 시계열 정렬이 포함됩니다.
     /// </summary>
+    /// <param name="parsedEntries">파싱된 로그 항목 목록</param>
+    /// <param name="options">파싱 옵션 (타임스탬프 정규화 및 필터링에 사용)</param>
+    /// <param name="errors">파싱 중 발생한 오류 목록 (추가될 수 있음)</param>
+    /// <param name="sourceFilePath">원본 로그 파일명 (SourceFileName 설정용)</param>
+    /// <returns>정규화된 로그 이벤트 목록</returns>
     private List<NormalizedLogEvent> NormalizeEvents(
         List<ParsedLogEntry> parsedEntries,
         LogParsingOptions options,
-        List<ParsingError> errors)
+        List<ParsingError> errors,
+        string sourceFilePath)
     {
         var normalizer = new TimestampNormalizer(
             options.DeviceInfo,
-            options.ConvertToUtc);
+            options.ConvertToUtc,
+            options.StartTime,
+            options.EndTime);
 
         var normalizedEvents = new List<NormalizedLogEvent>();
         int filteredByTimeRange = 0;
@@ -499,6 +511,7 @@ public sealed class AdbLogParser : ILogParser
                     Timestamp = normalizedTimestamp,
                     EventType = entry.EventType,
                     SourceSection = entry.SectionId,
+                    SourceFileName = sourceFilePath,
                     PackageName = ExtractPackageName(entry.Fields),
                     Attributes = entry.Fields,
                     RawLine = entry.RawLine,

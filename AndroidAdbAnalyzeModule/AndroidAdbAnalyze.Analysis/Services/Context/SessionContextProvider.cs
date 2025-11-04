@@ -18,13 +18,23 @@ public sealed class SessionContextProvider : ISessionContextProvider
     /// 세션 시간 범위 확장 (초 단위)
     /// </summary>
     /// <remarks>
-    /// 파일 생성 등 지연되는 이벤트를 포함하기 위해 세션 종료 후 N초까지 확장합니다.
+    /// <para>
+    /// 파일 생성, MediaStore 동기화 등 비동기 처리로 인해 지연되는 이벤트를 포함하기 위해 
+    /// 세션 종료 후 N초까지 확장합니다.
+    /// </para>
+    /// <para>
+    /// <b>설정 근거:</b> 경험적 값 (실측 데이터 수집 권장)
+    /// - DATABASE_INSERT: 파일 쓰기 완료까지 최대 3~5초 지연 가능
+    /// - CAMERA_DISCONNECT: HAL 레벨 해제까지 1~2초 지연 가능
+    /// - 안전 마진 고려하여 10초 설정
+    /// </para>
+    /// <para>
+    /// <b>주의:</b> 과도한 확장은 다음 세션의 이벤트를 포함하여 오탐을 유발할 수 있습니다.
+    /// 실측 데이터 수집을 통한 과학적 근거 확보가 필요합니다.
+    /// (참고: Paper/06_doc/분석 보고서/세션_확장_실측_분석_스크립트.md)
+    /// </para>
     /// </remarks>
     private const int SESSION_TIME_EXTENSION_SECONDS = 10;
-    
-    // Activity 상태 문자열 상수
-    private const string ACTIVITY_STATE_RESUMED = "ACTIVITY_RESUMED";
-    private const string ACTIVITY_STATE_PAUSED = "ACTIVITY_PAUSED";
     
     // Foreground Service 상태 문자열 상수
     private const string SERVICE_STATE_START = "FOREGROUND_SERVICE_START";
@@ -52,53 +62,15 @@ public sealed class SessionContextProvider : ISessionContextProvider
             .OrderBy(e => e.Timestamp)
             .ToList();
         
-        // usagestats 기반 정보 추출
-        var activityResumed = ExtractActivityResumedTime(sessionEvents, session.PackageName);
-        var activityPaused = ExtractActivityPausedTime(sessionEvents, session.PackageName);
+        // usagestats 기반 Foreground Service 정보 추출
         var foregroundServices = ExtractForegroundServices(sessionEvents, session.PackageName);
-        
-        // 시간대별 이벤트 그룹화 (1초 단위)
-        var timelineEvents = GroupEventsByTimeline(sessionEvents);
         
         return new SessionContext
         {
             Session = session,
             AllEvents = sessionEvents,
-            ActivityResumedTime = activityResumed,
-            ActivityPausedTime = activityPaused,
-            ForegroundServices = foregroundServices,
-            TimelineEvents = timelineEvents
+            ForegroundServices = foregroundServices
         };
-    }
-    
-    /// <summary>
-    /// ACTIVITY_RESUMED 시간 추출
-    /// </summary>
-    private static DateTime? ExtractActivityResumedTime(
-        List<NormalizedLogEvent> events, 
-        string packageName)
-    {
-        return events
-            .Where(e => e.EventType == LogEventTypes.ACTIVITY_LIFECYCLE)
-            .Where(e => e.PackageName == packageName)
-            .Where(e => e.Attributes.GetValueOrDefault("activityState")?.ToString() == ACTIVITY_STATE_RESUMED)
-            .Select(e => e.Timestamp as DateTime?)
-            .FirstOrDefault();
-    }
-    
-    /// <summary>
-    /// ACTIVITY_PAUSED 시간 추출
-    /// </summary>
-    private static DateTime? ExtractActivityPausedTime(
-        List<NormalizedLogEvent> events, 
-        string packageName)
-    {
-        return events
-            .Where(e => e.EventType == LogEventTypes.ACTIVITY_LIFECYCLE)
-            .Where(e => e.PackageName == packageName)
-            .Where(e => e.Attributes.GetValueOrDefault("activityState")?.ToString() == ACTIVITY_STATE_PAUSED)
-            .Select(e => e.Timestamp as DateTime?)
-            .FirstOrDefault();
     }
     
     /// <summary>
@@ -145,24 +117,5 @@ public sealed class SessionContextProvider : ISessionContextProvider
         }
         
         return services;
-    }
-    
-    /// <summary>
-    /// 시간대별 이벤트 그룹화 (1초 단위)
-    /// </summary>
-    private static IReadOnlyDictionary<DateTime, List<NormalizedLogEvent>> GroupEventsByTimeline(
-        List<NormalizedLogEvent> events)
-    {
-        return events
-            .GroupBy(e => new DateTime(
-                e.Timestamp.Year,
-                e.Timestamp.Month,
-                e.Timestamp.Day,
-                e.Timestamp.Hour,
-                e.Timestamp.Minute,
-                e.Timestamp.Second))
-            .ToDictionary(
-                g => g.Key,
-                g => g.ToList());
     }
 }

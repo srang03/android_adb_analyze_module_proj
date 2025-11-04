@@ -42,7 +42,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange
         var configPath = Path.Combine("TestData", "adb_activity_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "activity.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "activity.log");
 
         if (!File.Exists(logPath))
         {
@@ -106,7 +106,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange
         var configPath = Path.Combine("TestData", "adb_activity_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "activity.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "activity.log");
 
         if (!File.Exists(logPath))
         {
@@ -193,7 +193,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange
         var configPath = Path.Combine("TestData", "adb_audio_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "audio.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "audio.log");
 
         if (!File.Exists(logPath))
         {
@@ -260,7 +260,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange
         var configPath = Path.Combine("TestData", "adb_media_metrics_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "media_metrics.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "media_metrics.log");
 
         if (!File.Exists(logPath))
         {
@@ -322,7 +322,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange
         var configPath = Path.Combine("TestData", "adb_media_camera_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "media_camera.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "media_camera.log");
 
         if (!File.Exists(logPath))
         {
@@ -385,7 +385,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange
         var configPath = Path.Combine("TestData", "adb_usagestats_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "usagestats.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "usagestats.log");
 
         if (!File.Exists(logPath))
         {
@@ -459,7 +459,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange
         var configPath = Path.Combine("TestData", "adb_usagestats_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "usagestats.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "usagestats.log");
 
         if (!File.Exists(logPath))
         {
@@ -526,7 +526,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange
         var configPath = Path.Combine("TestData", "adb_vibrator_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "vibrator_manager.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "vibrator_manager.log");
 
         if (!File.Exists(logPath))
         {
@@ -588,7 +588,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange
         var configPath = Path.Combine("TestData", "adb_activity_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "activity.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "activity.log");
 
         if (!File.Exists(logPath))
         {
@@ -710,7 +710,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange: Media Camera Worker 로그에서 PackageName 추출 검증
         var configPath = Path.Combine("TestData", "adb_media_camera_worker_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "media_camera_worker.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "media_camera_worker.log");
 
         if (!File.Exists(logPath))
         {
@@ -748,12 +748,12 @@ public sealed class PackageNameParsingTests : IDisposable
         result.Should().NotBeNull();
         result.Success.Should().BeTrue();
 
-        // CAMERA_CONNECT, CAMERA_DISCONNECT, MEDIA_INSERT_START, MEDIA_INSERT_END 이벤트 확인
+        // CAMERA_CONNECT, CAMERA_DISCONNECT, MEDIA_INSERT_START, DATABASE_INSERT 이벤트 확인
         var cameraEvents = result.Events
             .Where(e => e.EventType == LogEventTypes.CAMERA_CONNECT || 
                        e.EventType == LogEventTypes.CAMERA_DISCONNECT ||
                        e.EventType == LogEventTypes.MEDIA_INSERT_START ||
-                       e.EventType == LogEventTypes.MEDIA_INSERT_END)
+                       e.EventType == LogEventTypes.DATABASE_INSERT)
             .Where(e => !string.IsNullOrWhiteSpace(e.PackageName))
             .ToList();
 
@@ -798,7 +798,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange: PackageName 일관성 검증 (Attributes["package"] vs PackageName)
         var configPath = Path.Combine("TestData", "adb_media_camera_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "media_camera.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "media_camera.log");
 
         if (!File.Exists(logPath))
         {
@@ -869,7 +869,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange: 특정 앱 필터링 테스트 (카카오톡, 기본 카메라 등)
         var configPath = Path.Combine("TestData", "adb_usagestats_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "usagestats.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "usagestats.log");
 
         if (!File.Exists(logPath))
         {
@@ -954,7 +954,7 @@ public sealed class PackageNameParsingTests : IDisposable
     {
         // Arrange: PackageName별 그룹화 및 통계 테스트
         var configPath = Path.Combine("TestData", "adb_usagestats_config.yaml");
-        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", "usagestats.log");
+        var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", "usagestats.log");
 
         if (!File.Exists(logPath))
         {
@@ -1054,7 +1054,7 @@ public sealed class PackageNameParsingTests : IDisposable
         foreach (var config in testConfigs)
         {
             var configPath = Path.Combine("TestData", config.ConfigFile);
-            var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플", config.LogFile);
+            var logPath = Path.Combine("..", "..", "..", "..", "..", "sample_logs", "4차 샘플_25_10_12", config.LogFile);
 
             if (!File.Exists(logPath) || !File.Exists(configPath))
             {

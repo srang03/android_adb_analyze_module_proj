@@ -444,7 +444,7 @@ public sealed class AnalysisOrchestratorTests
                 StartTime = baseTime.AddMinutes(i * 5),
                 EndTime = (i == count - 1) ? null : baseTime.AddMinutes(i * 5 + 2), // 마지막 세션만 불완전 (EndTime = null)
                 PackageName = "com.sec.android.app.camera",
-                ConfidenceScore = 0.9,
+                SessionCompletenessScore = 0.9,
                 CaptureEventIds = new List<Guid>().AsReadOnly()
             });
         }
@@ -464,9 +464,9 @@ public sealed class AnalysisOrchestratorTests
                 CaptureId = Guid.NewGuid(),
                 CaptureTime = baseTime.AddSeconds(i * 10),
                 PackageName = "com.sec.android.app.camera",
-                ConfidenceScore = 0.8,
-                PrimaryEvidenceId = Guid.NewGuid(),
-                SupportingEvidenceIds = new List<Guid>().AsReadOnly()
+                CaptureDetectionScore = 0.8,
+                decisiveArtifact = Guid.NewGuid(),
+                SupportingArtifactIds = new List<Guid>().AsReadOnly()
             });
         }
 

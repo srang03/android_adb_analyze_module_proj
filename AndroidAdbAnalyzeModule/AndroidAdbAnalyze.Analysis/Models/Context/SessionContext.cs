@@ -26,40 +26,19 @@ public sealed class SessionContext
     public IReadOnlyList<NormalizedLogEvent> AllEvents { get; init; } = Array.Empty<NormalizedLogEvent>();
     
     /// <summary>
-    /// Activity Resume 시간 (usagestats 베이스)
+    /// Foreground Service 목록 (usagestats 기반)
     /// </summary>
     /// <remarks>
-    /// ACTIVITY_RESUMED 이벤트의 타임스탬프.
-    /// 앱이 포그라운드로 전환된 시점을 나타냅니다.
-    /// </remarks>
-    public DateTime? ActivityResumedTime { get; init; }
-    
-    /// <summary>
-    /// Activity Pause 시간 (usagestats 베이스)
-    /// </summary>
-    /// <remarks>
-    /// ACTIVITY_PAUSED 이벤트의 타임스탬프.
-    /// 앱이 백그라운드로 전환된 시점을 나타냅니다.
-    /// </remarks>
-    public DateTime? ActivityPausedTime { get; init; }
-    
-    /// <summary>
-    /// Foreground Service 목록 (usagestats 베이스)
-    /// </summary>
-    /// <remarks>
-    /// 세션 내 실행된 모든 Foreground Service 정보.
-    /// PostProcessService 등으로 실제 촬영 처리 시점을 식별할 수 있습니다.
+    /// <para>세션 내 실행된 모든 Foreground Service 정보 (START ~ STOP).</para>
+    /// <para>
+    /// <b>사용처:</b> BasePatternStrategy.ValidatePlayerEvent()
+    /// - PLAYER_EVENT가 실제 촬영 관련인지 검증
+    /// - PostProcessService 실행 중인지 확인
+    /// - PostProcessService는 기본 카메라에서 촬영 후처리 시 실행됨
+    /// </para>
+    /// <para>
+    /// <b>데이터 소스:</b> usagestats.log의 FOREGROUND_SERVICE 이벤트
+    /// </para>
     /// </remarks>
     public IReadOnlyList<ForegroundServiceInfo> ForegroundServices { get; init; } = Array.Empty<ForegroundServiceInfo>();
-    
-    /// <summary>
-    /// 시간대별 이벤트 그룹화 (1초 단위)
-    /// </summary>
-    /// <remarks>
-    /// Key: 시간 (초 단위로 버림)
-    /// Value: 해당 시간대(±500ms)의 모든 이벤트
-    /// 빠른 시간대 기반 조회를 위해 사용됩니다.
-    /// </remarks>
-    public IReadOnlyDictionary<DateTime, List<NormalizedLogEvent>> TimelineEvents { get; init; } 
-        = new Dictionary<DateTime, List<NormalizedLogEvent>>();
 }

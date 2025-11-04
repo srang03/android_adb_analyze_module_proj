@@ -1,4 +1,3 @@
-using AndroidAdbAnalyze.Analysis.Services.Sessions;
 using AndroidAdbAnalyze.Analysis.Services.Confidence;
 using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Analysis.Models.Sessions;
@@ -7,6 +6,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 using AndroidAdbAnalyze.Parser.Core.Models;
 using AndroidAdbAnalyze.Parser.Core.Constants;
+using AndroidAdbAnalyze.Analysis.Services.Sessions.Sources;
 
 namespace AndroidAdbAnalyze.Analysis.Tests.Services.Sessions;
 
@@ -442,7 +442,7 @@ public sealed class UsagestatsSessionSourceTests
         session.StartTime.Should().Be(baseTime);
         session.EndTime.Should().Be(baseTime.AddSeconds(5));
         session.IsIncomplete.Should().BeFalse("RESUMED와 STOPPED 쌍이 있으므로 완전한 세션입니다");
-        session.ConfidenceScore.Should().BeGreaterThan(0.0);
+        session.SessionCompletenessScore.Should().BeGreaterThan(0.0);
     }
 
     /// <summary>
