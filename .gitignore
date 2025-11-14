@@ -104,6 +104,24 @@ lab/
 **/*_원인_*.md
 **/*vs_*.md
 
+# Analysis and report documents with emoji prefixes
+**/Documentation/✅_*.md
+**/Documentation/⚠️_*.md
+**/Documentation/❌_*.md
+**/Documentation/📊_*.md
+**/Documentation/📋_*.md
+**/Documentation/🔍_*.md
+**/Documentation/🚨_*.md
+**/Documentation/🔧_*.md
+**/Documentation/GroundTruth/✅_*.md
+**/Documentation/GroundTruth/⚠️_*.md
+**/Documentation/GroundTruth/❌_*.md
+**/Documentation/GroundTruth/📊_*.md
+**/Documentation/GroundTruth/📋_*.md
+**/Documentation/GroundTruth/🔍_*.md
+**/Documentation/GroundTruth/🚨_*.md
+**/Documentation/GroundTruth/🔧_*.md
+
 # Test output files
 test_*.txt
 test_*.ps1
@@ -112,6 +130,12 @@ test_*.ps1
 sample*_test*.txt
 sample*_output*.txt
 sample*_session*.txt
+**/*_test*.txt
+**/*_output*.txt
+**/*_detailed*.txt
+**/*_debug*.txt
+**/*_correlation*.txt
+**/TestOutput/**/*.html
 
 # Phase reports
 PHASE_*_REPORT.md

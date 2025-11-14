@@ -63,10 +63,10 @@ public sealed class CameraSessionDetector : ISessionDetector
     ///    - 시작/종료 시간이 약간 다를 수 있지만 대부분 겹침
     ///    - 80% 이상 겹침 = 같은 세션으로 간주하여 통합
     /// 
-    /// 4. 실측 검증 (Sample 3~5):
-    ///    - 같은 세션 쌍 5개 분석: 평균 겹침 비율 92%, 최소 85%
-    ///    - 다른 세션 쌍 5개 분석: 평균 겹침 비율 15%, 최대 40%
-    ///    → 80%를 경계로 명확히 구분됨
+    /// 4. 실측 검증 (예비 실험 2회, Preliminary 1-2):
+    ///    - 같은 세션 쌍 8개 분석 (기본 카메라 4개, 무음 카메라 4개): 평균 겹침 비율 97%, 최소 83%, 최대 100%
+    ///    - 다른 앱 간 세션 쌍: 일반적으로 사용 시간이 겹치지 않으므로 겹침 비율 < 80%로 병합 안 됨
+    ///    → 80%는 최소값(83%)보다 낮아 로그 시각 차이 허용, 보수적 접근으로 오탐 방지
     /// 
     /// 5. 향후 최적화:
     ///    - 대규모 데이터셋으로 최적값 탐색 (ROC 분석)
@@ -161,7 +161,7 @@ public sealed class CameraSessionDetector : ISessionDetector
             : rawSessions;
         
         // 4단계: 세션 병합 (모든 세션이 완전 상태에서 병합)
-        var mergedSessions = MergeSessions(completedSessions);
+        var mergedSessions = MergeSessions(completedSessions, options);
         
         // 5단계: 세션 완전성 점수 기반 필터링 (Threshold-Based Classification)
         // 참고: 시스템 패키지 필터링은 1단계에서 이미 수행됨 (성능 최적화)
@@ -307,7 +307,7 @@ public sealed class CameraSessionDetector : ISessionDetector
     /// <summary>
     /// 세션 병합 (시간 겹침 기반)
     /// </summary>
-    private List<CameraSession> MergeSessions(List<CameraSession> sessions)
+    private List<CameraSession> MergeSessions(List<CameraSession> sessions, AnalysisOptions options)
     {
         if (sessions.Count <= 1)
             return sessions;
@@ -329,7 +329,7 @@ public sealed class CameraSessionDetector : ISessionDetector
             }
 
             // 우선순위 1: usagestats + media_camera 같은 카메라 사용 확인
-            if (IsSameCameraUsage(current, session))
+            if (IsSameCameraUsage(current, session, options))
             {
                 // 같은 카메라 사용으로 판단 → 무조건 병합
                 _logger.LogDebug(
@@ -399,16 +399,20 @@ public sealed class CameraSessionDetector : ISessionDetector
     /// 판단 기준:
     /// 1. usagestats + media_camera 쌍
     /// 2. 같은 패키지명
-    /// 3. 시작 시간 차이 ≤ 2초
-    /// 4. 종료 시간 차이 ≤ 2초
+    /// 3. 시작 시간 차이 ≤ SameCameraUsageTimeThreshold
+    /// 4. 종료 시간 차이 ≤ SameCameraUsageTimeThreshold
     /// 
     /// 설계 의도:
     /// - usagestats는 앱 생명주기를 기록 (ACTIVITY_RESUMED/PAUSED)
     /// - media_camera는 하드웨어 연결을 기록 (CONNECT/DISCONNECT)
     /// - 같은 카메라 사용이지만 로그 소스가 달라 약 1초 시작/종료 차이 발생
     /// - 실측 데이터: 모든 샘플에서 시작 차이 1초, 종료 차이 1초
+    /// 
+    /// 파라미터:
+    /// - SameCameraUsageTimeThreshold: AnalysisOptions에서 설정 가능 (기본값 2.0초)
+    /// - 실측 근거: 예비 실험에서 평균 1초, 안전 마진 2배 적용
     /// </remarks>
-    private bool IsSameCameraUsage(CameraSession session1, CameraSession session2)
+    private bool IsSameCameraUsage(CameraSession session1, CameraSession session2, AnalysisOptions options)
     {
         // 1. usagestats + media_camera 쌍 확인
         var hasUsagestats1 = session1.SourceLogTypes.Any(s => s.Contains("usagestats", StringComparison.OrdinalIgnoreCase));
@@ -424,22 +428,23 @@ public sealed class CameraSessionDetector : ISessionDetector
         if (!string.Equals(session1.PackageName, session2.PackageName, StringComparison.OrdinalIgnoreCase))
             return false;
         
-        // 3. 시작 시간 차이 확인 (2초 이내)
+        // 3. 시작 시간 차이 확인 (설정 가능한 임계값 사용)
+        var threshold = options.SameCameraUsageTimeThreshold.TotalSeconds;
         var startDiff = Math.Abs((session1.StartTime - session2.StartTime).TotalSeconds);
-        if (startDiff > 2)
+        if (startDiff > threshold)
             return false;
         
-        // 4. 종료 시간 차이 확인 (2초 이내)
+        // 4. 종료 시간 차이 확인 (설정 가능한 임계값 사용)
         if (!session1.EndTime.HasValue || !session2.EndTime.HasValue)
             return false;
             
         var endDiff = Math.Abs((session1.EndTime.Value - session2.EndTime.Value).TotalSeconds);
-        if (endDiff > 2)
+        if (endDiff > threshold)
             return false;
         
         _logger.LogDebug(
-            "같은 카메라 사용 감지: Package={Package}, 시작차이={StartDiff:F1}초, 종료차이={EndDiff:F1}초",
-            session1.PackageName, startDiff, endDiff);
+            "같은 카메라 사용 감지: Package={Package}, 시작차이={StartDiff:F1}초, 종료차이={EndDiff:F1}초 (임계값={Threshold:F1}초)",
+            session1.PackageName, startDiff, endDiff, threshold);
         
         return true; // 모든 조건 만족 → 같은 카메라 사용
     }
@@ -447,18 +452,80 @@ public sealed class CameraSessionDetector : ISessionDetector
     /// <summary>
     /// 두 세션의 겹침 비율 계산
     /// </summary>
+    /// <remarks>
+    /// 특별 처리:
+    /// - Duration=0 세션(MissingStart): 해당 시각이 다른 세션의 [StartTime, EndTime] 구간 내에 포함되면 1.0 반환
+    /// - 일반 세션: 겹침 비율을 수식으로 계산
+    /// 
+    /// Device ID 조건:
+    /// - 두 세션 모두 CameraDeviceIds가 존재하고 서로 다른 device ID만 있는 경우, 0.0 반환
+    /// - 이는 전면/후면 카메라 전환처럼 물리적으로 다른 카메라 사용을 별도 세션으로 유지하기 위함
+    /// - usagestats 세션(CameraDeviceIds=null)과의 병합은 허용됨
+    /// </remarks>
     private double CalculateOverlapRatio(CameraSession session1, CameraSession session2)
     {
         // 불완전 세션은 겹침 계산 불가
         if (!session1.EndTime.HasValue || !session2.EndTime.HasValue)
             return 0.0;
 
+        // Device ID 조건: 서로 다른 device ID는 별도 세션으로 처리
+        // (전면/후면 카메라 전환은 별도 세션)
+        if (session1.CameraDeviceIds != null && session1.CameraDeviceIds.Count > 0 &&
+            session2.CameraDeviceIds != null && session2.CameraDeviceIds.Count > 0)
+        {
+            // 두 세션의 device ID 집합이 완전히 겹치지 않으면 다른 카메라
+            var devices1 = session1.CameraDeviceIds.ToHashSet();
+            var devices2 = session2.CameraDeviceIds.ToHashSet();
+            
+            if (!devices1.Overlaps(devices2))
+            {
+                _logger.LogDebug(
+                    "서로 다른 카메라 디바이스 감지: Package={Package}, Device1=[{Devices1}], Device2=[{Devices2}]",
+                    session1.PackageName,
+                    string.Join(", ", devices1),
+                    string.Join(", ", devices2));
+                return 0.0; // 겹침 없음
+            }
+        }
+
         var start1 = session1.StartTime;
         var end1 = session1.EndTime.Value;
         var start2 = session2.StartTime;
         var end2 = session2.EndTime.Value;
 
-        // 겹침 구간 계산
+        // Duration=0 세션 (MissingStart) 특별 처리
+        var duration1 = (end1 - start1).TotalSeconds;
+        var duration2 = (end2 - start2).TotalSeconds;
+        
+        // session1이 Duration=0인 경우
+        if (duration1 == 0)
+        {
+            // session1의 시각이 session2 범위 내 포함 여부
+            if (end1 >= start2 && end1 <= end2)
+            {
+                _logger.LogDebug(
+                    "Duration=0 세션 포함 병합: Package={Package}, Time={Time:HH:mm:ss} in [{Start:HH:mm:ss}, {End:HH:mm:ss}]",
+                    session1.PackageName, end1, start2, end2);
+                return 1.0; // 완전 포함으로 간주
+            }
+            return 0.0;
+        }
+        
+        // session2가 Duration=0인 경우
+        if (duration2 == 0)
+        {
+            // session2의 시각이 session1 범위 내 포함 여부
+            if (end2 >= start1 && end2 <= end1)
+            {
+                _logger.LogDebug(
+                    "Duration=0 세션 포함 병합: Package={Package}, Time={Time:HH:mm:ss} in [{Start:HH:mm:ss}, {End:HH:mm:ss}]",
+                    session2.PackageName, end2, start1, end1);
+                return 1.0; // 완전 포함으로 간주
+            }
+            return 0.0;
+        }
+
+        // 일반 세션 간 겹침 비율 계산
         var overlapStart = start1 > start2 ? start1 : start2;
         var overlapEnd = end1 < end2 ? end1 : end2;
 

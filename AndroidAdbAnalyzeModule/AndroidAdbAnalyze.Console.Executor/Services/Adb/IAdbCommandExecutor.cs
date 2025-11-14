@@ -11,6 +11,11 @@ public interface IAdbCommandExecutor
     string AdbPath { get; }
     
     /// <summary>
+    /// 타겟 디바이스 시리얼 번호 (여러 디바이스가 연결된 경우 필수)
+    /// </summary>
+    string? TargetDeviceSerial { get; set; }
+    
+    /// <summary>
     /// ADB 명령을 비동기로 실행합니다
     /// </summary>
     /// <param name="arguments">ADB 명령 인자 (예: "devices", "shell dumpsys activity")</param>

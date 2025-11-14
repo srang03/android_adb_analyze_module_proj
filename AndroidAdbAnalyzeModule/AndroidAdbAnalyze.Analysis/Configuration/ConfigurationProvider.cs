@@ -220,7 +220,8 @@ public static class ConfigurationProvider
             {
                 MaxSessionGapMinutes = 5,
                 EventCorrelationSeconds = 30,
-                CaptureDeduplicationSeconds = 1
+                CaptureDeduplicationSeconds = 1,
+                SameCameraUsageTimeThresholdSeconds = 2.0
             },
             Packages = new PackagesConfig
             {

@@ -593,7 +593,7 @@ public sealed class BasePatternStrategyTests
                     ["piid"] = 311, 
                     ["event"] = "started" 
                 }),
-            CreateEvent(LogEventTypes.VIBRATION_EVENT, baseTime.AddMilliseconds(500), // VIBRATION_EVENT 나중
+            CreateEvent(LogEventTypes.VIBRATION_EVENT, baseTime.AddMilliseconds(499), // VIBRATION_EVENT 나중 (경계값 회피: 499ms < 500ms)
                 "com.sec.android.app.camera",
                 new Dictionary<string, object> 
                 { 

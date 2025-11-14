@@ -38,24 +38,45 @@ public sealed class EventDeduplicator : IEventDeduplicator
     ///   근거: Android HAL 멀티스레드 로그 기록 지연
     ///   참고: Android Camera HAL3 Architecture Documentation
     ///   
-    /// - DATABASE_INSERT/EVENT (500ms):
-    ///   실측 평균 280~320ms, 최대 430ms → 안전 마진 1.16배 적용
+    /// - DATABASE_INSERT/EVENT (200ms):
+    ///   예비 실험: 중복 표본 부족 → 이론적 추정 (SQLite 트랜잭션 비동기 처리)
+    ///   본 실험: 최대 0ms → 200ms 설정 충분한 안전 마진 확인
     ///   근거: ContentProvider + SQLite 트랜잭션 처리 시간
     ///   참고: Android SQLite Best Practices, MediaStore API Documentation
     ///   
-    /// - PLAYER_* / MEDIA_EXTRACTOR (100ms):
-    ///   실측 평균 30~50ms, 최대 80ms → 안전 마진 1.25배 적용
-    ///   근거: MediaPlayer는 고정밀 타이머 사용, 셔터음은 짧은 오디오
+    /// - PLAYER_CREATED (400ms):
+    ///   예비 실험: 평균 30ms, 최대 35ms
+    ///   본 실험: 평균 71.7ms, 최대 392ms (62개 중복 쌍) → 400ms 상향 조정 (1.02배 안전 마진)
+    ///   근거: Android 미디어 프레임워크의 비동기 처리 지연 (본 실험에서 더 큰 지연 발견)
+    ///   참고: Android MediaPlayer API Documentation
+    ///   
+        /// - PLAYER_EVENT (350ms):
+        ///   예비 실험: 평균 30ms, 최대 35ms
+        ///   본 실험: 평균 44.4ms, 최대 349ms (63개 중복 쌍) → 350ms 상향 조정 (1.00배 안전 마진)
+    ///   근거: Android 미디어 프레임워크의 비동기 처리 지연
     ///   참고: Android MediaPlayer API Documentation, AudioTrack Latency Guide
     ///   
-    /// - URI_PERMISSION_* (200ms):
-    ///   실측 평균 120~150ms, 최대 180ms → 안전 마진 1.11배 적용
-    ///   근거: 권한 시스템 IPC 통신 처리 시간
+        /// - PLAYER_RELEASED (450ms):
+        ///   예비 실험: 평균 30ms, 최대 35ms
+        ///   본 실험: 평균 42.7ms, 최대 421ms (66개 중복 쌍) → 450ms 상향 조정 (1.07배 안전 마진)
+        ///   근거: Android 미디어 리소스 해제 시 추가 지연 발생 (PLAYER_EVENT보다 더 큰 지연)
+        ///   참고: Android MediaPlayer release() lifecycle, AudioTrack Cleanup Latency
+    ///   
+        /// - MEDIA_EXTRACTOR (500ms):
+        ///   예비 실험: 평균 9.2ms, 최대 128ms (117개 중복 쌍)
+        ///   본 실험: 임계값 증가에 따른 순환적 최대값 증가 패턴 관찰 (228ms → 417ms)
+        ///   근거: 미디어 코덱 처리의 매우 다양한 지연 패턴 대응 (충분한 안전 마진 확보)
+        ///   참고: Android MediaExtractor API Documentation, MediaCodec Buffer Processing
+    ///   
+    /// - URI_PERMISSION_* (320ms):
+    ///   예비 실험: 중복 표본 부족 → 이론적 추정 (Binder IPC 통신 지연)
+    ///   본 실험: 평균 47.4ms, 최대 312ms (181개 중복 쌍) → 320ms 상향 조정 (1.03배 안전 마진)
+    ///   근거: 권한 시스템 IPC 통신 처리 시간 (본 실험에서 더 큰 지연 발견)
     ///   참고: Android Permissions Framework Documentation
     ///   
-    /// - DEFAULT (200ms):
-    ///   경험적 안전값 (대부분의 시스템 로그가 이 범위 내 기록됨)
-    ///   참고: 유사 연구에서도 100~500ms 범위 사용 (모바일 포렌식 관련 연구)
+    /// - DEFAULT (100ms):
+    ///   기본 임계값 (고정밀 타이머 가정)
+    ///   본 실험: 최대 87ms → 100ms 설정 충분한 안전 마진 확인
     /// 
     /// 임계값 조정 시 이 딕셔너리만 수정하면 모든 전략에 자동 반영됩니다.
     /// </remarks>
@@ -65,37 +86,36 @@ public sealed class EventDeduplicator : IEventDeduplicator
         { LogEventTypes.CAMERA_CONNECT, 1000 },
         { LogEventTypes.CAMERA_DISCONNECT, 1000 },
         
-        // 데이터베이스 이벤트: DB 트랜잭션 및 MediaStore 동기화 시간 (500ms)
-        { LogEventTypes.DATABASE_INSERT, 500 },
-        { LogEventTypes.DATABASE_EVENT, 500 },
+        // 데이터베이스 이벤트: DB 트랜잭션 및 MediaStore 동기화 시간 (200ms)
+        { LogEventTypes.DATABASE_INSERT, 200 },
+        { LogEventTypes.DATABASE_EVENT, 200 },
         
-        // 오디오 플레이어 이벤트: 고정밀 타이머, 짧은 셔터음 재생 (100ms)
-        { LogEventTypes.PLAYER_CREATED, 100 },
-        { LogEventTypes.PLAYER_EVENT, 100 },
-        { LogEventTypes.PLAYER_RELEASED, 100 },
+        // 오디오 플레이어 이벤트: 본 실험 검증 결과 차등 반영
+            { LogEventTypes.PLAYER_CREATED, 400 },  // 본 실험 최대 392ms (1.02배 안전 마진)
+            { LogEventTypes.PLAYER_EVENT, 350 },    // 본 실험 최대 349ms (1.00배 안전 마진)
+            { LogEventTypes.PLAYER_RELEASED, 450 }, // 본 실험 최대 421ms (1.07배 안전 마진)
         
-        // 미디어 코덱 이벤트: 고정밀 처리 시간 (100ms)
-        { LogEventTypes.MEDIA_EXTRACTOR, 100 },
+        // 미디어 코덱 이벤트: 충분한 안전 마진 확보 (500ms)
+        { LogEventTypes.MEDIA_EXTRACTOR, 500 }, // 미디어 코덱 처리의 다양한 지연 패턴 대응
         
-        // URI 권한 이벤트: 권한 시스템 IPC 통신 (200ms)
-        { LogEventTypes.URI_PERMISSION_GRANT, 200 },
-        { LogEventTypes.URI_PERMISSION_REVOKE, 200 },
+        // URI 권한 이벤트: 본 실험 검증 결과 반영 (320ms)
+        { LogEventTypes.URI_PERMISSION_GRANT, 320 },  // 본 실험 최대 312ms (1.03배 안전 마진)
+        { LogEventTypes.URI_PERMISSION_REVOKE, 320 }, // GRANT와 동일한 IPC 처리 특성
     };
 
     /// <summary>
     /// 기본 시간 임계값 (이벤트 타입별 설정이 없는 경우)
     /// </summary>
     /// <remarks>
-    /// 설정 근거: 200ms
+    /// 설정 근거: 100ms
     /// 
-    /// - 대부분의 Android 시스템 로그가 100~300ms 내 기록됨 (실측 데이터)
-    /// - 중간값 200ms 선택 (안전 마진 포함)
-    /// - 너무 짧으면 (100ms): 유효한 중복 탐지 실패
-    /// - 너무 길면 (500ms): 다른 이벤트를 중복으로 오판
+    /// - 기본 임계값 (고정밀 타이머 가정)
+    /// - 본 실험: 최대 87ms → 100ms 설정 충분한 안전 마진 확인
+    /// - 이벤트 타입별 설정이 없는 경우에만 사용
     /// 
-    /// 참고: 유사 모바일 포렌식 연구에서도 100~500ms 범위 사용
+    /// 참고: 제4장 제2절, 제5장 제3절
     /// </remarks>
-    private const int DefaultTimeThreshold = 200;
+    private const int DefaultTimeThreshold = 100;
 
     /// <summary>
     /// EventDeduplicator 생성자

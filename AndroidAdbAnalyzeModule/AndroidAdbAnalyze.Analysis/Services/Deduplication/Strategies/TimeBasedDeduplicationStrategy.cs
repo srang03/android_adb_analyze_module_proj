@@ -19,42 +19,45 @@ public sealed class TimeBasedDeduplicationStrategy : IDeduplicationStrategy
     /// TimeBasedDeduplicationStrategy 생성자
     /// </summary>
     /// <param name="timeThresholdMs">시간 임계값 (밀리초)</param>
-    /// <param name="similarityThreshold">속성 유사도 임계값 (0.0 ~ 1.0, 기본값: 0.8)</param>
+    /// <param name="similarityThreshold">속성 유사도 임계값 (0.0 ~ 1.0, 기본값: 0.55)</param>
     /// <remarks>
-    /// similarityThreshold 설정 근거: 0.8 (80%)
+    /// similarityThreshold 설정 근거: 0.55 (55%)
     /// 
-    /// 1. 중복 탐지 분야 일반적 기준: 70~90% 범위
-    ///    - 너무 낮으면 (60%): 다른 이벤트를 중복으로 오판
-    ///    - 너무 높으면 (95%): 실제 중복을 탐지하지 못함
+    /// 1. 실측 검증 (예비 실험 3회):
+    ///    - 중복 이벤트 쌍: 평균 64%, 최소 60%, 최대 71%
+    ///    - 비중복 이벤트 쌍: 평균 45%, 최대 65% (부록 3 기준)
+    ///    → 55%를 경계로 두 분포 구분 (안전 마진 확보)
     /// 
-    /// 2. 실측 검증 (Sample 3~5 로그):
-    ///    - 중복 이벤트 쌍 10개 분석: 평균 유사도 85%, 최소 78%
-    ///    - 비중복 이벤트 쌍 10개 분석: 평균 유사도 45%, 최대 65%
-    ///    → 80%를 경계로 명확히 구분됨
+    /// 2. 임계값 설정 논리:
+    ///    - 중복 쌍 최소값(60%)보다 낮아야 모든 중복 탐지 가능
+    ///    - 비중복 쌍 최대값(65%)보다 낮아야 오탐 방지
+    ///    - 55% 선정: 두 분포 사이의 안전한 경계값
     /// 
-    /// 3. Ground Truth 검증 결과 (Sample 3~8):
-    ///    - 0.7: Precision 95.2%, Recall 100% (오탐 4.8%)
-    ///    - 0.8: Precision 100%, Recall 98.5% (최적 균형점)
-    ///    - 0.9: Precision 100%, Recall 92.3% (미탐 7.7%)
+    /// 3. 실측 데이터 상세 (예비 실험):
+    ///    - STANDBY_BUCKET_CHANGED: 60.0%
+    ///    - ACTIVITY_RESUMED: 62.5%
+    ///    - ACTIVITY_STOPPED: 62.5%
+    ///    - VIBRATION_EVENT: 64.3%
+    ///    - AUDIO_TRACK: 71.4%
     /// 
     /// 4. Jaccard Similarity 특성:
     ///    - J(A,B) = |A ∩ B| / |A ∪ B|
     ///    - 속성 키-값 쌍이 완전히 같을 때: 1.0
     ///    - 전혀 다를 때: 0.0
     ///    - 예: {a:1, b:2} vs {a:1, c:3} → 1/3 = 0.33 (중복 아님)
-    ///    - 예: {a:1, b:2} vs {a:1, b:2, c:3} → 2/3 = 0.67 (중복 아님)
-    ///    - 예: {a:1, b:2, c:3} vs {a:1, b:2, c:3, d:4} → 3/4 = 0.75 (경계)
+    ///    - 예: {a:1, b:2} vs {a:1, b:2, c:3} → 2/3 = 0.67 (중복)
+    ///    - 예: {a:1, b:2, c:3} vs {a:1, b:2, c:3, d:4} → 3/4 = 0.75 (중복)
     ///    - 예: {a:1, b:2, c:3, d:4} vs {a:1, b:2, c:3, d:4} → 4/4 = 1.0 (중복)
     /// 
     /// 5. 참고 문헌:
     ///    - "Duplicate Detection" (유사 중복 탐지 연구에서 일반적으로 사용)
     ///    - 정보 검색 분야의 문서 유사도 측정 기준
     /// 
-    /// 결론: 80% = 대부분의 속성이 일치해야 중복으로 판정 (보수적 접근)
+    /// 결론: 55% = 절반 이상의 속성이 일치하면 중복으로 판정 (실측 데이터 기반)
     /// 
     /// 참고: AnalysisOptions.DeduplicationSimilarityThreshold에서 설정 가능
     /// </remarks>
-    public TimeBasedDeduplicationStrategy(int timeThresholdMs = 200, double similarityThreshold = 0.8)
+    public TimeBasedDeduplicationStrategy(int timeThresholdMs = 200, double similarityThreshold = 0.55)
     {
         _timeThresholdMs = timeThresholdMs;
         _similarityThreshold = similarityThreshold;

@@ -15,6 +15,11 @@ public sealed class AdbCommandExecutor : IAdbCommandExecutor
     private readonly TimeSpan _defaultRetryDelay;
 
     public string AdbPath { get; }
+    
+    /// <summary>
+    /// 타겟 디바이스 시리얼 번호 (여러 디바이스가 연결된 경우 필수)
+    /// </summary>
+    public string? TargetDeviceSerial { get; set; }
 
     /// <summary>
     /// AdbCommandExecutor 생성자
@@ -68,18 +73,25 @@ public sealed class AdbCommandExecutor : IAdbCommandExecutor
             throw new ArgumentException("ADB 명령 인자가 비어있습니다.", nameof(arguments));
         }
 
+        // 디바이스 시리얼이 설정되어 있으면 -s 옵션 추가
+        var effectiveArguments = arguments;
+        if (!string.IsNullOrWhiteSpace(TargetDeviceSerial) && !arguments.StartsWith("devices"))
+        {
+            effectiveArguments = $"-s {TargetDeviceSerial} {arguments}";
+        }
+
         var effectiveTimeout = timeout ?? _defaultTimeout;
         var stopwatch = Stopwatch.StartNew();
 
         _logger.LogDebug("ADB 명령 실행: adb {Arguments} (타임아웃: {Timeout}초)", 
-            arguments, effectiveTimeout.TotalSeconds);
+            effectiveArguments, effectiveTimeout.TotalSeconds);
 
         try
         {
             var startInfo = new ProcessStartInfo
             {
                 FileName = AdbPath,
-                Arguments = arguments,
+                Arguments = effectiveArguments,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -135,14 +147,14 @@ public sealed class AdbCommandExecutor : IAdbCommandExecutor
                 if (timeoutCts.Token.IsCancellationRequested)
                 {
                     _logger.LogWarning("ADB 명령 타임아웃: {Arguments} ({Elapsed}초)", 
-                        arguments, stopwatch.Elapsed.TotalSeconds);
+                        effectiveArguments, stopwatch.Elapsed.TotalSeconds);
                     
                     return AdbCommandResult.CreateFailure(
                         exitCode: -1,
                         stdout: stdoutBuilder.ToString(),
                         stderr: $"타임아웃 ({effectiveTimeout.TotalSeconds}초 초과)",
                         executionTime: stopwatch.Elapsed,
-                        exception: new TimeoutException($"ADB 명령 타임아웃: {arguments}"));
+                        exception: new TimeoutException($"ADB 명령 타임아웃: {effectiveArguments}"));
                 }
                 else
                 {
@@ -159,7 +171,7 @@ public sealed class AdbCommandExecutor : IAdbCommandExecutor
             if (exitCode == 0)
             {
                 _logger.LogDebug("ADB 명령 성공: {Arguments} ({Elapsed}초)", 
-                    arguments, stopwatch.Elapsed.TotalSeconds);
+                    effectiveArguments, stopwatch.Elapsed.TotalSeconds);
                 
                 return AdbCommandResult.CreateSuccess(
                     stdout: stdout,
@@ -169,7 +181,7 @@ public sealed class AdbCommandExecutor : IAdbCommandExecutor
             else
             {
                 _logger.LogWarning("ADB 명령 실패: {Arguments} (ExitCode: {ExitCode}, Stderr: {Stderr})", 
-                    arguments, exitCode, stderr.Length > 100 ? stderr.Substring(0, 100) + "..." : stderr);
+                    effectiveArguments, exitCode, stderr.Length > 100 ? stderr.Substring(0, 100) + "..." : stderr);
                 
                 return AdbCommandResult.CreateFailure(
                     exitCode: exitCode,
@@ -182,7 +194,7 @@ public sealed class AdbCommandExecutor : IAdbCommandExecutor
         {
             stopwatch.Stop();
             
-            _logger.LogError(ex, "ADB 명령 실행 중 예외 발생: {Arguments}", arguments);
+            _logger.LogError(ex, "ADB 명령 실행 중 예외 발생: {Arguments}", effectiveArguments);
             
             return AdbCommandResult.CreateFailure(
                 exitCode: -1,

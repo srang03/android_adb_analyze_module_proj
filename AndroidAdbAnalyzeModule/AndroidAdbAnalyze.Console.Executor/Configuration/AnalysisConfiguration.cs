@@ -29,5 +29,20 @@ public sealed class AnalysisConfiguration
     /// 중복 제거 유사도 임계값 (0.0 ~ 1.0)
     /// </summary>
     public double DeduplicationSimilarityThreshold { get; set; } = 0.8;
+    
+    /// <summary>
+    /// 같은 카메라 사용 판정 시간 임계값 (초)
+    /// </summary>
+    /// <remarks>
+    /// usagestats와 media.camera의 같은 카메라 사용 세션 병합에 사용 (병합 규칙 1)
+    /// 기본값: 2.0 (2초)
+    /// 
+    /// 실측 근거 (예비 실험):
+    /// - 로그 소스 간 시작/종료 시각 차이 평균 1초
+    /// - 안전 마진 2배 적용
+    /// 
+    /// 참고: 제4장 제3절 (세션 탐지 설계)
+    /// </remarks>
+    public double SameCameraUsageTimeThresholdSeconds { get; set; } = 2.0;
 }
 

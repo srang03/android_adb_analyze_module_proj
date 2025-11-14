@@ -462,11 +462,8 @@ public sealed class RebootDetectionIntegrationTests : IAsyncLifetime
 
     private AnalysisOptions CreateAnalysisOptions()
     {
-        return new AnalysisOptions
-        {
-            MinConfidenceThreshold = 0.3,
-            CaptureDeduplicationWindow = TimeSpan.FromSeconds(1)
-        };
+        // AnalysisOptions 기본값 사용 (하드코딩 금지)
+        return new AnalysisOptions();
     }
 
     #endregion

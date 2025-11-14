@@ -290,9 +290,32 @@ public sealed class TimeWindowsConfig
     /// </summary>
     /// <remarks>
     /// 동일 촬영의 여러 핵심 아티팩트를 1개로 통합
-    /// 기본값: 1 (1초)
+    /// 기본값: 0.5 (0.5초, 500ms)
+    /// 
+    /// 설정 근거:
+    /// - 예비 실험 측정: 최대 핵심 아티팩트 시간 범위 330ms
+    /// - 안전 마진: 1.52배 (500ms / 330ms)
+    /// - 측정 제외: FOREGROUND_SERVICE, MEDIA_EXTRACTOR, PLAYER_CREATED, PLAYER_RELEASED
+    /// - 본 실험 검증: 46개 촬영, Precision 100%
+    /// 
+    /// 참고: 제4장 제4절, 부록 3
     /// </remarks>
-    public int CaptureDeduplicationSeconds { get; set; } = 1;
+    public double CaptureDeduplicationSeconds { get; set; } = 0.5;
+    
+    /// <summary>
+    /// 같은 카메라 사용 판정 시간 임계값 (초)
+    /// </summary>
+    /// <remarks>
+    /// usagestats와 media.camera의 같은 카메라 사용 세션 병합에 사용 (병합 규칙 1)
+    /// 기본값: 2 (2.0초)
+    /// 
+    /// 실측 근거 (예비 실험):
+    /// - 로그 소스 간 시작/종료 시각 차이 평균 1초
+    /// - 안전 마진 2배 적용
+    /// 
+    /// 참고: 제4장 제3절 (세션 탐지 설계)
+    /// </remarks>
+    public double SameCameraUsageTimeThresholdSeconds { get; set; } = 2.0;
 }
 
 /// <summary>

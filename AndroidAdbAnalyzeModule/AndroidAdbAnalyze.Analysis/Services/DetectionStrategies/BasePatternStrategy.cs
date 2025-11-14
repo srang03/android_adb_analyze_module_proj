@@ -565,11 +565,15 @@ public sealed class BasePatternStrategy : BaseCaptureDetectionStrategy
     }
 
     /// <summary>
-    /// 시간 윈도우 기반 중복 제거
+    /// 시간 윈도우 및 패키지명 기반 중복 제거
     /// </summary>
     /// <remarks>
     /// 동일한 촬영에 대해 여러 증거(VIBRATION_EVENT, PLAYER_EVENT 등)가 시간대별로 발생할 수 있음.
-    /// 시간 윈도우(기본 1초) 내의 여러 캡처 이벤트를 하나로 통합.
+    /// 
+    /// 중복 제거 조건 (AND):
+    /// 1. 시간 차이 ≤ CaptureDeduplicationWindow (기본 1초)
+    /// 2. PackageName 일치 (동일 앱의 촬영만 병합)
+    /// 
     /// 우선순위: VIBRATION_EVENT > PLAYER_EVENT > URI_PERMISSION_GRANT > SILENT_CAMERA_CAPTURE
     /// </remarks>
     private List<CameraCaptureEvent> DeduplicateCapturesByTimeWindow(
@@ -597,14 +601,30 @@ public sealed class BasePatternStrategy : BaseCaptureDetectionStrategy
             for (int j = i + 1; j < sorted.Count; j++)
             {
                 var next = sorted[j];
-                if ((next.CaptureTime - current.CaptureTime) <= timeWindow)
+                var timeDiff = next.CaptureTime - current.CaptureTime;
+                
+                // 조건 1: 시간 차이 체크 (>= 사용으로 경계값 포함)
+                // 예: 1초 간격 연속 촬영 시 병합 방지 (1000ms >= 1000ms → 중단)
+                if (timeDiff >= timeWindow)
+                {
+                    break; // 시간 차이가 윈도우 이상이면 중단
+                }
+                
+                // 조건 2: PackageName 일치 체크 (동일 앱의 촬영만 병합)
+                if (next.PackageName.Equals(current.PackageName, StringComparison.OrdinalIgnoreCase))
                 {
                     group.Add(next);
                     processed.Add(next.CaptureId);
+                    
+                    _logger.LogDebug(
+                        "[BaseStrategy] 중복 후보 추가: Time={Time:HH:mm:ss.fff}, Package={Package}, TimeDiff={TimeDiff}ms",
+                        next.CaptureTime, next.PackageName, timeDiff.TotalMilliseconds);
                 }
                 else
                 {
-                    break; // 시간 차이가 윈도우를 벗어나면 중단
+                    _logger.LogDebug(
+                        "[BaseStrategy] 중복 제외 (다른 앱): Current={CurrentPackage}, Next={NextPackage}, TimeDiff={TimeDiff}ms",
+                        current.PackageName, next.PackageName, timeDiff.TotalMilliseconds);
                 }
             }
 
@@ -616,8 +636,8 @@ public sealed class BasePatternStrategy : BaseCaptureDetectionStrategy
             {
                 var ArtifactTypesSummary = string.Join(", ", best.ArtifactTypes);
                 _logger.LogDebug(
-                    "[BaseStrategy] 중복 그룹 통합: {Count}개 → 1개 (Time={Time:HH:mm:ss.fff}, ArtifactTypes=[{ArtifactTypes}])",
-                    group.Count, best.CaptureTime, ArtifactTypesSummary);
+                    "[BaseStrategy] 중복 그룹 통합: {Count}개 → 1개 (Time={Time:HH:mm:ss.fff}, Package={Package}, ArtifactTypes=[{ArtifactTypes}])",
+                    group.Count, best.CaptureTime, best.PackageName, ArtifactTypesSummary);
             }
         }
 

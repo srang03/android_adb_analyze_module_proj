@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using AndroidAdbAnalyze.Console.Executor.Core;
 using AndroidAdbAnalyze.Console.Executor.Core.Exceptions;
+using AndroidAdbAnalyze.Console.Executor.Services.Output;
 using AndroidAdbAnalyze.Console.Executor.Services.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -103,12 +104,59 @@ public static class AnalyzeCommand
                 
                 if (result.Success)
                 {
-                    System.Console.WriteLine();
-                    System.Console.WriteLine("=== 분석 완료 ===");
-                    System.Console.WriteLine($"세션: {result.AnalysisResult?.Sessions.Count ?? 0}개");
-                    System.Console.WriteLine($"촬영 이벤트: {result.AnalysisResult?.CaptureEvents.Count ?? 0}개");
-                    System.Console.WriteLine($"실행 시간: {result.TotalExecutionTime.TotalSeconds:F2}초");
-                    System.Console.WriteLine($"출력 디렉토리: {result.CollectionSummary?.OutputDirectory ?? outputDir ?? "./logs"}");
+                    // ========================================
+                    // 결과 저장 (JSON + HTML)
+                    // ========================================
+                    try
+                    {
+                        var outputService = scope.ServiceProvider.GetRequiredService<IResultOutputService>();
+                        var outputSummary = await outputService.SaveResultsAsync(
+                            result, 
+                            outputDir, 
+                            context.GetCancellationToken());
+                        
+                        // ========================================
+                        // 콘솔 출력
+                        // ========================================
+                        System.Console.WriteLine();
+                        System.Console.WriteLine("=== 분석 완료 ===");
+                        System.Console.WriteLine($"세션: {result.AnalysisResult?.Sessions.Count ?? 0}개");
+                        System.Console.WriteLine($"촬영 이벤트: {result.AnalysisResult?.CaptureEvents.Count ?? 0}개");
+                        System.Console.WriteLine($"실행 시간: {result.TotalExecutionTime.TotalSeconds:F2}초");
+                        System.Console.WriteLine();
+                        System.Console.WriteLine("=== 결과 저장 ===");
+                        System.Console.WriteLine($"출력 디렉토리: {outputSummary.OutputDirectory}");
+                        
+                        if (outputSummary.HtmlReportPath != null)
+                        {
+                            System.Console.WriteLine($"  ✓ HTML 보고서: {Path.GetFileName(outputSummary.HtmlReportPath)}");
+                        }
+                        
+                        if (outputSummary.JsonFilePaths.Any())
+                        {
+                            System.Console.WriteLine($"  ✓ JSON 파일: {outputSummary.JsonFilePaths.Count}개");
+                        }
+                        
+                        if (outputSummary.RawLogsDirectory != null)
+                        {
+                            System.Console.WriteLine($"  ✓ 원본 로그: raw_logs/");
+                        }
+                        
+                        System.Console.WriteLine($"  총 {outputSummary.TotalFilesCreated}개 파일 생성");
+                    }
+                    catch (Exception ex)
+                    {
+                        // 결과 저장 실패해도 분석은 성공으로 처리
+                        logger.LogWarning(ex, "결과 저장 중 오류 발생 (분석은 성공)");
+                        System.Console.WriteLine();
+                        System.Console.WriteLine("=== 분석 완료 ===");
+                        System.Console.WriteLine($"세션: {result.AnalysisResult?.Sessions.Count ?? 0}개");
+                        System.Console.WriteLine($"촬영 이벤트: {result.AnalysisResult?.CaptureEvents.Count ?? 0}개");
+                        System.Console.WriteLine($"실행 시간: {result.TotalExecutionTime.TotalSeconds:F2}초");
+                        System.Console.WriteLine($"출력 디렉토리: {result.CollectionSummary?.OutputDirectory ?? outputDir ?? "./logs"}");
+                        System.Console.WriteLine();
+                        System.Console.WriteLine("⚠️  결과 저장 중 오류 발생: " + ex.Message);
+                    }
                     
                     context.ExitCode = (int)ExitCode.Success;
                 }

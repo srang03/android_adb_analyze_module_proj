@@ -157,6 +157,92 @@ public abstract class BaseCaptureDetectionStrategy : ICaptureDetectionStrategy
     }
 
     /// <summary>
+    /// 중복 제거 전 촬영 탐지 (테스트용 공개 메서드)
+    /// </summary>
+    /// <remarks>
+    /// CaptureDeduplicationWindow 파라미터 검증을 위해 중복 제거 전 CameraCaptureEvent 목록을 반환합니다.
+    /// 이를 통해 실제 CameraCaptureEvent 간 시간 간격을 측정할 수 있습니다.
+    /// </remarks>
+    public List<CameraCaptureEvent> DetectCapturesWithoutDeduplication(
+        SessionContext context,
+        AnalysisOptions options)
+    {
+        var captures = new List<CameraCaptureEvent>();
+
+        // 1단계: 핵심 아티팩트 검색 (전략별 구현)
+        var keyArtifacts = GetKeyArtifacts(context, options);
+        
+        LogKeyArtifactsFound(context, keyArtifacts.Count);
+
+        // 2단계: 각 핵심 아티팩트에 대해 촬영 탐지
+        foreach (var keyArtifact in keyArtifacts)
+        {
+            // 경로 패턴 검증 (전략별 Hook Method)
+            if (ShouldExcludeByPathPattern(keyArtifact, options))
+            {
+                _logger.LogDebug(
+                    "[{Strategy}] 경로 패턴 제외: EventId={EventId}",
+                    GetType().Name, keyArtifact.EventId);
+                continue;
+            }
+
+            // 보조 아티팩트 수집 (공통 로직)
+            var supportingArtifacts = CollectSupportingArtifacts(
+                keyArtifact,
+                context,
+                options.EventCorrelationWindow);
+
+            _logger.LogInformation("┌─────────────────────────────────────────────────────────────┐");
+            _logger.LogInformation("│ [CAPTURE_DETECTION] 촬영 탐지 시작                           │");
+            _logger.LogInformation("├─────────────────────────────────────────────────────────────┤");
+            _logger.LogInformation("│ [SESSION_INFO] SessionId: {SessionId}", context.Session.SessionId);
+            _logger.LogInformation("│ [SESSION_INFO] 패키지명: {PackageName}", context.Session.PackageName);
+            _logger.LogInformation("│ [SESSION_INFO] 세션 시간: {Start:HH:mm:ss} ~ {End:HH:mm:ss}", 
+                context.Session.StartTime, 
+                context.Session.EndTime);
+            _logger.LogInformation("├─────────────────────────────────────────────────────────────┤");
+            _logger.LogInformation("│ [STRATEGY_INFO] 사용 전략: {Strategy}", GetType().Name);
+            _logger.LogInformation("│ [STRATEGY_INFO] 패키지 패턴: {Pattern}", PackageNamePattern ?? "N/A");
+            _logger.LogInformation("│ [STRATEGY_INFO] 핵심 아티팩트: {KeyArtifact}", keyArtifact.EventType);
+            _logger.LogInformation("│ [STRATEGY_INFO] 촬영 시각: {Time:HH:mm:ss.fff}", keyArtifact.Timestamp);
+            _logger.LogInformation("│ [STRATEGY_INFO] 보조 아티팩트: {Count}개", supportingArtifacts.Count);
+            if (supportingArtifacts.Count > 0)
+            {
+                _logger.LogInformation("│ [STRATEGY_INFO] 보조 목록: [{SupportingTypes}]", 
+                    string.Join(", ", supportingArtifacts.Select(a => a.EventType)));
+            }
+            _logger.LogInformation("└─────────────────────────────────────────────────────────────┘");
+
+            // 탐지 점수 계산 (공통 로직)
+            var allArtifacts = new List<NormalizedLogEvent> { keyArtifact };
+            allArtifacts.AddRange(supportingArtifacts);
+            var score = _confidenceCalculator.CalculateConfidence(allArtifacts);
+
+            // CameraCaptureEvent 생성 (공통 로직)
+            var capture = CreateCaptureEvent(
+                context.Session,
+                keyArtifact,
+                supportingArtifacts,
+                allArtifacts,
+                score);
+
+            captures.Add(capture);
+
+            _logger.LogInformation("┌═════════════════════════════════════════════════════════════┐");
+            _logger.LogInformation("║ [CAPTURE_SUCCESS] ✅ 촬영 탐지 성공                          ║");
+            _logger.LogInformation("╞═════════════════════════════════════════════════════════════╡");
+            _logger.LogInformation("║ CaptureId: {CaptureId}", capture.CaptureId);
+            _logger.LogInformation("║ 촬영 시각: {Time:HH:mm:ss.fff}", capture.CaptureTime);
+            _logger.LogInformation("║ 탐지 점수: {Score:F2}", capture.CaptureDetectionScore);
+            _logger.LogInformation("└═════════════════════════════════════════════════════════════┘");
+            _logger.LogInformation("");  // 빈 줄로 구분
+        }
+
+        // 중복 제거는 하지 않음 (테스트용)
+        return captures;
+    }
+
+    /// <summary>
     /// 핵심 아티팩트 검색 (Abstract Method - 각 전략이 반드시 구현)
     /// </summary>
     /// <param name="context">세션 컨텍스트</param>
@@ -291,7 +377,7 @@ public abstract class BaseCaptureDetectionStrategy : ICaptureDetectionStrategy
         {
             CaptureId = Guid.NewGuid(),
             ParentSessionId = session.SessionId,
-            CaptureTime = keyArtifact.Timestamp,
+            CaptureTime = GetPreciseCaptureTime(keyArtifact, allArtifacts),
             PackageName = session.PackageName,
             FilePath = filePath,
             FileUri = fileUri,
@@ -303,6 +389,61 @@ public abstract class BaseCaptureDetectionStrategy : ICaptureDetectionStrategy
             SourceEventIds = allArtifacts.Select(e => e.EventId).ToList(),
             Metadata = metadata
         };
+    }
+
+    /// <summary>
+    /// 정밀한 촬영 시각 결정
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// FOREGROUND_SERVICE는 타임스탬프 정밀도가 낮으므로 (1초 단위 반올림),
+    /// 다른 정밀한 아티팩트의 타임스탬프를 우선적으로 사용합니다.
+    /// </para>
+    /// <para>
+    /// <b>설계 근거 (논문 부록 3):</b>
+    /// "FOREGROUND_SERVICE: 촬영 후 후처리 서비스로 2~3초 지연 발생.
+    /// 타임스탬프가 1초 단위로 반올림되어 정밀도가 낮음.
+    /// 휘발성 대응용 아티팩트로, 촬영 존재 여부 판정에는 기여하나
+    /// 촬영 시각 측정에는 부적합함."
+    /// </para>
+    /// <para>
+    /// <b>우선순위:</b>
+    /// 1. DATABASE_INSERT (확정 핵심, 가장 정밀)
+    /// 2. VIBRATION_EVENT (조건부 핵심, 밀리초 단위)
+    /// 3. 기타 아티팩트 (시간 순 정렬, FOREGROUND_SERVICE 제외)
+    /// 4. FOREGROUND_SERVICE (최후 수단)
+    /// </para>
+    /// </remarks>
+    /// <param name="keyArtifact">핵심 아티팩트</param>
+    /// <param name="allArtifacts">전체 아티팩트 목록</param>
+    /// <returns>정밀한 촬영 시각</returns>
+    protected virtual DateTime GetPreciseCaptureTime(
+        NormalizedLogEvent keyArtifact,
+        List<NormalizedLogEvent> allArtifacts)
+    {
+        // FOREGROUND_SERVICE가 keyArtifact인 경우, 다른 정밀한 아티팩트 사용
+        if (keyArtifact.EventType == "FOREGROUND_SERVICE")
+        {
+            // 우선순위: DATABASE_INSERT > VIBRATION_EVENT > 기타 (FOREGROUND_SERVICE 제외)
+            var preciseArtifact = allArtifacts
+                .Where(e => e.EventType != "FOREGROUND_SERVICE")
+                .OrderByDescending(e => 
+                    e.EventType == "DATABASE_INSERT" ? 3 :
+                    e.EventType == "VIBRATION_EVENT" ? 2 : 1)
+                .ThenBy(e => e.Timestamp)
+                .FirstOrDefault();
+            
+            if (preciseArtifact != null)
+            {
+                _logger.LogDebug(
+                    "[CreateCaptureEvent] FOREGROUND_SERVICE의 타임스탬프 대신 {Type}의 타임스탬프 사용: {Time:HH:mm:ss.fff}",
+                    preciseArtifact.EventType, preciseArtifact.Timestamp);
+                
+                return preciseArtifact.Timestamp;
+            }
+        }
+        
+        return keyArtifact.Timestamp;
     }
 
     /// <summary>

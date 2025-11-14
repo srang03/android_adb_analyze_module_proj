@@ -207,18 +207,18 @@ public sealed class EventDeduplicatorTests
         // Arrange
         var baseTime = DateTime.UtcNow;
         
-        // DATABASE_INSERT는 500ms 임계값
+        // DATABASE_INSERT는 200ms 임계값
         var dbEvents = new[]
         {
             CreateEvent(LogEventTypes.DATABASE_INSERT, baseTime),
-            CreateEvent(LogEventTypes.DATABASE_INSERT, baseTime.AddMilliseconds(400)) // 500ms 이하
+            CreateEvent(LogEventTypes.DATABASE_INSERT, baseTime.AddMilliseconds(150)) // 200ms 이하
         };
         
-        // PLAYER_EVENT는 100ms 임계값
+        // PLAYER_EVENT는 350ms 임계값 (본 실험 검증 결과 반영)
         var playerEvents = new[]
         {
             CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime),
-            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddMilliseconds(150)) // 100ms 초과
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddMilliseconds(400)) // 350ms 초과
         };
 
         // Act
@@ -226,10 +226,10 @@ public sealed class EventDeduplicatorTests
         var playerResult = _deduplicator.Deduplicate(playerEvents, out var playerDetails);
 
         // Assert
-        dbResult.Should().HaveCount(1, "DATABASE_INSERT는 500ms 이하이므로 1개");
+        dbResult.Should().HaveCount(1, "DATABASE_INSERT는 200ms 이하이므로 1개");
         dbDetails.Should().HaveCount(1);
         
-        playerResult.Should().HaveCount(2, "PLAYER_EVENT는 100ms 초과이므로 2개");
+        playerResult.Should().HaveCount(2, "PLAYER_EVENT는 350ms 초과이므로 2개");
         playerDetails.Should().BeEmpty();
     }
 

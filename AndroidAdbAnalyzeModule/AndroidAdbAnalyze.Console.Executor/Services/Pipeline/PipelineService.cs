@@ -3,6 +3,7 @@ using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Options;
 using AndroidAdbAnalyze.Console.Executor.Configuration;
 using AndroidAdbAnalyze.Console.Executor.Models;
+using AndroidAdbAnalyze.Console.Executor.Services.Adb;
 using AndroidAdbAnalyze.Console.Executor.Services.Device;
 using AndroidAdbAnalyze.Console.Executor.Services.LogCollection;
 using AndroidAdbAnalyze.Parser.Configuration.Loaders;
@@ -20,6 +21,7 @@ public sealed class PipelineService : IPipelineService
 {
     private readonly IDeviceManager _deviceManager;
     private readonly ILogCollector _logCollector;
+    private readonly IAdbCommandExecutor _adbExecutor;
     private readonly IAnalysisOrchestrator _analysisOrchestrator;
     private readonly AnalysisConfiguration _analysisConfig;
     private readonly ILogger<PipelineService> _logger;
@@ -28,6 +30,7 @@ public sealed class PipelineService : IPipelineService
     public PipelineService(
         IDeviceManager deviceManager,
         ILogCollector logCollector,
+        IAdbCommandExecutor adbExecutor,
         IAnalysisOrchestrator analysisOrchestrator,
         IOptions<AnalysisConfiguration> analysisConfig,
         ILogger<PipelineService> logger,
@@ -35,6 +38,7 @@ public sealed class PipelineService : IPipelineService
     {
         _deviceManager = deviceManager ?? throw new ArgumentNullException(nameof(deviceManager));
         _logCollector = logCollector ?? throw new ArgumentNullException(nameof(logCollector));
+        _adbExecutor = adbExecutor ?? throw new ArgumentNullException(nameof(adbExecutor));
         _analysisOrchestrator = analysisOrchestrator ?? throw new ArgumentNullException(nameof(analysisOrchestrator));
         _analysisConfig = analysisConfig?.Value ?? throw new ArgumentNullException(nameof(analysisConfig));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -61,6 +65,11 @@ public sealed class PipelineService : IPipelineService
             _logger.LogInformation("[Step 1/4] 디바이스 연결 확인 중...");
             
             var device = await _deviceManager.EnsureSingleDeviceAsync(cancellationToken);
+            
+            // 선택된 디바이스의 시리얼 번호를 AdbCommandExecutor에 설정
+            // 이제부터 모든 ADB 명령은 자동으로 "-s <SERIAL>"을 포함하게 됨
+            _adbExecutor.TargetDeviceSerial = device.Serial;
+            _logger.LogInformation("타겟 디바이스 설정: {Serial}", device.Serial);
             
             progress?.Report($"디바이스 연결됨: {device.Serial}");
             _logger.LogInformation("디바이스 연결 확인: {Serial} ({Type})", 

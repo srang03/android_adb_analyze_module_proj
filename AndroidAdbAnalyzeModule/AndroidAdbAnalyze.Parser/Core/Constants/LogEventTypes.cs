@@ -5,18 +5,18 @@ namespace AndroidAdbAnalyze.Parser.Core.Constants;
 /// 모든 프로젝트에서 공통으로 사용하는 이벤트 타입 문자열을 중앙에서 관리합니다.
 /// </summary>
 /// <remarks>
-/// 논문 연구 범위: 총 18개 EventType (13개 촬영 탐지용 + 5개 세션 탐지용)
+/// 논문 연구 범위: 총 17개 EventType (12개 촬영 탐지용 + 5개 세션 탐지용)
 /// 
 /// 세션 탐지용 (5개):
 /// - CAMERA_CONNECT, CAMERA_DISCONNECT (media.camera)
 /// - ACTIVITY_RESUMED, ACTIVITY_PAUSED, ACTIVITY_STOPPED (usagestats)
 /// 
-/// 촬영 탐지용 (13개):
-/// - 확정 핵심 (3개): DATABASE_INSERT, DATABASE_EVENT, SILENT_CAMERA_CAPTURE
+/// 촬영 탐지용 (12개):
+/// - 확정 핵심 (2개): DATABASE_INSERT, SILENT_CAMERA_CAPTURE
 /// - 조건부 핵심 (4개): VIBRATION_EVENT, PLAYER_EVENT, FOREGROUND_SERVICE, URI_PERMISSION_GRANT
 /// - 보조 (6개): URI_PERMISSION_REVOKE, PLAYER_CREATED, SHUTTER_SOUND, MEDIA_EXTRACTOR, PLAYER_RELEASED, CAMERA_ACTIVITY_REFRESH
 /// 
-/// 테스트용 (논문 제외): ACTIVITY_LIFECYCLE (Obsolete)
+/// 테스트용 (논문 제외): ACTIVITY_LIFECYCLE (Obsolete), DATABASE_EVENT (Obsolete)
 /// </remarks>
 public static class LogEventTypes
 {
@@ -59,6 +59,7 @@ public static class LogEventTypes
     /// <para>🎯 논문: 촬영 탐지용 - 확정 핵심 아티팩트 (2/13, 총점 8점, 가중치 0.5, D/E/R: 3+3+2)</para>
     /// <para>📱 적용 앱: DATABASE_INSERT와 동일 역할 (DB 조작 변형 패턴)</para>
     /// </summary>
+    [Obsolete("연구 범위에서 제외됨. 사용하지 마세요.", false)]
     public const string DATABASE_EVENT = "DATABASE_EVENT";
     
     /// <summary>

@@ -1,0 +1,40 @@
+{
+  "profiles": {
+    "AndroidAdbAnalyze.Console.Executor": {
+      "commandName": "Project",
+      "commandLineArgs": "analyze",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "Analyze with Verbose": {
+      "commandName": "Project",
+      "commandLineArgs": "analyze --verbose",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "Analyze with Custom Output": {
+      "commandName": "Project",
+      "commandLineArgs": "analyze --output-dir ./test-logs",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "Show Help": {
+      "commandName": "Project",
+      "commandLineArgs": "--help",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "Show Analyze Help": {
+      "commandName": "Project",
+      "commandLineArgs": "analyze --help",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
+

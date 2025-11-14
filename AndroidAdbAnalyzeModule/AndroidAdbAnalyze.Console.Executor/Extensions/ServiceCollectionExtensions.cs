@@ -3,6 +3,7 @@ using AndroidAdbAnalyze.Console.Executor.Configuration;
 using AndroidAdbAnalyze.Console.Executor.Services.Adb;
 using AndroidAdbAnalyze.Console.Executor.Services.Device;
 using AndroidAdbAnalyze.Console.Executor.Services.LogCollection;
+using AndroidAdbAnalyze.Console.Executor.Services.Output;
 using AndroidAdbAnalyze.Console.Executor.Services.Pipeline;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,6 +58,9 @@ public static class ServiceCollectionExtensions
         // Pipeline Service
         services.AddScoped<IPipelineService, PipelineService>();
         
+        // Result Output Service (결과 저장)
+        services.AddScoped<IResultOutputService, ResultOutputService>();
+        
         // ===== Parser Services =====
         // ILogParser는 PipelineService에서 각 로그 파일마다 동적으로 생성
         // (각 로그마다 다른 YAML 설정 파일을 사용하기 때문)
@@ -73,7 +77,8 @@ public static class ServiceCollectionExtensions
                 MinConfidenceThreshold = analysisConfig.MinConfidenceThreshold,
                 EventCorrelationWindow = TimeSpan.FromSeconds(analysisConfig.EventCorrelationWindowSeconds),
                 MaxSessionGap = TimeSpan.FromMinutes(analysisConfig.MaxSessionGapMinutes),
-                DeduplicationSimilarityThreshold = analysisConfig.DeduplicationSimilarityThreshold
+                DeduplicationSimilarityThreshold = analysisConfig.DeduplicationSimilarityThreshold,
+                SameCameraUsageTimeThreshold = TimeSpan.FromSeconds(analysisConfig.SameCameraUsageTimeThresholdSeconds)
             };
         });
         

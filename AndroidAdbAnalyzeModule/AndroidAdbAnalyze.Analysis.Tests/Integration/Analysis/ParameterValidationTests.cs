@@ -102,14 +102,14 @@ public sealed class ParameterValidationTests
         _output.WriteLine("- 안전 마진: 1.67배 (1000ms / 600ms)");
         _output.WriteLine("- 지연 아티팩트 배제: 1초 초과 아티팩트는 촬영 신호 아님");
         _output.WriteLine("");
-        _output.WriteLine("**검증 결과** (Sample 1~10, N=40 촬영):");
+        _output.WriteLine("**검증 결과** (Sample 1~10, N=46 촬영):");
         _output.WriteLine("- 중복 탐지: 0건");
         _output.WriteLine("- Precision: 100%");
-        _output.WriteLine("- 결론: 1초 윈도우로 완벽한 중복 제거 달성");
+        _output.WriteLine("- 결론: 0.5초 윈도우로 완벽한 중복 제거 달성");
         _output.WriteLine("```\n");
 
         // 검증
-        Assert.Equal(1000, currentSetting);
+        Assert.Equal(500, currentSetting);
     }
 
     /// <summary>

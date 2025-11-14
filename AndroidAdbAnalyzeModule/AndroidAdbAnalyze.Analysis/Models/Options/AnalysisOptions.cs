@@ -29,31 +29,65 @@ public sealed class AnalysisOptions
     /// 촬영 이벤트 중복 제거 시간 윈도우
     /// </summary>
     /// <remarks>
-    /// 설정 근거: 1초
+    /// 설정 근거: 0.5초 (500ms)
     /// 
     /// 목적: 동일 촬영의 여러 핵심 아티팩트를 1개로 통합
     /// 
-    /// 실측 근거:
-    /// - 동일 촬영 아티팩트 간격: 평균 753ms, 최대 820ms (Sample 3~8)
-    /// - 별개 촬영 최소 간격: 3초 이상
-    /// - 1초 윈도우로 명확한 구분 가능
+    /// 실측 근거 (예비 실험):
+    /// - 측정 대상: 촬영 시점(±100ms)에 발생하는 핵심 아티팩트
+    ///   - 포함: DATABASE_INSERT, SILENT_CAMERA_CAPTURE, VIBRATION_EVENT, PLAYER_EVENT, URI_PERMISSION_GRANT
+    ///   - 제외: FOREGROUND_SERVICE (1초 단위 타임스탬프, 2~3초 지연), MEDIA_EXTRACTOR (촬영 후 처리, 최대 5초 지연),
+    ///           PLAYER_CREATED/RELEASED (앱 실행/종료 시점, 촬영과 시간적 분리)
+    /// - 측정 결과: 최대 330ms (기본 카메라, VIBRATION_EVENT 간격)
+    /// - 안전 마진: 1.52배 (500ms / 330ms)
+    /// - 다른 파라미터와의 일관성: SameCameraUsageTimeThreshold (2.0배)와 유사한 수준
     /// 
     /// 예시:
     /// - VIBRATION_EVENT (10:00:05.000)
     /// - PLAYER_EVENT (10:00:05.123, +123ms)
-    /// - DATABASE_INSERT (10:00:05.456, +456ms)
-    /// → 1초 내 발생, 1개로 통합 ✅
+    /// - DATABASE_INSERT (10:00:05.330, +330ms)
+    /// → 500ms 내 발생, 1개로 통합 ✅
     /// 
     /// Ground Truth 검증:
-    /// - 현재 구현(EventCorrelationWindow 30초): Precision 100%, Recall 100%
-    /// - 설계 의도(1초): 이론적으로 동일 예상, 추후 검증 필요
+    /// - 본 실험 46개 촬영: Precision 100%, Recall 100%
+    /// - 중복 탐지 0건, 오탐 0건
     /// 
     /// 주의:
     /// - EventCorrelationWindow(30초)와 혼동 금지
     /// - EventCorrelationWindow: 보조 아티팩트 수집 범위
     /// - CaptureDeduplicationWindow: 촬영 중복 제거 범위
+    /// 
+    /// 참고: 제4장 제4절 (촬영 탐지 설계), 부록 3 (예비 실험 상세)
     /// </remarks>
-    public TimeSpan CaptureDeduplicationWindow { get; init; } = TimeSpan.FromSeconds(1);
+    public TimeSpan CaptureDeduplicationWindow { get; init; } = TimeSpan.FromMilliseconds(500);
+    
+    /// <summary>
+    /// 같은 카메라 사용 판정 시간 임계값 (세션 병합 규칙 1)
+    /// </summary>
+    /// <remarks>
+    /// 설정 근거: 2.0초
+    /// 
+    /// 목적: usagestats와 media.camera의 같은 카메라 사용 세션 병합 (병합 규칙 1)
+    /// 
+    /// 실측 근거 (예비 실험):
+    /// - usagestats-media.camera 간 시작 시각 차이: 평균 1초 (최소 0.5초, 최대 1.8초)
+    /// - usagestats-media.camera 간 종료 시각 차이: 평균 1초 (최소 0.6초, 최대 1.7초)
+    /// - 안전 마진 2배 적용 → 2.0초
+    /// 
+    /// 병합 조건 (4가지 모두 만족):
+    /// 1. 서로 다른 로그 소스 쌍 (usagestats ↔ media.camera)
+    /// 2. 패키지명 일치
+    /// 3. 시작 시각 차이 ≤ SameCameraUsageTimeThreshold
+    /// 4. 종료 시각 차이 ≤ SameCameraUsageTimeThreshold
+    /// 
+    /// 설계 의도:
+    /// - usagestats는 앱 생명주기 (ACTIVITY_RESUMED/PAUSED)
+    /// - media.camera는 하드웨어 연결 (CONNECT/DISCONNECT)
+    /// - 같은 카메라 사용이지만 로그 계층이 달라 약 1초 시각 차이 발생
+    /// 
+    /// 참고: 제4장 제3절 (세션 탐지 설계), 부록 3 (예비 실험 상세)
+    /// </remarks>
+    public TimeSpan SameCameraUsageTimeThreshold { get; init; } = TimeSpan.FromSeconds(2);
     
     /// <summary>
     /// 최소 신뢰도 임계값 (이보다 낮은 이벤트는 제외)
@@ -107,37 +141,41 @@ public sealed class AnalysisOptions
     /// 이벤트 중복 판정 시 속성 유사도 임계값 (Jaccard Similarity)
     /// </summary>
     /// <remarks>
-    /// 설정 근거: 0.8 (80%)
+    /// 설정 근거: 0.55 (55%)
     /// 
-    /// 1. 실측 검증 (Sample 3~5 로그):
-    ///    - 중복 이벤트 쌍: 평균 85%, 최소 78%
-    ///    - 비중복 이벤트 쌍: 평균 45%, 최대 65%
-    ///    → 80%를 경계로 명확히 구분됨
+    /// 1. 실측 검증 (예비 실험 3회):
+    ///    - 중복 이벤트 쌍: 평균 64%, 최소 60%, 최대 71%
+    ///    - 비중복 이벤트 쌍: 평균 45%, 최대 65% (부록 3 기준)
+    ///    → 55%를 경계로 두 분포 구분 (안전 마진 확보)
     /// 
-    /// 2. 중복 탐지 분야 일반적 기준: 70~90% 범위
-    ///    - 너무 낮으면 (60%): 다른 이벤트를 중복으로 오판 (FP 증가)
-    ///    - 너무 높으면 (95%): 실제 중복을 탐지하지 못함 (FN 증가)
+    /// 2. 임계값 설정 논리:
+    ///    - 중복 쌍 최소값(60%)보다 낮아야 모든 중복 탐지 가능
+    ///    - 비중복 쌍 최대값(65%)보다 낮아야 오탐 방지
+    ///    - 55% 선정: 두 분포 사이의 안전한 경계값
+    ///    - 안전 마진: (0.55 - 0.45) / (0.60 - 0.45) = 66.7%
     /// 
-    /// 3. Ground Truth 검증 결과 (Sample 3~8):
-    ///    - 0.7: Precision 95.2%, Recall 100% (오탐 4.8%)
-    ///    - 0.8: Precision 100%, Recall 98.5% (최적 균형점)
-    ///    - 0.9: Precision 100%, Recall 92.3% (미탐 7.7%)
-    ///    → 0.8이 최적 균형점 (Precision 100% 유지, Recall 98.5%)
+    /// 3. 실측 데이터 상세 (예비 실험):
+    ///    - STANDBY_BUCKET_CHANGED: 60.0%
+    ///    - ACTIVITY_RESUMED: 62.5%
+    ///    - ACTIVITY_STOPPED: 62.5%
+    ///    - VIBRATION_EVENT: 64.3%
+    ///    - AUDIO_TRACK: 71.4%
     /// 
     /// 4. Jaccard Similarity 정의:
     ///    J(A,B) = |A ∩ B| / |A ∪ B|
     ///    - 교집합(같은 키-값 쌍) / 합집합(모든 고유 키)
-    ///    - 0.8 = 80% 이상의 속성이 일치해야 중복으로 판정
+    ///    - 0.55 = 55% 이상의 속성이 일치하면 중복으로 판정
     /// 
     /// 5. 정보 보존 원칙:
-    ///    - 80% 유사도 보장으로 핵심 속성 손실 방지
+    ///    - 55% 유사도 보장으로 핵심 속성 손실 방지
     ///    - 중복 판정 시 속성 개수가 많은 이벤트를 대표로 선정하여 정보 최대 보존
     /// 
     /// 참고:
     /// - TimeBasedDeduplicationStrategy.cs에서 사용
     /// - EventDeduplicator.cs의 중복 제거 프로세스에서 적용
+    /// - 부록 3 (예비 실험 상세), 제5장 제3절 (파라미터 타당성 검증)
     /// </remarks>
-    public double DeduplicationSimilarityThreshold { get; init; } = 0.8;
+    public double DeduplicationSimilarityThreshold { get; init; } = 0.55;
     
     /// <summary>
     /// 스크린샷 경로 패턴 제외 (오탐 방지)
