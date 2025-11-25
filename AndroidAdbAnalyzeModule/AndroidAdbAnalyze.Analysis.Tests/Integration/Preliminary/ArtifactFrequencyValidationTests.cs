@@ -34,19 +34,20 @@ namespace AndroidAdbAnalyze.Analysis.Tests.Integration.Preliminary;
 /// </summary>
 /// <remarks>
 /// 목적:
-/// - 예비 실험(3회)에서 촬영 판정의 직접적 근거가 되는 주요 아티팩트의 앱별 출현 빈도를 측정
+/// - 예비 실험(3회)에서 모든 아티팩트(12개)의 앱별 출현 빈도를 측정
 /// - 4개 앱(기본 카메라, 카카오톡, 텔레그램, 무음 카메라)별 아티팩트 패턴 분석
 /// - Strategy Pattern 기반 차별화 전략 설계의 근거 마련
+/// - 예비 실험과 본 실험의 아티팩트 출현 빈도 비교 검증
 /// 
-/// 측정 대상 (8개 주요 아티팩트):
+/// 측정 대상 (12개 아티팩트 전체):
 /// - 확정 핵심 (2개): DATABASE_INSERT, SILENT_CAMERA_CAPTURE
 /// - 조건부 핵심 (4개): VIBRATION_EVENT, PLAYER_EVENT, URI_PERMISSION_GRANT, FOREGROUND_SERVICE
-/// - 보조 (2개): CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR
+/// - 보조 (6개): CAMERA_ACTIVITY_REFRESH, MEDIA_EXTRACTOR, URI_PERMISSION_REVOKE, PLAYER_CREATED, PLAYER_RELEASED, SHUTTER_SOUND
 /// 
 /// 논문 반영:
+/// - 제5장 제3절: 예비 vs 본 실험 아티팩트 출현 빈도 비교 ([표 24])
 /// - 제4장 제4절: 앱별 차별화 전략 설계
 /// - 부록 3, 2.3.2: 앱별 아티팩트 출현 빈도 분석 방법론
-/// - 부록 3, 표 34: 앱별 주요 아티팩트 출현 빈도
 /// </remarks>
 public sealed class ArtifactFrequencyValidationTests : IAsyncLifetime
 {
@@ -54,23 +55,8 @@ public sealed class ArtifactFrequencyValidationTests : IAsyncLifetime
     private readonly string _sampleLogsPath;
     private readonly string _parserConfigPath;
     
-    // 측정 대상 아티팩트 (8개)
-    private readonly List<string> _targetArtifacts = new()
-    {
-        // 확정 핵심
-        "DATABASE_INSERT",
-        "SILENT_CAMERA_CAPTURE",
-        
-        // 조건부 핵심
-        "VIBRATION_EVENT",
-        "PLAYER_EVENT",
-        "URI_PERMISSION_GRANT",
-        "FOREGROUND_SERVICE",
-        
-        // 보조 (촬영 판정 관련)
-        "CAMERA_ACTIVITY_REFRESH",
-        "MEDIA_EXTRACTOR"
-    };
+    // 측정 대상 아티팩트 (12개 전체) - ArtifactWeights.Standard에서 가져옴
+    private readonly List<string> _targetArtifacts;
     
     // 예비 실험 분석 결과 캐싱
     private Dictionary<string, List<List<NormalizedLogEvent>>>? _captureEventsByApp; // 앱 -> 촬영별 이벤트 리스트
@@ -89,6 +75,9 @@ public sealed class ArtifactFrequencyValidationTests : IAsyncLifetime
         
         _sampleLogsPath = Path.Combine(projectRoot, "..", "sample_logs");
         _parserConfigPath = Path.Combine(projectRoot, "AndroidAdbAnalyze.Parser", "Configs");
+        
+        // ArtifactWeights.Standard에서 모든 아티팩트 가져오기 (12개)
+        _targetArtifacts = ArtifactWeights.Standard.Keys.OrderBy(a => a).ToList();
     }
 
     public async Task InitializeAsync()
@@ -347,9 +336,9 @@ public sealed class ArtifactFrequencyValidationTests : IAsyncLifetime
             _output.WriteLine($"| {GetArtifactDisplayName(artifactType),-30} | {FormatFrequency(defaultCameraCount, defaultCameraTotal),-15} | {FormatFrequency(kakaoTalkCount, kakaoTalkTotal),-15} | {FormatFrequency(telegramCount, telegramTotal),-15} | {FormatFrequency(silentCameraCount, silentCameraTotal),-15} | {avgFreq:P0,-10} |");
         }
         
-        _output.WriteLine("\n※ 측정 범위: 촬영 판정의 직접적 근거가 되는 주요 아티팩트 8개 (확정 핵심 2개, 조건부 핵심 4개, 보조 2개)");
-        _output.WriteLine("※ 측정 제외: 보조 아티팩트 4개 (URI_PERMISSION_REVOKE, PLAYER_CREATED, PLAYER_RELEASED, SHUTTER_SOUND)는 본 실험에서 측정");
-        _output.WriteLine("※ 측정 방법론: 부록 3, 2.3.2절 참조\n");
+        _output.WriteLine("\n※ 측정 범위: 모든 아티팩트 12개 (확정 핵심 2개, 조건부 핵심 4개, 보조 6개)");
+        _output.WriteLine("※ 측정 방법론: 부록 3, 2.3.2절 참조");
+        _output.WriteLine("※ 논문 반영: 제5장 제3절 [표 24] 예비 vs 본 실험 아티팩트 출현 빈도 비교\n");
         
         // 3. 관찰 결과 출력
         _output.WriteLine("─────────────────────────────────────────────────────────────────────");

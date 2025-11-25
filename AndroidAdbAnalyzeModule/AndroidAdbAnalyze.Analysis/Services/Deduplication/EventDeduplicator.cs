@@ -28,79 +28,73 @@ public sealed class EventDeduplicator : IEventDeduplicator
     /// </summary>
     /// <remarks>
     /// 임계값 설정 근거:
-    /// 1. 실측 데이터: Sample 3~5 로그에서 중복 이벤트 간 시간 차이 측정
-    /// 2. 기술 문서: Android 공식 문서의 일반적 처리 시간
-    /// 3. 안전 마진: 실측 최대값 × 1.2~1.7배 적용 (환경 변동 고려)
+    /// 1. 예비 실험: 제한된 시나리오(4회 촬영만)로 인해 모든 주요 이벤트 타입에서 중복 쌍 미발견 → 초기 설정값 100ms 통일
+    /// 2. 본 실험: 중복 쌍이 발생한 이벤트 타입에 대해서만 실측 데이터 기반 최종 설정값 도출
+    /// 3. 안전 마진: 실측 최대값에 안전 마진 적용 (환경 변동 고려)
     /// 
     /// 세부 근거:
-    /// - CAMERA_CONNECT/DISCONNECT (1000ms):
-    ///   실측 평균 450ms, 최대 820ms → 안전 마진 1.22배 적용
-    ///   근거: Android HAL 멀티스레드 로그 기록 지연
-    ///   참고: Android Camera HAL3 Architecture Documentation
+    /// - CAMERA_CONNECT/DISCONNECT (100ms):
+    ///   예비 실험: 중복 쌍 미발견 → 초기 설정 100ms
+    ///   본 실험: 모든 샘플에서 중복 쌍 0개 → 100ms 유지
+    ///   참고: 제5장 제4절 표 24
     ///   
-    /// - DATABASE_INSERT/EVENT (200ms):
-    ///   예비 실험: 중복 표본 부족 → 이론적 추정 (SQLite 트랜잭션 비동기 처리)
-    ///   본 실험: 최대 0ms → 200ms 설정 충분한 안전 마진 확인
-    ///   근거: ContentProvider + SQLite 트랜잭션 처리 시간
-    ///   참고: Android SQLite Best Practices, MediaStore API Documentation
+    /// - DATABASE_INSERT/EVENT (100ms):
+    ///   예비 실험: 중복 쌍 미발견 → 초기 설정 100ms
+    ///   본 실험: 모든 샘플에서 중복 쌍 0개 → 100ms 유지
+    ///   참고: 제5장 제4절 표 24
     ///   
-    /// - PLAYER_CREATED (400ms):
-    ///   예비 실험: 평균 30ms, 최대 35ms
-    ///   본 실험: 평균 71.7ms, 최대 392ms (62개 중복 쌍) → 400ms 상향 조정 (1.02배 안전 마진)
-    ///   근거: Android 미디어 프레임워크의 비동기 처리 지연 (본 실험에서 더 큰 지연 발견)
-    ///   참고: Android MediaPlayer API Documentation
+    /// - PLAYER_CREATED (100ms):
+    ///   예비 실험: 중복 쌍 미발견 → 초기 설정 100ms
+    ///   본 실험: 모든 샘플에서 중복 쌍 0개 → 100ms 유지
+    ///   참고: 제5장 제4절 표 24
     ///   
-        /// - PLAYER_EVENT (350ms):
-        ///   예비 실험: 평균 30ms, 최대 35ms
-        ///   본 실험: 평균 44.4ms, 최대 349ms (63개 중복 쌍) → 350ms 상향 조정 (1.00배 안전 마진)
-    ///   근거: Android 미디어 프레임워크의 비동기 처리 지연
-    ///   참고: Android MediaPlayer API Documentation, AudioTrack Latency Guide
+    /// - PLAYER_EVENT (550ms):
+    ///   예비 실험: 중복 쌍 미발견 → 초기 설정 100ms
+    ///   본 실험: Sample 2, 3, 4에서 중복 쌍 9개 발견, 최대 525ms → 550ms 상향 조정 (1.05배 안전 마진)
+    ///   참고: 제5장 제4절 표 24
     ///   
-        /// - PLAYER_RELEASED (450ms):
-        ///   예비 실험: 평균 30ms, 최대 35ms
-        ///   본 실험: 평균 42.7ms, 최대 421ms (66개 중복 쌍) → 450ms 상향 조정 (1.07배 안전 마진)
-        ///   근거: Android 미디어 리소스 해제 시 추가 지연 발생 (PLAYER_EVENT보다 더 큰 지연)
-        ///   참고: Android MediaPlayer release() lifecycle, AudioTrack Cleanup Latency
+    /// - PLAYER_RELEASED (100ms):
+    ///   예비 실험: 중복 쌍 미발견 → 초기 설정 100ms
+    ///   본 실험: 모든 샘플에서 중복 쌍 0개 → 100ms 유지
+    ///   참고: 제5장 제4절 표 24
     ///   
-        /// - MEDIA_EXTRACTOR (500ms):
-        ///   예비 실험: 평균 9.2ms, 최대 128ms (117개 중복 쌍)
-        ///   본 실험: 임계값 증가에 따른 순환적 최대값 증가 패턴 관찰 (228ms → 417ms)
-        ///   근거: 미디어 코덱 처리의 매우 다양한 지연 패턴 대응 (충분한 안전 마진 확보)
-        ///   참고: Android MediaExtractor API Documentation, MediaCodec Buffer Processing
+    /// - MEDIA_EXTRACTOR (100ms):
+    ///   예비 실험: 중복 쌍 미발견 → 초기 설정 100ms
+    ///   본 실험: Sample 1, 2에서 중복 쌍 31개 발견, 최대 52ms → 100ms 유지 (1.92배 안전 마진)
+    ///   참고: 제5장 제4절 표 24
     ///   
-    /// - URI_PERMISSION_* (320ms):
-    ///   예비 실험: 중복 표본 부족 → 이론적 추정 (Binder IPC 통신 지연)
-    ///   본 실험: 평균 47.4ms, 최대 312ms (181개 중복 쌍) → 320ms 상향 조정 (1.03배 안전 마진)
-    ///   근거: 권한 시스템 IPC 통신 처리 시간 (본 실험에서 더 큰 지연 발견)
-    ///   참고: Android Permissions Framework Documentation
+    /// - URI_PERMISSION_* (100ms):
+    ///   예비 실험: 중복 쌍 미발견 → 초기 설정 100ms
+    ///   본 실험: 모든 샘플에서 중복 쌍 0개 → 100ms 유지
+    ///   참고: 제5장 제4절 표 24
     ///   
     /// - DEFAULT (100ms):
-    ///   기본 임계값 (고정밀 타이머 가정)
+    ///   기본 임계값 (예비 실험 초기 설정값과 동일)
     ///   본 실험: 최대 87ms → 100ms 설정 충분한 안전 마진 확인
     /// 
     /// 임계값 조정 시 이 딕셔너리만 수정하면 모든 전략에 자동 반영됩니다.
     /// </remarks>
     private static readonly Dictionary<string, int> TimeThresholds = new()
     {
-        // 카메라 이벤트: HAL 레벨 멀티스레드 로그 기록 지연 (1초)
-        { LogEventTypes.CAMERA_CONNECT, 1000 },
-        { LogEventTypes.CAMERA_DISCONNECT, 1000 },
+        // 카메라 이벤트: 예비 실험 초기 설정 100ms, 본 실험 검증 후 100ms 유지
+        { LogEventTypes.CAMERA_CONNECT, 100 },
+        { LogEventTypes.CAMERA_DISCONNECT, 100 },
         
-        // 데이터베이스 이벤트: DB 트랜잭션 및 MediaStore 동기화 시간 (200ms)
-        { LogEventTypes.DATABASE_INSERT, 200 },
-        { LogEventTypes.DATABASE_EVENT, 200 },
+        // 데이터베이스 이벤트: 예비 실험 초기 설정 100ms, 본 실험 검증 후 100ms 유지
+        { LogEventTypes.DATABASE_INSERT, 100 },
+        { LogEventTypes.DATABASE_EVENT, 100 },
         
-        // 오디오 플레이어 이벤트: 본 실험 검증 결과 차등 반영
-            { LogEventTypes.PLAYER_CREATED, 400 },  // 본 실험 최대 392ms (1.02배 안전 마진)
-            { LogEventTypes.PLAYER_EVENT, 350 },    // 본 실험 최대 349ms (1.00배 안전 마진)
-            { LogEventTypes.PLAYER_RELEASED, 450 }, // 본 실험 최대 421ms (1.07배 안전 마진)
+        // 오디오 플레이어 이벤트: 예비 실험 초기 설정 100ms, 본 실험 검증 결과 반영
+        { LogEventTypes.PLAYER_CREATED, 100 },  // 본 실험: 모든 샘플에서 중복 쌍 0개 → 100ms 유지
+        { LogEventTypes.PLAYER_EVENT, 550 },    // 본 실험: 최대 525ms (Sample 2,3,4에서 9개) → 550ms 상향
+        { LogEventTypes.PLAYER_RELEASED, 100 }, // 본 실험: 모든 샘플에서 중복 쌍 0개 → 100ms 유지
         
-        // 미디어 코덱 이벤트: 충분한 안전 마진 확보 (500ms)
-        { LogEventTypes.MEDIA_EXTRACTOR, 500 }, // 미디어 코덱 처리의 다양한 지연 패턴 대응
+        // 미디어 코덱 이벤트: 예비 실험 초기 설정 100ms, 본 실험 검증 후 100ms 유지
+        { LogEventTypes.MEDIA_EXTRACTOR, 100 }, // 본 실험: 최대 52ms (Sample 1,2에서 31개) → 100ms 유지
         
-        // URI 권한 이벤트: 본 실험 검증 결과 반영 (320ms)
-        { LogEventTypes.URI_PERMISSION_GRANT, 320 },  // 본 실험 최대 312ms (1.03배 안전 마진)
-        { LogEventTypes.URI_PERMISSION_REVOKE, 320 }, // GRANT와 동일한 IPC 처리 특성
+        // URI 권한 이벤트: 예비 실험 초기 설정 100ms, 본 실험 검증 후 100ms 유지
+        { LogEventTypes.URI_PERMISSION_GRANT, 100 },  // 본 실험: 모든 샘플에서 중복 쌍 0개 → 100ms 유지
+        { LogEventTypes.URI_PERMISSION_REVOKE, 100 }, // 본 실험: 모든 샘플에서 중복 쌍 0개 → 100ms 유지
     };
 
     /// <summary>

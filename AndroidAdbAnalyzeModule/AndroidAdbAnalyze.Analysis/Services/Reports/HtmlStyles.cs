@@ -407,8 +407,7 @@ internal static class HtmlStyles
             color: #34495e;
             text-align: right;
             padding: 8px 10px 8px 5px;
-            border-right: 3px solid #3498db;
-            border-radius: 4px 0 0 4px;
+            /* border-right 제거 (요구사항 2: 하늘색 긴 네모 제거) */
         }
         
         /* 왼쪽 범례 영역 */

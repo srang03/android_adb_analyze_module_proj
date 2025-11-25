@@ -151,10 +151,11 @@ public sealed class CaptureDetectionParameterValidationTests : IAsyncLifetime
         _output.WriteLine("  - 예비 실험에서는 각 촬영당 CameraCaptureEvent가 1개만 생성되어 간격 측정 불가\n");
 
         var captureWindow = ArtifactWeights.CaptureDeduplicationWindowMs;
+        var maxIntervalMs = 330.0; // 예비 실험에서 측정한 핵심 아티팩트 최대 간격 (기본 카메라)
         _output.WriteLine("✅ 대안:");
-        _output.WriteLine("  - VIBRATION_EVENT 연속 간격을 측정하여 대리 지표로 사용");
-        _output.WriteLine("  - 예비 실험에서 VIBRATION_EVENT 연속 간격 최대 300ms 측정");
-        _output.WriteLine($"  - 안전 마진 {captureWindow / 300.0:F2}배 적용하여 {captureWindow / 1000.0:F1}초 ({captureWindow:F0}ms)로 설정");
+        _output.WriteLine("  - 예비 실험 데이터 특성상 직접 측정 불가로 인해 핵심 아티팩트 시간 범위를 측정하여 대리 지표로 사용");
+        _output.WriteLine("  - 예비 실험에서 핵심 아티팩트 시간 범위 최대 330ms 측정 (기본 카메라)");
+        _output.WriteLine($"  - 안전 마진 {captureWindow / maxIntervalMs:F2}배 적용하여 {captureWindow / 1000.0:F1}초 ({captureWindow:F0}ms)로 설정");
         _output.WriteLine("  - 본 실험에서 중복 0건, Precision 100% 검증 완료\n");
 
         _output.WriteLine("📝 논문 반영:");

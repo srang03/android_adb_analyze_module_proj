@@ -89,7 +89,7 @@ public sealed class EventDeduplicatorTests
         {
             CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime, 
                 new Dictionary<string, object> { ["package"] = "com.camera", ["cameraId"] = 0 }),
-            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime.AddMilliseconds(1100), // 1000ms 초과
+            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime.AddMilliseconds(110), // 100ms 초과
                 new Dictionary<string, object> { ["package"] = "com.camera", ["cameraId"] = 0 })
         };
 
@@ -97,7 +97,7 @@ public sealed class EventDeduplicatorTests
         var result = _deduplicator.Deduplicate(events, out var details);
 
         // Assert
-        result.Should().HaveCount(2, "시간 임계값(1000ms)을 초과하므로 2개가 유지되어야 함");
+        result.Should().HaveCount(2, "시간 임계값(100ms)을 초과하므로 2개가 유지되어야 함");
         details.Should().BeEmpty("중복이 없으므로 details가 비어있어야 함");
     }
 
@@ -110,7 +110,7 @@ public sealed class EventDeduplicatorTests
         {
             CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime, 
                 new Dictionary<string, object> { ["package"] = "com.camera", ["cameraId"] = 0 }),
-            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime.AddMilliseconds(1000), // 정확히 1000ms
+            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime.AddMilliseconds(100), // 정확히 100ms
                 new Dictionary<string, object> { ["package"] = "com.camera", ["cameraId"] = 0 })
         };
 
@@ -118,7 +118,7 @@ public sealed class EventDeduplicatorTests
         var result = _deduplicator.Deduplicate(events, out var details);
 
         // Assert
-        result.Should().HaveCount(1, "1000ms 이하이므로 1개로 그룹화되어야 함");
+        result.Should().HaveCount(1, "100ms 이하이므로 1개로 그룹화되어야 함");
         details.Should().HaveCount(1);
     }
 
@@ -207,18 +207,20 @@ public sealed class EventDeduplicatorTests
         // Arrange
         var baseTime = DateTime.UtcNow;
         
-        // DATABASE_INSERT는 200ms 임계값
+        // DATABASE_INSERT는 100ms 임계값 (EventDeduplicator.TimeThresholds와 동일)
+        var dbThreshold = GetTimeThreshold(LogEventTypes.DATABASE_INSERT);
         var dbEvents = new[]
         {
             CreateEvent(LogEventTypes.DATABASE_INSERT, baseTime),
-            CreateEvent(LogEventTypes.DATABASE_INSERT, baseTime.AddMilliseconds(150)) // 200ms 이하
+            CreateEvent(LogEventTypes.DATABASE_INSERT, baseTime.AddMilliseconds(50)) // 100ms 이하
         };
         
-        // PLAYER_EVENT는 350ms 임계값 (본 실험 검증 결과 반영)
+        // PLAYER_EVENT는 550ms 임계값 (EventDeduplicator.TimeThresholds와 동일, 본 실험 검증 결과 반영)
+        var playerThreshold = GetTimeThreshold(LogEventTypes.PLAYER_EVENT);
         var playerEvents = new[]
         {
             CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime),
-            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddMilliseconds(400)) // 350ms 초과
+            CreateEvent(LogEventTypes.PLAYER_EVENT, baseTime.AddMilliseconds(400)) // 550ms 이하
         };
 
         // Act
@@ -226,11 +228,11 @@ public sealed class EventDeduplicatorTests
         var playerResult = _deduplicator.Deduplicate(playerEvents, out var playerDetails);
 
         // Assert
-        dbResult.Should().HaveCount(1, "DATABASE_INSERT는 200ms 이하이므로 1개");
+        dbResult.Should().HaveCount(1, $"DATABASE_INSERT는 {dbThreshold}ms 이하이므로 1개");
         dbDetails.Should().HaveCount(1);
         
-        playerResult.Should().HaveCount(2, "PLAYER_EVENT는 350ms 초과이므로 2개");
-        playerDetails.Should().BeEmpty();
+        playerResult.Should().HaveCount(1, $"PLAYER_EVENT는 {playerThreshold}ms 이하이므로 1개");
+        playerDetails.Should().HaveCount(1);
     }
 
     [Fact]
@@ -246,10 +248,10 @@ public sealed class EventDeduplicatorTests
             CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime.AddMilliseconds(50),
                 new Dictionary<string, object> { ["package"] = "com.camera", ["cameraId"] = 0 }),
             
-            // 두 번째 그룹 (첫 그룹과 시간 차이 큼 - 1000ms 초과)
-            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime.AddMilliseconds(1200),
+            // 두 번째 그룹 (첫 그룹과 시간 차이 큼 - 100ms 초과)
+            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime.AddMilliseconds(200),
                 new Dictionary<string, object> { ["package"] = "com.camera", ["cameraId"] = 0 }),
-            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime.AddMilliseconds(1250),
+            CreateEvent(LogEventTypes.CAMERA_CONNECT, baseTime.AddMilliseconds(250),
                 new Dictionary<string, object> { ["package"] = "com.camera", ["cameraId"] = 0 })
         };
 
@@ -281,6 +283,37 @@ public sealed class EventDeduplicatorTests
         // Assert
         result.Should().HaveCount(3, "CAMERA_OPEN(1개), DATABASE_INSERT(1개), CAMERA_CLOSE(1개)");
         details.Should().HaveCount(2, "CAMERA_OPEN과 DATABASE_INSERT에서 각각 중복 제거");
+    }
+
+    /// <summary>
+    /// 이벤트 타입별 시간 임계값 조회 (EventDeduplicator.TimeThresholds와 동일한 값 사용)
+    /// </summary>
+    /// <remarks>
+    /// 비즈니스 코드의 EventDeduplicator.TimeThresholds와 동일한 값을 반환합니다.
+    /// 비즈니스 코드의 임계값이 변경되면 이 메서드도 함께 수정해야 합니다.
+    /// 
+    /// 참고: EventDeduplicator.cs의 TimeThresholds 딕셔너리와 동기화 필요
+    /// - DATABASE_INSERT: 100ms (표 24: 기타 카테고리)
+    /// - PLAYER_EVENT: 550ms (표 24: 본 실험 검증 결과)
+    /// - 기타 이벤트: 100ms (표 24: 기타 카테고리)
+    /// </remarks>
+    private static int GetTimeThreshold(string eventType)
+    {
+        // EventDeduplicator.TimeThresholds와 동일한 값 반환
+        return eventType switch
+        {
+            LogEventTypes.CAMERA_CONNECT => 100,
+            LogEventTypes.CAMERA_DISCONNECT => 100,
+            LogEventTypes.DATABASE_INSERT => 100,
+            LogEventTypes.DATABASE_EVENT => 100,
+            LogEventTypes.PLAYER_CREATED => 100,
+            LogEventTypes.PLAYER_EVENT => 550,  // 본 실험: 최대 525ms → 550ms 상향
+            LogEventTypes.PLAYER_RELEASED => 100,
+            LogEventTypes.MEDIA_EXTRACTOR => 100,
+            LogEventTypes.URI_PERMISSION_GRANT => 100,
+            LogEventTypes.URI_PERMISSION_REVOKE => 100,
+            _ => 100  // 기본값 (DefaultTimeThreshold)
+        };
     }
 
     // Helper method

@@ -65,7 +65,7 @@ public sealed class CameraSessionDetector : ISessionDetector
     /// 
     /// 4. 실측 검증 (예비 실험 2회, Preliminary 1-2):
     ///    - 같은 세션 쌍 8개 분석 (기본 카메라 4개, 무음 카메라 4개): 평균 겹침 비율 97%, 최소 83%, 최대 100%
-    ///    - 다른 앱 간 세션 쌍: 일반적으로 사용 시간이 겹치지 않으므로 겹침 비율 < 80%로 병합 안 됨
+    ///    - 다른 앱 간 세션 쌍: 일반적으로 사용 시간이 겹치지 않으므로 겹침 비율 80% 미만으로 병합 안 됨
     ///    → 80%는 최소값(83%)보다 낮아 로그 시각 차이 허용, 보수적 접근으로 오탐 방지
     /// 
     /// 5. 향후 최적화:
@@ -160,8 +160,25 @@ public sealed class CameraSessionDetector : ISessionDetector
             ? HandleIncompleteSessions(rawSessions, filteredEvents, options)
             : rawSessions;
         
+        _logger.LogInformation(
+            "[병합 전 세션] 원시: {Raw}개 → 불완전 처리 후: {Completed}개",
+            rawSessions.Count, completedSessions.Count);
+        
+        // 3.5단계: 세션 유효성 검증 (Duration이 음수인 세션 필터링)
+        var validSessions = ValidateAndFilterSessions(completedSessions);
+        if (validSessions.Count < completedSessions.Count)
+        {
+            _logger.LogWarning(
+                "[세션 유효성 검증] 유효하지 않은 세션 {InvalidCount}개 제거 (EndTime < StartTime)",
+                completedSessions.Count - validSessions.Count);
+        }
+        
         // 4단계: 세션 병합 (모든 세션이 완전 상태에서 병합)
-        var mergedSessions = MergeSessions(completedSessions, options);
+        var mergedSessions = MergeSessions(validSessions, options);
+        
+        _logger.LogInformation(
+            "[병합 후 세션] 병합 전: {Before}개 → 병합 후: {After}개 (감소: {Reduced}개)",
+            completedSessions.Count, mergedSessions.Count, completedSessions.Count - mergedSessions.Count);
         
         // 5단계: 세션 완전성 점수 기반 필터링 (Threshold-Based Classification)
         // 참고: 시스템 패키지 필터링은 1단계에서 이미 수행됨 (성능 최적화)
@@ -274,6 +291,13 @@ public sealed class CameraSessionDetector : ISessionDetector
             "전체 원시 세션 추출 완료: {Total}개 (Sources: {SourceCount}개)",
             allRawSessions.Count, _sessionSources.Count);
         
+        // 원시 세션 개수 상세 로깅
+        _logger.LogInformation(
+            "[원시 세션 통계] 총 {Total}개 - usagestats: {Usagestats}개, media_camera: {MediaCamera}개",
+            allRawSessions.Count,
+            allRawSessions.Count(s => s.SourceLogTypes.Any(st => st.Contains("usagestats", StringComparison.OrdinalIgnoreCase))),
+            allRawSessions.Count(s => s.SourceLogTypes.Any(st => st.Contains("media_camera", StringComparison.OrdinalIgnoreCase))));
+        
         // 디버깅: 각 SessionSource별 세션 패키지 출력
         _logger.LogDebug("=== 원시 세션 상세 ===");
         foreach (var session in allRawSessions.OrderBy(s => s.StartTime))
@@ -285,6 +309,48 @@ public sealed class CameraSessionDetector : ISessionDetector
         }
         
         return allRawSessions;
+    }
+
+    /// <summary>
+    /// 세션 유효성 검증 및 필터링 (Duration이 음수인 세션 제거)
+    /// </summary>
+    /// <remarks>
+    /// EndTime이 StartTime보다 작은 잘못된 세션을 필터링합니다.
+    /// 이는 SessionSource에서 세션 생성 시 발생할 수 있는 문제를 방지하기 위함입니다.
+    /// 
+    /// 객체지향 설계 원칙:
+    /// - 단일 책임 원칙: 세션 유효성 검증만 담당
+    /// - 기존 비즈니스 로직에 영향 없음: 필터링만 수행
+    /// </remarks>
+    private List<CameraSession> ValidateAndFilterSessions(List<CameraSession> sessions)
+    {
+        var validSessions = new List<CameraSession>();
+        var invalidCount = 0;
+        
+        foreach (var session in sessions)
+        {
+            // EndTime이 있고, EndTime < StartTime인 경우 필터링
+            if (session.EndTime.HasValue && session.EndTime.Value < session.StartTime)
+            {
+                invalidCount++;
+                _logger.LogWarning(
+                    "[세션 유효성 검증 실패] SessionId={SessionId}, Package={Package}, StartTime={StartTime:HH:mm:ss.fff}, EndTime={EndTime:HH:mm:ss.fff}, Duration={Duration}ms (음수)",
+                    session.SessionId, session.PackageName, session.StartTime, session.EndTime.Value,
+                    (session.EndTime.Value - session.StartTime).TotalMilliseconds);
+                continue;
+            }
+            
+            validSessions.Add(session);
+        }
+        
+        if (invalidCount > 0)
+        {
+            _logger.LogInformation(
+                "[세션 유효성 검증] 총 {Total}개 중 {Invalid}개 유효하지 않은 세션 제거, {Valid}개 유효한 세션 유지",
+                sessions.Count, invalidCount, validSessions.Count);
+        }
+        
+        return validSessions;
     }
 
     /// <summary>
@@ -346,11 +412,14 @@ public sealed class CameraSessionDetector : ISessionDetector
                 continue;
             }
 
-            // 우선순위 2: 기존 겹침 비율 로직
-            var overlapRatio = CalculateOverlapRatio(current, session);
+            // 우선순위 2: 시간 겹침 비율 기반 병합 (규칙 2)
+            // 조건: 패키지명 일치 또는 Intent 위임 방식 (usagestats + media.camera 쌍, 패키지명 다름)
+            bool canMergeByOverlap = CanMergeByOverlapRatio(current, session, options);
 
-            if (overlapRatio >= MinOverlapRatio)
+            if (canMergeByOverlap)
             {
+                var overlapRatio = CalculateOverlapRatio(current, session);
+                
                 // 병합
                 _logger.LogDebug(
                     "세션 병합 (겹침 비율): Package1={Package1} (Priority={Priority1}, Conf={Conf1:F2}, Sources={Sources1}) + Package2={Package2} (Priority={Priority2}, Conf={Conf2:F2}, Sources={Sources2}), 겹침={Overlap:P0}",
@@ -366,6 +435,9 @@ public sealed class CameraSessionDetector : ISessionDetector
             }
             else
             {
+                // 병합 실패 원인 상세 로깅
+                LogMergeFailureReason(current, session, options);
+                
                 // 별도 세션으로 유지
                 mergedSessions.Add(current);
                 current = session;
@@ -398,7 +470,7 @@ public sealed class CameraSessionDetector : ISessionDetector
     /// <remarks>
     /// 판단 기준:
     /// 1. usagestats + media_camera 쌍
-    /// 2. 같은 패키지명
+    /// 2. 같은 패키지명 또는 Intent 위임 방식 (패키지명 다름)
     /// 3. 시작 시간 차이 ≤ SameCameraUsageTimeThreshold
     /// 4. 종료 시간 차이 ≤ SameCameraUsageTimeThreshold
     /// 
@@ -407,6 +479,7 @@ public sealed class CameraSessionDetector : ISessionDetector
     /// - media_camera는 하드웨어 연결을 기록 (CONNECT/DISCONNECT)
     /// - 같은 카메라 사용이지만 로그 소스가 달라 약 1초 시작/종료 차이 발생
     /// - 실측 데이터: 모든 샘플에서 시작 차이 1초, 종료 차이 1초
+    /// - Intent 위임 방식: 카카오톡 등이 시스템 카메라를 호출하는 경우, 패키지명이 다르지만 같은 카메라 사용
     /// 
     /// 파라미터:
     /// - SameCameraUsageTimeThreshold: AnalysisOptions에서 설정 가능 (기본값 2.0초)
@@ -424,8 +497,11 @@ public sealed class CameraSessionDetector : ISessionDetector
         if (!((hasUsagestats1 && hasMediaCamera2) || (hasMediaCamera1 && hasUsagestats2)))
             return false;
         
-        // 2. 같은 패키지 확인
-        if (!string.Equals(session1.PackageName, session2.PackageName, StringComparison.OrdinalIgnoreCase))
+        // 2. 같은 패키지 확인 또는 Intent 위임 방식 확인
+        bool packageMatch = string.Equals(session1.PackageName, session2.PackageName, StringComparison.OrdinalIgnoreCase);
+        bool isIntentDelegation = IsIntentDelegationPair(session1, session2);
+        
+        if (!packageMatch && !isIntentDelegation)
             return false;
         
         // 3. 시작 시간 차이 확인 (설정 가능한 임계값 사용)
@@ -443,10 +519,183 @@ public sealed class CameraSessionDetector : ISessionDetector
             return false;
         
         _logger.LogDebug(
-            "같은 카메라 사용 감지: Package={Package}, 시작차이={StartDiff:F1}초, 종료차이={EndDiff:F1}초 (임계값={Threshold:F1}초)",
-            session1.PackageName, startDiff, endDiff, threshold);
+            "같은 카메라 사용 감지: Package1={Package1}, Package2={Package2}, Intent위임={IntentDelegation}, 시작차이={StartDiff:F1}초, 종료차이={EndDiff:F1}초 (임계값={Threshold:F1}초)",
+            session1.PackageName, session2.PackageName, isIntentDelegation, startDiff, endDiff, threshold);
         
         return true; // 모든 조건 만족 → 같은 카메라 사용
+    }
+    
+    /// <summary>
+    /// 규칙 2: 시간 겹침 비율 기반 병합 가능 여부 확인
+    /// </summary>
+    /// <remarks>
+    /// 병합 조건 (논문 제4장 제3절 표 7):
+    /// 1. 패키지명 일치 또는 Intent 위임 방식 (usagestats + media.camera 쌍, 패키지명 다름)
+    /// 2. 카메라 디바이스 ID 일치하거나, 둘 중 하나 이상이 null
+    /// 3. EndTime 존재 (두 세션 모두)
+    /// 4. 시간 겹침 비율 ≥ 80%
+    /// 
+    /// Intent 위임 방식: usagestats 세션과 media.camera 세션의 쌍이며 패키지명이 다른 경우
+    /// </remarks>
+    private bool CanMergeByOverlapRatio(CameraSession session1, CameraSession session2, AnalysisOptions options)
+    {
+        // 조건 3: EndTime 존재 확인
+        if (!session1.EndTime.HasValue || !session2.EndTime.HasValue)
+            return false;
+        
+        // 조건 1: 패키지명 일치 또는 Intent 위임 방식 확인
+        bool packageMatch = string.Equals(session1.PackageName, session2.PackageName, StringComparison.OrdinalIgnoreCase);
+        bool isIntentDelegation = IsIntentDelegationPair(session1, session2);
+        
+        if (!packageMatch && !isIntentDelegation)
+        {
+            // 패키지명도 다르고 Intent 위임 방식도 아님
+            return false;
+        }
+        
+        // 조건 2: 카메라 디바이스 ID 확인
+        if (session1.CameraDeviceIds != null && session1.CameraDeviceIds.Count > 0 &&
+            session2.CameraDeviceIds != null && session2.CameraDeviceIds.Count > 0)
+        {
+            // 두 세션 모두 device ID가 있는 경우: 일치해야 함
+            var devices1 = session1.CameraDeviceIds.ToHashSet();
+            var devices2 = session2.CameraDeviceIds.ToHashSet();
+            
+            if (!devices1.Overlaps(devices2))
+            {
+                // 서로 다른 카메라 디바이스 (전면/후면 전환) → 병합 불가
+                return false;
+            }
+        }
+        // 둘 중 하나 이상이 null이면 조건 2 통과 (usagestats 세션은 CameraDeviceIds가 null)
+        
+        // 조건 4: 시간 겹침 비율 확인
+        var overlapRatio = CalculateOverlapRatio(session1, session2);
+        return overlapRatio >= MinOverlapRatio;
+    }
+    
+    /// <summary>
+    /// 병합 실패 원인 상세 로깅
+    /// </summary>
+    private void LogMergeFailureReason(CameraSession session1, CameraSession session2, AnalysisOptions options)
+    {
+        var hasUsagestats1 = session1.SourceLogTypes.Any(s => s.Contains("usagestats", StringComparison.OrdinalIgnoreCase));
+        var hasMediaCamera1 = session1.SourceLogTypes.Any(s => s.Contains("media_camera", StringComparison.OrdinalIgnoreCase));
+        var hasUsagestats2 = session2.SourceLogTypes.Any(s => s.Contains("usagestats", StringComparison.OrdinalIgnoreCase));
+        var hasMediaCamera2 = session2.SourceLogTypes.Any(s => s.Contains("media_camera", StringComparison.OrdinalIgnoreCase));
+        
+        var isUsagestatsMediaCameraPair = (hasUsagestats1 && hasMediaCamera2) || (hasMediaCamera1 && hasUsagestats2);
+        var packageMatch = string.Equals(session1.PackageName, session2.PackageName, StringComparison.OrdinalIgnoreCase);
+        var isIntentDelegation = IsIntentDelegationPair(session1, session2);
+        
+        var startDiff = Math.Abs((session1.StartTime - session2.StartTime).TotalSeconds);
+        var threshold = options.SameCameraUsageTimeThreshold.TotalSeconds;
+        
+        var overlapRatio = 0.0;
+        if (session1.EndTime.HasValue && session2.EndTime.HasValue)
+        {
+            overlapRatio = CalculateOverlapRatio(session1, session2);
+        }
+        
+        _logger.LogInformation(
+            "[병합 실패] Session1: Package={Package1}, Sources={Sources1}, Time={Start1:HH:mm:ss.fff}~{End1:HH:mm:ss.fff}, DeviceIds={DeviceIds1} | " +
+            "Session2: Package={Package2}, Sources={Sources2}, Time={Start2:HH:mm:ss.fff}~{End2:HH:mm:ss.fff}, DeviceIds={DeviceIds2} | " +
+            "시작차이={StartDiff:F2}초, 겹침비율={Overlap:P1}, 패키지일치={PackageMatch}, Intent위임={IntentDelegation}, usagestats-media쌍={IsPair}",
+            session1.PackageName, string.Join(",", session1.SourceLogTypes), session1.StartTime, session1.EndTime,
+            session1.CameraDeviceIds != null ? string.Join(",", session1.CameraDeviceIds) : "null",
+            session2.PackageName, string.Join(",", session2.SourceLogTypes), session2.StartTime, session2.EndTime,
+            session2.CameraDeviceIds != null ? string.Join(",", session2.CameraDeviceIds) : "null",
+            startDiff, overlapRatio, packageMatch, isIntentDelegation, isUsagestatsMediaCameraPair);
+        
+        // IsSameCameraUsage 실패 원인
+        if (isUsagestatsMediaCameraPair && packageMatch)
+        {
+            if (startDiff > threshold)
+            {
+                _logger.LogInformation(
+                    "[IsSameCameraUsage 실패] 시작 시간 차이 초과: {StartDiff:F2}초 > {Threshold:F2}초",
+                    startDiff, threshold);
+            }
+            else if (!session1.EndTime.HasValue || !session2.EndTime.HasValue)
+            {
+                _logger.LogInformation(
+                    "[IsSameCameraUsage 실패] EndTime 없음: Session1.EndTime={End1}, Session2.EndTime={End2}",
+                    session1.EndTime.HasValue ? session1.EndTime.Value.ToString("HH:mm:ss.fff") : "null",
+                    session2.EndTime.HasValue ? session2.EndTime.Value.ToString("HH:mm:ss.fff") : "null");
+            }
+            else
+            {
+                var endDiff = Math.Abs((session1.EndTime.Value - session2.EndTime.Value).TotalSeconds);
+                if (endDiff > threshold)
+                {
+                    _logger.LogInformation(
+                        "[IsSameCameraUsage 실패] 종료 시간 차이 초과: {EndDiff:F2}초 > {Threshold:F2}초",
+                        endDiff, threshold);
+                }
+            }
+        }
+        
+        // CanMergeByOverlapRatio 실패 원인
+        if (!session1.EndTime.HasValue || !session2.EndTime.HasValue)
+        {
+            _logger.LogInformation(
+                "[CanMergeByOverlapRatio 실패] EndTime 없음: Session1.EndTime={End1}, Session2.EndTime={End2}",
+                session1.EndTime.HasValue ? session1.EndTime.Value.ToString("HH:mm:ss.fff") : "null",
+                session2.EndTime.HasValue ? session2.EndTime.Value.ToString("HH:mm:ss.fff") : "null");
+        }
+        else if (!packageMatch && !isIntentDelegation)
+        {
+            _logger.LogInformation(
+                "[CanMergeByOverlapRatio 실패] 패키지명 불일치 및 Intent 위임 아님: Package1={Package1}, Package2={Package2}",
+                session1.PackageName, session2.PackageName);
+        }
+        else if (session1.CameraDeviceIds != null && session1.CameraDeviceIds.Count > 0 &&
+                 session2.CameraDeviceIds != null && session2.CameraDeviceIds.Count > 0)
+        {
+            var devices1 = session1.CameraDeviceIds.ToHashSet();
+            var devices2 = session2.CameraDeviceIds.ToHashSet();
+            if (!devices1.Overlaps(devices2))
+            {
+                _logger.LogInformation(
+                    "[CanMergeByOverlapRatio 실패] 카메라 디바이스 ID 불일치: DeviceIds1=[{Devices1}], DeviceIds2=[{Devices2}]",
+                    string.Join(",", devices1), string.Join(",", devices2));
+            }
+        }
+        else if (overlapRatio < MinOverlapRatio)
+        {
+            _logger.LogInformation(
+                "[CanMergeByOverlapRatio 실패] 겹침 비율 부족: {Overlap:P1} < {MinOverlap:P0}",
+                overlapRatio, MinOverlapRatio);
+        }
+    }
+    
+    /// <summary>
+    /// Intent 위임 방식 쌍인지 확인 (usagestats 세션과 media.camera 세션의 쌍, 패키지명 다름)
+    /// </summary>
+    /// <remarks>
+    /// Intent 위임 방식 앱이 시스템 카메라를 호출하는 경우:
+    /// - usagestats 세션: taskRootPackage 기반으로 실제 앱 패키지명 (예: com.kakao.talk)
+    /// - media.camera 세션: package 속성 기반으로 시스템 카메라 패키지명 (예: com.sec.android.app.camera)
+    /// 
+    /// 판정 기준:
+    /// - 한 세션이 usagestats를 포함하고, 다른 세션이 media.camera를 포함
+    /// - 패키지명이 다름
+    /// </remarks>
+    private bool IsIntentDelegationPair(CameraSession session1, CameraSession session2)
+    {
+        // 세션의 SourceLogTypes 확인
+        var hasUsagestats1 = session1.SourceLogTypes.Any(s => s.Contains("usagestats", StringComparison.OrdinalIgnoreCase));
+        var hasMediaCamera1 = session1.SourceLogTypes.Any(s => s.Contains("media_camera", StringComparison.OrdinalIgnoreCase));
+        var hasUsagestats2 = session2.SourceLogTypes.Any(s => s.Contains("usagestats", StringComparison.OrdinalIgnoreCase));
+        var hasMediaCamera2 = session2.SourceLogTypes.Any(s => s.Contains("media_camera", StringComparison.OrdinalIgnoreCase));
+        
+        // usagestats 세션과 media.camera 세션의 쌍인지 확인
+        bool isUsagestatsMediaCameraPair = (hasUsagestats1 && hasMediaCamera2) || (hasMediaCamera1 && hasUsagestats2);
+        
+        // 패키지명이 다른 경우만 Intent 위임 방식으로 판정
+        bool hasDifferentPackage = !string.Equals(session1.PackageName, session2.PackageName, StringComparison.OrdinalIgnoreCase);
+        
+        return isUsagestatsMediaCameraPair && hasDifferentPackage;
     }
     
     /// <summary>

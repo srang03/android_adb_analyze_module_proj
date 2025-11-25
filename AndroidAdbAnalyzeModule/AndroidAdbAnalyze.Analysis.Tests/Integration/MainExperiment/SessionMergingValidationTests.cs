@@ -75,24 +75,18 @@ public sealed class SessionMergingValidationTests : IAsyncLifetime
         // Sample 1-10 분석 (병합 전 원본 세션 추출)
         var allRawSessions = new List<AndroidAdbAnalyze.Analysis.Models.Sessions.CameraSession>();
         
-        // Sample 1-10 분석 (실제 디렉토리명 및 Ground Truth 기반 시간)
-        var sampleMappings = new Dictionary<int, (string dir, DateTime start, DateTime end)>
-        {
-            { 1, ("1차 샘플_25_10_04", new DateTime(2025, 10, 4, 14, 49, 0), new DateTime(2025, 10, 4, 14, 56, 0)) },
-            { 2, ("2차 샘플_25_10_06", new DateTime(2025, 10, 6, 22, 46, 0), new DateTime(2025, 10, 6, 22, 59, 0)) },
-            { 3, ("3차 샘플_25_10_07", new DateTime(2025, 10, 7, 23, 13, 0), new DateTime(2025, 10, 7, 23, 30, 0)) },
-            { 4, ("4차 샘플_25_10_12", new DateTime(2025, 10, 12, 16, 7, 0), new DateTime(2025, 10, 12, 16, 25, 0)) },
-            { 5, ("5차 샘플_25_10_13", new DateTime(2025, 10, 13, 23, 24, 0), new DateTime(2025, 10, 13, 23, 36, 0)) },
-            { 6, ("6차 샘플_25_10_16", new DateTime(2025, 10, 16, 16, 34, 0), new DateTime(2025, 10, 16, 16, 49, 0)) },
-            { 7, ("7차 샘플_25_10_16", new DateTime(2025, 10, 17, 10, 33, 0), new DateTime(2025, 10, 17, 10, 51, 0)) },
-            { 8, ("8차 샘플_25_10_17", new DateTime(2025, 10, 17, 16, 0, 0), new DateTime(2025, 10, 17, 16, 8, 0)) },
-            { 9, ("9차 샘플_25_10_17", new DateTime(2025, 10, 17, 16, 40, 0), new DateTime(2025, 10, 17, 16, 53, 0)) },
-            { 10, ("10차 샘플_25_10_17", new DateTime(2025, 10, 17, 23, 56, 0), new DateTime(2025, 10, 18, 0, 14, 0)) }
-        };
-        
+        // ArtifactWeights.SampleTimeRanges 공용 상수 사용 (Ground Truth와 동일)
         for (int i = 1; i <= 10; i++)
         {
-            var (sampleDir, startTime, endTime) = sampleMappings[i];
+            if (!ArtifactWeights.SampleTimeRanges.TryGetValue(i, out var timeRange))
+            {
+                _output.WriteLine($"⚠️ Sample {i}의 시간 범위를 찾을 수 없습니다.");
+                continue;
+            }
+            
+            var sampleDir = timeRange.DirectoryName;
+            var startTime = timeRange.StartTime;
+            var endTime = timeRange.EndTime;
             
             _output.WriteLine($"분석 중: {sampleDir}");
             var rawSessions = await ExtractRawSessionsFromSample(sampleDir, startTime, endTime);
@@ -468,12 +462,24 @@ public sealed class SessionMergingValidationTests : IAsyncLifetime
     }
 
     /// <summary>
-    /// 분석 옵션 생성
+    /// 분석 옵션 생성 (ArtifactFrequencyValidationTests와 동일한 기본 설정 사용)
     /// </summary>
+    /// <remarks>
+    /// 세션 병합 검증을 위한 추가 옵션과 함께, ArtifactFrequencyValidationTests와 동일한 기본 설정 사용
+    /// - DeduplicationSimilarityThreshold: GroundTruthDeduplicationSimilarityThreshold (0.8)
+    /// - SameCameraUsageTimeThreshold: 세션 탐지 임계값
+    /// - CaptureDeduplicationWindow: 500ms (CameraCaptureEvent 중복 제거)
+    /// </remarks>
     private AnalysisOptions CreateAnalysisOptions()
     {
         return new AnalysisOptions
         {
+            // ArtifactFrequencyValidationTests와 동일한 기본 설정
+            DeduplicationSimilarityThreshold = ArtifactWeights.GroundTruthDeduplicationSimilarityThreshold,  // Ground Truth와 동일한 설정 사용 (0.8)
+            SameCameraUsageTimeThreshold = TimeSpan.FromSeconds(ArtifactWeights.SameCameraUsageTimeThreshold),
+            CaptureDeduplicationWindow = TimeSpan.FromMilliseconds(ArtifactWeights.CaptureDeduplicationWindowMs),
+            
+            // 세션 병합 검증을 위한 추가 옵션
             EnableIncompleteSessionHandling = true,
             MinConfidenceThreshold = 0.3,
             PackageWhitelist = new List<string>(),

@@ -85,8 +85,8 @@ public sealed class SessionMergingParameterValidationTests : IAsyncLifetime
             new DateTime(2025, 9, 6, 10, 22, 0));
         
         _preliminary3RawSessions = await ExtractRawSessionsFromSample("예비 실험/예비 실험 3차 25_09_07", 
-            new DateTime(2025, 9, 7, 9, 40, 0), 
-            new DateTime(2025, 9, 7, 9, 52, 0));
+            new DateTime(2025, 9, 7, 10, 35, 0), 
+            new DateTime(2025, 9, 7, 10, 44, 59));
         
         _output.WriteLine("\n✅ 예비 실험 3회 원본 세션 추출 완료 (병합 전)\n");
     }

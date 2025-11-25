@@ -70,9 +70,9 @@ public sealed class AnalysisOptions
     /// 목적: usagestats와 media.camera의 같은 카메라 사용 세션 병합 (병합 규칙 1)
     /// 
     /// 실측 근거 (예비 실험):
-    /// - usagestats-media.camera 간 시작 시각 차이: 평균 1초 (최소 0.5초, 최대 1.8초)
-    /// - usagestats-media.camera 간 종료 시각 차이: 평균 1초 (최소 0.6초, 최대 1.7초)
-    /// - 안전 마진 2배 적용 → 2.0초
+    /// - usagestats-media.camera 간 시작 시각 차이: 평균 0.62초 (최소 0.31초, 최대 0.85초)
+    /// - usagestats-media.camera 간 종료 시각 차이: 평균 0.25초 (최소 0.00초, 최대 1.00초)
+    /// - 안전 마진 2배 적용 (종료 차이 최대값 1.00초 기준) → 2.0초
     /// 
     /// 병합 조건 (4가지 모두 만족):
     /// 1. 서로 다른 로그 소스 쌍 (usagestats ↔ media.camera)

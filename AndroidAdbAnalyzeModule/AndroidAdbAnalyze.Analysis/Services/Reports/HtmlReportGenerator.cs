@@ -232,7 +232,6 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("                        <th>파일 경로</th>");
         html.AppendLine("                        <th>유형</th>");
         html.AppendLine("                        <th>신뢰도</th>");
-        html.AppendLine("                        <th>전송 여부</th>");
         html.AppendLine("                    </tr>");
         html.AppendLine("                </thead>");
         html.AppendLine("                <tbody>");
@@ -252,7 +251,6 @@ public sealed class HtmlReportGenerator : IReportGenerator
             
             html.AppendLine($"                        <td>{GetCaptureTypeBadge(capture.IsEstimated)}</td>");
             html.AppendLine($"                        <td>{GetConfidenceBar(capture.CaptureDetectionScore)}</td>");
-            html.AppendLine($"                        <td>{GetTransmissionBadge(capture)}</td>");
             html.AppendLine("                    </tr>");
         }
 
@@ -489,15 +487,15 @@ public sealed class HtmlReportGenerator : IReportGenerator
         var barThickness = hasTransmission ? 60 : 80;  // 세션 막대 두께
         var highConfidenceRadius = 5;    // 높은 확신 촬영 점 크기 (8 → 5)
         var mediumConfidenceRadius = 4;  // 중간 확신 촬영 점 크기 (6 → 4)
-        var lowConfidenceRadius = 3;     // 낮은 확신 촬영 점 크기 (5 → 3)
+        // 낮은 확신 촬영 제거 (요구사항 3)
         
-        // 세션 데이터 - Session 레이어에 배치
+        // 세션 데이터 - Session 레이어에 배치 (범례에서 제외)
         var sessions = items.Where(i => i.EventType == Constants.TimelineEventTypes.CAMERA_SESSION).ToList();
         if (sessions.Any())
         {
             html.AppendLine("                    {");
             html.AppendLine("                        type: 'bar',");
-            html.AppendLine("                        label: '카메라 세션 (기간)',");
+            html.AppendLine("                        label: '',"); // 범례에서 제외
             html.AppendLine("                        data: [");
             
             for (int i = 0; i < sessions.Count; i++)
@@ -540,16 +538,16 @@ public sealed class HtmlReportGenerator : IReportGenerator
         var captures = items.Where(i => i.EventType == Constants.TimelineEventTypes.CAMERA_CAPTURE).ToList();
         if (captures.Any())
         {
-            // 점수별로 그룹화하여 다른 색상 및 크기 적용
+            // 점수별로 그룹화하여 다른 색상 및 크기 적용 (낮은 확신 제외)
             var highConfidence = captures.Where(c => c.Score >= 0.7).ToList();
             var mediumConfidence = captures.Where(c => c.Score >= 0.4 && c.Score < 0.7).ToList();
-            var lowConfidence = captures.Where(c => c.Score < 0.4).ToList();
+            // 낮은 확신 촬영 제거 (요구사항 3)
 
             if (highConfidence.Any())
             {
                 html.AppendLine("                    {");
                 html.AppendLine("                        type: 'scatter',");
-                html.AppendLine("                        label: '촬영 (높은 확신: ≥0.7)',");
+                html.AppendLine("                        label: '',"); // 범례에서 제외
                 html.Append("                        data: [");
                 html.Append(string.Join(", ", highConfidence.Select(c => 
                     $"{{ x: new Date('{c.StartTime:yyyy-MM-ddTHH:mm:ss}'), y: 'Capture', label: '{c.Label}', score: {c.Score:F2} }}")));  // Capture 레이어 분리
@@ -579,22 +577,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
                 html.AppendLine("                    },");
             }
 
-            if (lowConfidence.Any())
-            {
-                html.AppendLine("                    {");
-                html.AppendLine("                        type: 'scatter',");
-                html.AppendLine("                        label: '촬영 (낮은 확신: <0.4)',");
-                html.Append("                        data: [");
-                html.Append(string.Join(", ", lowConfidence.Select(c => 
-                    $"{{ x: new Date('{c.StartTime:yyyy-MM-ddTHH:mm:ss}'), y: 'Capture', label: '{c.Label}', score: {c.Score:F2} }}")));  // Capture 레이어 분리
-                html.AppendLine("],");
-                html.AppendLine("                        backgroundColor: 'rgba(149, 165, 166, 0.75)',");
-                html.AppendLine("                        borderColor: 'rgba(127, 140, 141, 1)',");
-                html.AppendLine("                        borderWidth: 2,");
-                html.AppendLine($"                        pointRadius: {lowConfidenceRadius},");  // 3px (축소)
-                html.AppendLine($"                        pointHoverRadius: {lowConfidenceRadius + 2}");
-                html.AppendLine("                    },");
-            }
+            // 낮은 확신 촬영 제거 (요구사항 3)
         }
         if (transmissions.Any())
         {
@@ -748,6 +731,11 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("            const datasets = timelineChart.data.datasets;");
         html.AppendLine("            ");
         html.AppendLine("            datasets.forEach((dataset) => {");
+        html.AppendLine("                // 범례에서 제외: 빈 label인 경우 (카메라 세션, 높은 확신 촬영)");
+        html.AppendLine("                if (!dataset.label || dataset.label.trim() === '') {");
+        html.AppendLine("                    return;");
+        html.AppendLine("                }");
+        html.AppendLine("                ");
         html.AppendLine("                const isBar = dataset.type === 'bar';");
         html.AppendLine("                const bgColor = Array.isArray(dataset.backgroundColor) ");
         html.AppendLine("                    ? dataset.backgroundColor[0] ");
@@ -827,7 +815,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
 
     private static string GetConfidenceBar(double score)
     {
-        var percent = (int)(score * 100);
+        var percent = Math.Min((int)(score * 100), 100); // 최대 100%로 제한
         var cssClass = score >= 0.8 ? "confidence-high" : score >= 0.5 ? "confidence-medium" : "confidence-low";
         
         return $@"<div class=""confidence-bar-container"">

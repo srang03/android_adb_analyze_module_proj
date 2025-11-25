@@ -77,25 +77,20 @@ public sealed class DeduplicationEffectValidationTests : IAsyncLifetime
         _output.WriteLine("════════════════════════════════════════════════════════════\n");
         
         // Sample 1-10 로그 파싱
-        var sampleMappings = new Dictionary<int, (string dir, DateTime start, DateTime end)>
-        {
-            { 1, ("1차 샘플_25_10_04", new DateTime(2025, 10, 4, 14, 49, 0), new DateTime(2025, 10, 4, 14, 56, 0)) },
-            { 2, ("2차 샘플_25_10_06", new DateTime(2025, 10, 6, 22, 46, 0), new DateTime(2025, 10, 6, 22, 59, 0)) },
-            { 3, ("3차 샘플_25_10_07", new DateTime(2025, 10, 7, 23, 13, 0), new DateTime(2025, 10, 7, 23, 30, 0)) },
-            { 4, ("4차 샘플_25_10_12", new DateTime(2025, 10, 12, 16, 7, 0), new DateTime(2025, 10, 12, 16, 25, 0)) },
-            { 5, ("5차 샘플_25_10_13", new DateTime(2025, 10, 13, 23, 24, 0), new DateTime(2025, 10, 13, 23, 36, 0)) },
-            { 6, ("6차 샘플_25_10_16", new DateTime(2025, 10, 16, 16, 34, 0), new DateTime(2025, 10, 16, 16, 49, 0)) },
-            { 7, ("7차 샘플_25_10_16", new DateTime(2025, 10, 17, 10, 33, 0), new DateTime(2025, 10, 17, 10, 51, 0)) },
-            { 8, ("8차 샘플_25_10_17", new DateTime(2025, 10, 17, 16, 0, 0), new DateTime(2025, 10, 17, 16, 8, 0)) },
-            { 9, ("9차 샘플_25_10_17", new DateTime(2025, 10, 17, 16, 40, 0), new DateTime(2025, 10, 17, 16, 53, 0)) },
-            { 10, ("10차 샘플_25_10_17", new DateTime(2025, 10, 17, 23, 56, 0), new DateTime(2025, 10, 18, 0, 14, 0)) }
-        };
-        
+        // ArtifactWeights.SampleTimeRanges 공용 상수 사용 (Ground Truth와 동일)
         _allEvents = new List<NormalizedLogEvent>();
         
         for (int i = 1; i <= 10; i++)
         {
-            var (sampleDir, startTime, endTime) = sampleMappings[i];
+            if (!ArtifactWeights.SampleTimeRanges.TryGetValue(i, out var timeRange))
+            {
+                _output.WriteLine($"⚠️ Sample {i}의 시간 범위를 찾을 수 없습니다.");
+                continue;
+            }
+            
+            var sampleDir = timeRange.DirectoryName;
+            var startTime = timeRange.StartTime;
+            var endTime = timeRange.EndTime;
             _output.WriteLine($"📂 Sample {i}: {sampleDir}");
             
             var events = await ParseSampleLogsAsync(sampleDir, startTime, endTime);
@@ -132,28 +127,50 @@ public sealed class DeduplicationEffectValidationTests : IAsyncLifetime
         var resultBefore = await orchestratorWithoutDedup.AnalyzeAsync(_allEvents!, CreateAnalysisOptions());
         
         _output.WriteLine($"세션 탐지 결과 (중복 제거 전):");
-        _output.WriteLine($"  - 탐지된 세션: {resultBefore.Sessions.Count}개");
-        _output.WriteLine($"  - 실제 세션 (Ground Truth): {ExpectedTotalSessions}개");
+        _output.WriteLine($"  - 실제 측정값: {resultBefore.Sessions.Count}개");
+        _output.WriteLine($"  - Ground Truth: {ExpectedTotalSessions}개");
         
-        var sessionFpBefore = Math.Max(0, resultBefore.Sessions.Count - ExpectedTotalSessions);
+        // 실제 측정값과 Ground Truth 비교
+        var sessionDiff = resultBefore.Sessions.Count - ExpectedTotalSessions;
+        var sessionFpBefore = Math.Max(0, sessionDiff); // 오탐 (측정값 > GT)
+        var sessionFnBefore = Math.Max(0, -sessionDiff); // 미탐 (측정값 < GT)
+        var sessionTpBefore = Math.Min(resultBefore.Sessions.Count, ExpectedTotalSessions); // 정탐
+        
         var sessionPrecisionBefore = resultBefore.Sessions.Count > 0 
-            ? (double)(resultBefore.Sessions.Count - sessionFpBefore) / resultBefore.Sessions.Count 
+            ? (double)sessionTpBefore / resultBefore.Sessions.Count 
+            : 1.0;
+        var sessionRecallBefore = ExpectedTotalSessions > 0
+            ? (double)sessionTpBefore / ExpectedTotalSessions
             : 1.0;
         
+        _output.WriteLine($"  - 정탐(TP): {sessionTpBefore}개");
         _output.WriteLine($"  - 오탐(FP): {sessionFpBefore}개");
-        _output.WriteLine($"  - Precision: {sessionPrecisionBefore:P0}\n");
+        _output.WriteLine($"  - 미탐(FN): {sessionFnBefore}개");
+        _output.WriteLine($"  - Precision: {sessionPrecisionBefore:P1} ({sessionTpBefore}/{resultBefore.Sessions.Count})");
+        _output.WriteLine($"  - Recall: {sessionRecallBefore:P1} ({sessionTpBefore}/{ExpectedTotalSessions})\n");
         
         _output.WriteLine($"촬영 탐지 결과 (중복 제거 전):");
-        _output.WriteLine($"  - 탐지된 촬영: {resultBefore.CaptureEvents.Count}개");
-        _output.WriteLine($"  - 실제 촬영 (Ground Truth): {ExpectedTotalCaptures}개");
+        _output.WriteLine($"  - 실제 측정값: {resultBefore.CaptureEvents.Count}개");
+        _output.WriteLine($"  - Ground Truth: {ExpectedTotalCaptures}개");
         
-        var captureFpBefore = Math.Max(0, resultBefore.CaptureEvents.Count - ExpectedTotalCaptures);
+        // 실제 측정값과 Ground Truth 비교
+        var captureDiff = resultBefore.CaptureEvents.Count - ExpectedTotalCaptures;
+        var captureFpBefore = Math.Max(0, captureDiff); // 오탐 (측정값 > GT)
+        var captureFnBefore = Math.Max(0, -captureDiff); // 미탐 (측정값 < GT)
+        var captureTpBefore = Math.Min(resultBefore.CaptureEvents.Count, ExpectedTotalCaptures); // 정탐
+        
         var capturePrecisionBefore = resultBefore.CaptureEvents.Count > 0 
-            ? (double)(resultBefore.CaptureEvents.Count - captureFpBefore) / resultBefore.CaptureEvents.Count 
+            ? (double)captureTpBefore / resultBefore.CaptureEvents.Count 
+            : 1.0;
+        var captureRecallBefore = ExpectedTotalCaptures > 0
+            ? (double)captureTpBefore / ExpectedTotalCaptures
             : 1.0;
         
+        _output.WriteLine($"  - 정탐(TP): {captureTpBefore}개");
         _output.WriteLine($"  - 오탐(FP): {captureFpBefore}개");
-        _output.WriteLine($"  - Precision: {capturePrecisionBefore:P0}\n");
+        _output.WriteLine($"  - 미탐(FN): {captureFnBefore}개");
+        _output.WriteLine($"  - Precision: {capturePrecisionBefore:P1} ({captureTpBefore}/{resultBefore.CaptureEvents.Count})");
+        _output.WriteLine($"  - Recall: {captureRecallBefore:P1} ({captureTpBefore}/{ExpectedTotalCaptures})\n");
         
         // 2. 중복 제거 후 분석
         _output.WriteLine("────────────────────────────────────────────────────────────");
@@ -174,30 +191,54 @@ public sealed class DeduplicationEffectValidationTests : IAsyncLifetime
         _output.WriteLine($"중복 비율: {duplicationRatio:P1} ({duplicationRatio:F3})\n");
         
         _output.WriteLine($"세션 탐지 결과 (중복 제거 후):");
-        _output.WriteLine($"  - 탐지된 세션: {resultAfter.Sessions.Count}개");
-        _output.WriteLine($"  - 실제 세션 (Ground Truth): {ExpectedTotalSessions}개");
+        _output.WriteLine($"  - 실제 측정값: {resultAfter.Sessions.Count}개");
+        _output.WriteLine($"  - Ground Truth: {ExpectedTotalSessions}개");
         
-        var sessionFpAfter = Math.Max(0, resultAfter.Sessions.Count - ExpectedTotalSessions);
+        // 실제 측정값과 Ground Truth 비교
+        var sessionDiffAfter = resultAfter.Sessions.Count - ExpectedTotalSessions;
+        var sessionFpAfter = Math.Max(0, sessionDiffAfter); // 오탐 (측정값 > GT)
+        var sessionFnAfter = Math.Max(0, -sessionDiffAfter); // 미탐 (측정값 < GT)
+        var sessionTpAfter = Math.Min(resultAfter.Sessions.Count, ExpectedTotalSessions); // 정탐
+        
         var sessionPrecisionAfter = resultAfter.Sessions.Count > 0 
-            ? (double)(resultAfter.Sessions.Count - sessionFpAfter) / resultAfter.Sessions.Count 
+            ? (double)sessionTpAfter / resultAfter.Sessions.Count 
+            : 1.0;
+        var sessionRecallAfter = ExpectedTotalSessions > 0
+            ? (double)sessionTpAfter / ExpectedTotalSessions
             : 1.0;
         
+        _output.WriteLine($"  - 정탐(TP): {sessionTpAfter}개");
         _output.WriteLine($"  - 오탐(FP): {sessionFpAfter}개");
-        _output.WriteLine($"  - Precision: {sessionPrecisionAfter:P0}");
-        _output.WriteLine($"  - 향상: {(sessionPrecisionAfter - sessionPrecisionBefore) * 100:+0.0}%p\n");
+        _output.WriteLine($"  - 미탐(FN): {sessionFnAfter}개");
+        _output.WriteLine($"  - Precision: {sessionPrecisionAfter:P1} ({sessionTpAfter}/{resultAfter.Sessions.Count})");
+        _output.WriteLine($"  - Recall: {sessionRecallAfter:P1} ({sessionTpAfter}/{ExpectedTotalSessions})");
+        _output.WriteLine($"  - Precision 향상: {(sessionPrecisionAfter - sessionPrecisionBefore) * 100:+0.0}%p");
+        _output.WriteLine($"  - Recall 향상: {(sessionRecallAfter - sessionRecallBefore) * 100:+0.0}%p\n");
         
         _output.WriteLine($"촬영 탐지 결과 (중복 제거 후):");
-        _output.WriteLine($"  - 탐지된 촬영: {resultAfter.CaptureEvents.Count}개");
-        _output.WriteLine($"  - 실제 촬영 (Ground Truth): {ExpectedTotalCaptures}개");
+        _output.WriteLine($"  - 실제 측정값: {resultAfter.CaptureEvents.Count}개");
+        _output.WriteLine($"  - Ground Truth: {ExpectedTotalCaptures}개");
         
-        var captureFpAfter = Math.Max(0, resultAfter.CaptureEvents.Count - ExpectedTotalCaptures);
+        // 실제 측정값과 Ground Truth 비교
+        var captureDiffAfter = resultAfter.CaptureEvents.Count - ExpectedTotalCaptures;
+        var captureFpAfter = Math.Max(0, captureDiffAfter); // 오탐 (측정값 > GT)
+        var captureFnAfter = Math.Max(0, -captureDiffAfter); // 미탐 (측정값 < GT)
+        var captureTpAfter = Math.Min(resultAfter.CaptureEvents.Count, ExpectedTotalCaptures); // 정탐
+        
         var capturePrecisionAfter = resultAfter.CaptureEvents.Count > 0 
-            ? (double)(resultAfter.CaptureEvents.Count - captureFpAfter) / resultAfter.CaptureEvents.Count 
+            ? (double)captureTpAfter / resultAfter.CaptureEvents.Count 
+            : 1.0;
+        var captureRecallAfter = ExpectedTotalCaptures > 0
+            ? (double)captureTpAfter / ExpectedTotalCaptures
             : 1.0;
         
+        _output.WriteLine($"  - 정탐(TP): {captureTpAfter}개");
         _output.WriteLine($"  - 오탐(FP): {captureFpAfter}개");
-        _output.WriteLine($"  - Precision: {capturePrecisionAfter:P0}");
-        _output.WriteLine($"  - 향상: {(capturePrecisionAfter - capturePrecisionBefore) * 100:+0.0}%p\n");
+        _output.WriteLine($"  - 미탐(FN): {captureFnAfter}개");
+        _output.WriteLine($"  - Precision: {capturePrecisionAfter:P1} ({captureTpAfter}/{resultAfter.CaptureEvents.Count})");
+        _output.WriteLine($"  - Recall: {captureRecallAfter:P1} ({captureTpAfter}/{ExpectedTotalCaptures})");
+        _output.WriteLine($"  - Precision 향상: {(capturePrecisionAfter - capturePrecisionBefore) * 100:+0.0}%p");
+        _output.WriteLine($"  - Recall 향상: {(captureRecallAfter - captureRecallBefore) * 100:+0.0}%p\n");
         
         // 3. 처리 시간 측정 (10,000 이벤트 기준)
         _output.WriteLine("────────────────────────────────────────────────────────────");
@@ -217,8 +258,9 @@ public sealed class DeduplicationEffectValidationTests : IAsyncLifetime
         _output.WriteLine($"|----------|-------------|-------------|----------|");
         _output.WriteLine($"| 전체 이벤트 수 | {_allEvents.Count:N0}개 | {deduplicatedEvents.Count:N0}개 | -{duplicatedCount:N0}개 (-{duplicationRatio:P1}) |");
         _output.WriteLine($"| 중복 비율 | - | {duplicationRatio:P1} | - |");
-        _output.WriteLine($"| 세션 탐지 Precision | {sessionPrecisionBefore:P0} ({resultBefore.Sessions.Count - sessionFpBefore}/{resultBefore.Sessions.Count}, 오탐 {sessionFpBefore}건) | {sessionPrecisionAfter:P0} ({resultAfter.Sessions.Count - sessionFpAfter}/{resultAfter.Sessions.Count}, 오탐 {sessionFpAfter}건) | {(sessionPrecisionAfter - sessionPrecisionBefore) * 100:+0.0}%p |");
-        _output.WriteLine($"| 촬영 탐지 Precision | {capturePrecisionBefore:P0} ({resultBefore.CaptureEvents.Count - captureFpBefore}/{resultBefore.CaptureEvents.Count}, 오탐 {captureFpBefore}건) | {capturePrecisionAfter:P0} ({resultAfter.CaptureEvents.Count - captureFpAfter}/{resultAfter.CaptureEvents.Count}, 오탐 {captureFpAfter}건) | {(capturePrecisionAfter - capturePrecisionBefore) * 100:+0.0}%p |");
+        
+        _output.WriteLine($"| 세션 탐지 Precision | {sessionPrecisionBefore:P1} (측정: {resultBefore.Sessions.Count}개, GT: {ExpectedTotalSessions}개, TP: {sessionTpBefore}개, FP: {sessionFpBefore}개, FN: {sessionFnBefore}개) | {sessionPrecisionAfter:P1} (측정: {resultAfter.Sessions.Count}개, GT: {ExpectedTotalSessions}개, TP: {sessionTpAfter}개, FP: {sessionFpAfter}개, FN: {sessionFnAfter}개) | {(sessionPrecisionAfter - sessionPrecisionBefore) * 100:+0.0}%p |");
+        _output.WriteLine($"| 촬영 탐지 Precision | {capturePrecisionBefore:P1} (측정: {resultBefore.CaptureEvents.Count}개, GT: {ExpectedTotalCaptures}개, TP: {captureTpBefore}개, FP: {captureFpBefore}개, FN: {captureFnBefore}개) | {capturePrecisionAfter:P1} (측정: {resultAfter.CaptureEvents.Count}개, GT: {ExpectedTotalCaptures}개, TP: {captureTpAfter}개, FP: {captureFpAfter}개, FN: {captureFnAfter}개) | {(capturePrecisionAfter - capturePrecisionBefore) * 100:+0.0}%p |");
         _output.WriteLine($"| 처리 시간 (10,000 이벤트) | - | 약 {processingTime:F0}ms | O(n log n) |\n");
         
         // 5. JSON 파일로 결과 저장
@@ -231,39 +273,51 @@ public sealed class DeduplicationEffectValidationTests : IAsyncLifetime
             DuplicationRatio = duplicationRatio,
             SessionDetection = new
             {
+                GroundTruth = ExpectedTotalSessions,
                 Before = new
                 {
                     DetectedSessions = resultBefore.Sessions.Count,
-                    TruePositives = resultBefore.Sessions.Count - sessionFpBefore,
+                    TruePositives = sessionTpBefore,
                     FalsePositives = sessionFpBefore,
-                    Precision = sessionPrecisionBefore
+                    FalseNegatives = sessionFnBefore,
+                    Precision = sessionPrecisionBefore,
+                    Recall = sessionRecallBefore
                 },
                 After = new
                 {
                     DetectedSessions = resultAfter.Sessions.Count,
-                    TruePositives = resultAfter.Sessions.Count - sessionFpAfter,
+                    TruePositives = sessionTpAfter,
                     FalsePositives = sessionFpAfter,
-                    Precision = sessionPrecisionAfter
+                    FalseNegatives = sessionFnAfter,
+                    Precision = sessionPrecisionAfter,
+                    Recall = sessionRecallAfter
                 },
-                Improvement = (sessionPrecisionAfter - sessionPrecisionBefore) * 100
+                PrecisionImprovement = (sessionPrecisionAfter - sessionPrecisionBefore) * 100,
+                RecallImprovement = (sessionRecallAfter - sessionRecallBefore) * 100
             },
             CaptureDetection = new
             {
+                GroundTruth = ExpectedTotalCaptures,
                 Before = new
                 {
                     DetectedCaptures = resultBefore.CaptureEvents.Count,
-                    TruePositives = resultBefore.CaptureEvents.Count - captureFpBefore,
+                    TruePositives = captureTpBefore,
                     FalsePositives = captureFpBefore,
-                    Precision = capturePrecisionBefore
+                    FalseNegatives = captureFnBefore,
+                    Precision = capturePrecisionBefore,
+                    Recall = captureRecallBefore
                 },
                 After = new
                 {
                     DetectedCaptures = resultAfter.CaptureEvents.Count,
-                    TruePositives = resultAfter.CaptureEvents.Count - captureFpAfter,
+                    TruePositives = captureTpAfter,
                     FalsePositives = captureFpAfter,
-                    Precision = capturePrecisionAfter
+                    FalseNegatives = captureFnAfter,
+                    Precision = capturePrecisionAfter,
+                    Recall = captureRecallAfter
                 },
-                Improvement = (capturePrecisionAfter - capturePrecisionBefore) * 100
+                PrecisionImprovement = (capturePrecisionAfter - capturePrecisionBefore) * 100,
+                RecallImprovement = (captureRecallAfter - captureRecallBefore) * 100
             },
             ProcessingTimeMs = processingTime
         };
@@ -272,19 +326,29 @@ public sealed class DeduplicationEffectValidationTests : IAsyncLifetime
         File.WriteAllText(resultPath, json);
         _output.WriteLine($"✅ 결과가 JSON 파일로 저장되었습니다: {resultPath}\n");
         
-        // 6. 검증 (예비 실험 15% vs 본 실험)
+        // 6. 검증 (예비 실험 실제 측정값 vs 본 실험)
         _output.WriteLine("════════════════════════════════════════════════════════════");
         _output.WriteLine("📊 검증: 예비 실험 효과 재현성");
         _output.WriteLine("════════════════════════════════════════════════════════════\n");
         
-        // 중복 비율이 예비 실험(15%)과 유사한지 확인 (±3% 허용)
-        duplicationRatio.Should().BeInRange(
-            ArtifactWeights.PreliminaryDuplicationRatioMin, 
-            ArtifactWeights.PreliminaryDuplicationRatioMax, 
-            "본 실험 중복 비율은 예비 실험(15%)과 ±3% 범위 내에서 일치해야 함");
+        // 예비 실험의 실제 중복 비율 측정
+        var preliminaryDuplicationRatio = await MeasurePreliminaryDuplicationRatioAsync();
+        var tolerance = 0.03; // ±3% 허용 오차
+        var minRatio = Math.Max(0.0, preliminaryDuplicationRatio - tolerance);
+        var maxRatio = Math.Min(1.0, preliminaryDuplicationRatio + tolerance);
         
-        _output.WriteLine($"✅ 중복 비율 재현성 검증: {duplicationRatio:P1} (예비 실험: 15%, ±3% 범위 내)");
-        _output.WriteLine($"   - 예비 실험 15%와 본 실험 {duplicationRatio:P1}의 재현성 확인됨\n");
+        _output.WriteLine($"예비 실험 실제 측정 중복 비율: {preliminaryDuplicationRatio:P1}");
+        _output.WriteLine($"본 실험 중복 비율: {duplicationRatio:P1}");
+        _output.WriteLine($"허용 범위: {minRatio:P1} ~ {maxRatio:P1} (±3%)\n");
+        
+        // 중복 비율이 예비 실험 실제 측정값과 유사한지 확인 (±3% 허용)
+        duplicationRatio.Should().BeInRange(
+            minRatio, 
+            maxRatio, 
+            $"본 실험 중복 비율은 예비 실험 실제 측정값({preliminaryDuplicationRatio:P1})과 ±3% 범위 내에서 일치해야 함");
+        
+        _output.WriteLine($"✅ 중복 비율 재현성 검증: {duplicationRatio:P1} (예비 실험: {preliminaryDuplicationRatio:P1}, ±3% 범위 내)");
+        _output.WriteLine($"   - 예비 실험 {preliminaryDuplicationRatio:P1}와 본 실험 {duplicationRatio:P1}의 재현성 확인됨\n");
         
         _output.WriteLine($"📊 세션 Precision 변화: {sessionPrecisionBefore:P0} → {sessionPrecisionAfter:P0} ({(sessionPrecisionAfter - sessionPrecisionBefore) * 100:+0.0}%p)");
         _output.WriteLine($"📊 촬영 Precision 변화: {capturePrecisionBefore:P0} → {capturePrecisionAfter:P0} ({(capturePrecisionAfter - capturePrecisionBefore) * 100:+0.0}%p)");
@@ -306,10 +370,54 @@ public sealed class DeduplicationEffectValidationTests : IAsyncLifetime
         
         _output.WriteLine($"\n✅ 처리 시간 일관성: {processingTime:F0}ms (예비 실험: 50ms, 본 실험 예상: 약 52ms)\n");
         
-        _output.WriteLine("✅ 중복 비율 재현성 검증 통과! (예비 15% ≈ 본 {0:P1})", duplicationRatio);
+        _output.WriteLine($"✅ 중복 비율 재현성 검증 통과! (예비 {preliminaryDuplicationRatio:P1} ≈ 본 {duplicationRatio:P1})");
     }
 
     #region Helper Methods
+
+    /// <summary>
+    /// 예비 실험의 실제 중복 비율을 측정합니다.
+    /// </summary>
+    /// <returns>예비 실험의 중복 비율 (0.0 ~ 1.0)</returns>
+    /// <remarks>
+    /// 예비 실험 테스트와 동일한 로직을 사용하여 실제 중복 비율을 측정합니다.
+    /// 하드코딩된 값을 사용하지 않고 실제 분석 결과를 반환합니다.
+    /// </remarks>
+    private async Task<double> MeasurePreliminaryDuplicationRatioAsync()
+    {
+        _output.WriteLine("📊 예비 실험 중복 비율 측정 중...\n");
+        
+        // 예비 실험 1-3 이벤트 파싱 (예비 실험 테스트와 동일한 시간 범위)
+        var events1 = await ParseSampleLogsAsync("예비 실험/예비 실험 1차 25_09_01", 
+            new DateTime(2025, 9, 1, 9, 45, 0), 
+            new DateTime(2025, 9, 1, 9, 53, 0));
+        
+        var events2 = await ParseSampleLogsAsync("예비 실험/예비 실험 2차 25_09_06", 
+            new DateTime(2025, 9, 6, 10, 10, 0), 
+            new DateTime(2025, 9, 6, 10, 22, 59));
+        
+        var events3 = await ParseSampleLogsAsync("예비 실험/예비 실험 3차 25_09_07", 
+            new DateTime(2025, 9, 7, 10, 35, 0), 
+            new DateTime(2025, 9, 7, 10, 44, 59));
+        
+        var allPreliminaryEvents = events1.Concat(events2).Concat(events3).ToList();
+        
+        _output.WriteLine($"  예비 실험 총 이벤트 수: {allPreliminaryEvents.Count:N0}개");
+        
+        // 중복 제거 수행
+        var deduplicator = new EventDeduplicator(NullLogger<EventDeduplicator>.Instance, CreateAnalysisOptions());
+        var deduplicatedEvents = deduplicator.Deduplicate(allPreliminaryEvents, out var _);
+        var duplicatedCount = allPreliminaryEvents.Count - deduplicatedEvents.Count;
+        var duplicationRatio = allPreliminaryEvents.Count > 0 
+            ? (double)duplicatedCount / allPreliminaryEvents.Count 
+            : 0.0;
+        
+        _output.WriteLine($"  중복 제거 후: {deduplicatedEvents.Count:N0}개");
+        _output.WriteLine($"  제거된 중복: {duplicatedCount:N0}개");
+        _output.WriteLine($"  중복 비율: {duplicationRatio:P1} ({duplicationRatio:F3})\n");
+        
+        return duplicationRatio;
+    }
 
     /// <summary>
     /// 중복 제거 처리 시간 측정 (10,000 이벤트 기준)
@@ -355,10 +463,11 @@ public sealed class DeduplicationEffectValidationTests : IAsyncLifetime
         var samplePath = Path.Combine(_sampleLogsPath, sampleDirectory);
         var allEvents = new List<NormalizedLogEvent>();
         
-        // 로그 파일 설정 맵핑
+        // 로그 파일 설정 맵핑 (ArtifactFrequencyValidationTests와 동일 - Ground Truth와 동일)
         var logConfigs = new Dictionary<string, string>
         {
             ["audio.log"] = "adb_audio_config.yaml",
+            ["media_camera_worker.log"] = "adb_media_camera_worker_config.yaml",  // ⭐ DATABASE_INSERT를 위해 필수!
             ["media_camera.log"] = "adb_media_camera_config.yaml",
             ["media_metrics.log"] = "adb_media_metrics_config.yaml",
             ["usagestats.log"] = "adb_usagestats_config.yaml",
@@ -431,15 +540,19 @@ public sealed class DeduplicationEffectValidationTests : IAsyncLifetime
     /// AnalysisOptions 생성
     /// </summary>
     /// <remarks>
-    /// ArtifactWeights 공용 상수 사용 (하드코딩 제거)
-    /// - DeduplicationSimilarityThreshold: 0.55 (NormalizedLogEvent 중복 제거)
+    /// ArtifactFrequencyValidationTests.cs와 동일한 설정 사용 (Ground Truth와 동일한 설정)
+    /// - DeduplicationSimilarityThreshold: 0.8 (GroundTruthDeduplicationSimilarityThreshold)
+    /// - SameCameraUsageTimeThreshold: 세션 탐지 임계값
     /// - CaptureDeduplicationWindow: 500ms (CameraCaptureEvent 중복 제거)
+    /// 
+    /// 주의: ArtifactFrequencyValidationTests.cs와 동일한 설정을 사용하여 46개 촬영을 정확히 탐지해야 함
     /// </remarks>
     private AnalysisOptions CreateAnalysisOptions()
     {
         return new AnalysisOptions
         {
-            DeduplicationSimilarityThreshold = ArtifactWeights.DeduplicationSimilarityThreshold,
+            DeduplicationSimilarityThreshold = ArtifactWeights.GroundTruthDeduplicationSimilarityThreshold,  // Ground Truth와 동일한 설정 사용 (0.8)
+            SameCameraUsageTimeThreshold = TimeSpan.FromSeconds(ArtifactWeights.SameCameraUsageTimeThreshold),
             CaptureDeduplicationWindow = TimeSpan.FromMilliseconds(ArtifactWeights.CaptureDeduplicationWindowMs)
         };
     }

@@ -129,21 +129,159 @@ public sealed class GetPreciseCaptureTimeValidationTests : IAsyncLifetime
     {
         _output.WriteLine("\n📊 정밀한 촬영 시각 결정 메커니즘 타당성 검증 (예비 실험)\n");
         
-        // 1. FOREGROUND_SERVICE가 keyArtifact로 사용된 케이스 추출
-        var foregroundServiceCases = _analysisResult!.CaptureEvents
-            .Where(c => c.Metadata.TryGetValue("key_artifact_type", out var keyType) && 
-                       keyType == "FOREGROUND_SERVICE")
+        // 0. 모든 촬영의 keyArtifact 타입 확인 (디버깅용)
+        _output.WriteLine("─────────────────────────────────────────────────────────────────────");
+        _output.WriteLine("모든 촬영의 keyArtifact 타입 확인");
+        _output.WriteLine("─────────────────────────────────────────────────────────────────────\n");
+        
+        var allKeyArtifactTypes = _analysisResult!.CaptureEvents
+            .Select(c => 
+            {
+                var keyType = "알 수 없음";
+                if (c.Metadata.TryGetValue("key_artifact_type", out var type))
+                {
+                    keyType = type ?? "알 수 없음";
+                }
+                else if (c.decisiveArtifact.HasValue)
+                {
+                    var keyArtifact = _allParsedEvents!.FirstOrDefault(e => e.EventId == c.decisiveArtifact.Value);
+                    keyType = keyArtifact?.EventType ?? "알 수 없음";
+                }
+                return new { Capture = c, KeyType = keyType };
+            })
             .ToList();
         
-        _output.WriteLine($"총 촬영 수: {_analysisResult.CaptureEvents.Count}개");
+        var keyArtifactTypeGroups = allKeyArtifactTypes
+            .GroupBy(x => x.KeyType)
+            .OrderByDescending(g => g.Count())
+            .ToList();
+        
+        _output.WriteLine($"총 촬영 수: {_analysisResult.CaptureEvents.Count}개\n");
+        _output.WriteLine("keyArtifact 타입별 분포:");
+        foreach (var group in keyArtifactTypeGroups)
+        {
+            _output.WriteLine($"  - {group.Key}: {group.Count()}개");
+        }
+        _output.WriteLine("");
+        
+        // 각 촬영의 상세 정보 출력
+        foreach (var item in allKeyArtifactTypes.OrderBy(x => x.Capture.CaptureTime))
+        {
+            var experimentNum = GetExperimentNumber(item.Capture);
+            _output.WriteLine($"  [{experimentNum}] {item.Capture.PackageName,-25} | {item.Capture.CaptureTime:HH:mm:ss.fff} | keyArtifact: {item.KeyType}");
+        }
+        _output.WriteLine("");
+        
+        // 🔍 디버깅: 카카오톡 촬영의 세션 컨텍스트와 VIBRATION_EVENT 비교 분석
+        _output.WriteLine("─────────────────────────────────────────────────────────────────────");
+        _output.WriteLine("🔍 카카오톡 촬영 세션 컨텍스트 및 VIBRATION_EVENT 비교 분석");
+        _output.WriteLine("─────────────────────────────────────────────────────────────────────\n");
+        
+        var kakaoCaptures = _analysisResult!.CaptureEvents
+            .Where(c => c.PackageName == "com.kakao.talk")
+            .OrderBy(c => c.CaptureTime)
+            .ToList();
+        
+        foreach (var capture in kakaoCaptures)
+        {
+            var experimentNum = GetExperimentNumber(capture);
+            var session = _analysisResult!.Sessions.FirstOrDefault(s => s.SessionId == capture.ParentSessionId);
+            
+            if (session == null)
+            {
+                _output.WriteLine($"⚠️ [{experimentNum}] 세션을 찾을 수 없습니다.");
+                continue;
+            }
+            
+            _output.WriteLine($"\n[{experimentNum}] 카카오톡 촬영 분석");
+            _output.WriteLine($"  촬영 시각: {capture.CaptureTime:HH:mm:ss.fff}");
+            _output.WriteLine($"  세션 시간: {session.StartTime:HH:mm:ss.fff} ~ {session.EndTime:HH:mm:ss.fff}");
+            _output.WriteLine($"  세션 확장 후: {session.StartTime:HH:mm:ss.fff} ~ {session.EndTime?.AddSeconds(10):HH:mm:ss.fff}");
+            
+            // 세션 시간 범위 내의 모든 VIBRATION_EVENT 찾기
+            var sessionStart = session.StartTime;
+            var sessionEnd = session.EndTime?.AddSeconds(10) ?? DateTime.MaxValue;
+            
+            var sessionVibrationEvents = _allParsedEvents!
+                .Where(e => e.EventType == "VIBRATION_EVENT")
+                .Where(e => e.PackageName == "com.kakao.talk" || e.PackageName == "com.sec.android.app.camera")
+                .Where(e => e.Timestamp >= sessionStart && e.Timestamp <= sessionEnd)
+                .OrderBy(e => e.Timestamp)
+                .ToList();
+            
+            _output.WriteLine($"  세션 시간 범위 내 VIBRATION_EVENT: {sessionVibrationEvents.Count}개");
+            
+            foreach (var vibEvent in sessionVibrationEvents)
+            {
+                var hapticType = vibEvent.Attributes.TryGetValue("hapticType", out var ht) ? ht?.ToString() : "없음";
+                var status = vibEvent.Attributes.TryGetValue("status", out var st) ? st?.ToString() : "없음";
+                _output.WriteLine($"    - {vibEvent.Timestamp:HH:mm:ss.fff} | hapticType={hapticType} | status={status} | Package={vibEvent.PackageName}");
+            }
+            
+            // SourceEventIds에 포함된 VIBRATION_EVENT 찾기
+            var sourceVibrationEvents = _allParsedEvents!
+                .Where(e => capture.SourceEventIds.Contains(e.EventId))
+                .Where(e => e.EventType == "VIBRATION_EVENT")
+                .OrderBy(e => e.Timestamp)
+                .ToList();
+            
+            _output.WriteLine($"  SourceEventIds에 포함된 VIBRATION_EVENT: {sourceVibrationEvents.Count}개");
+            
+            foreach (var vibEvent in sourceVibrationEvents)
+            {
+                var hapticType = vibEvent.Attributes.TryGetValue("hapticType", out var ht) ? ht?.ToString() : "없음";
+                var status = vibEvent.Attributes.TryGetValue("status", out var st) ? st?.ToString() : "없음";
+                var inSession = vibEvent.Timestamp >= sessionStart && vibEvent.Timestamp <= sessionEnd ? "세션 내" : "세션 밖";
+                _output.WriteLine($"    - {vibEvent.Timestamp:HH:mm:ss.fff} | hapticType={hapticType} | status={status} | {inSession}");
+            }
+            
+            // keyArtifact 확인
+            if (capture.decisiveArtifact.HasValue)
+            {
+                var keyArtifact = _allParsedEvents!.FirstOrDefault(e => e.EventId == capture.decisiveArtifact.Value);
+                if (keyArtifact != null)
+                {
+                    _output.WriteLine($"  keyArtifact: {keyArtifact.EventType} ({keyArtifact.Timestamp:HH:mm:ss.fff})");
+                    if (keyArtifact.EventType == "VIBRATION_EVENT")
+                    {
+                        var hapticType = keyArtifact.Attributes.TryGetValue("hapticType", out var ht) ? ht?.ToString() : "없음";
+                        _output.WriteLine($"    hapticType={hapticType}");
+                    }
+                }
+            }
+        }
+        _output.WriteLine("");
+        
+        // 1. FOREGROUND_SERVICE가 keyArtifact로 사용된 케이스 추출
+        var foregroundServiceCases = _analysisResult.CaptureEvents
+            .Where(c => 
+            {
+                // Metadata에서 확인
+                if (c.Metadata.TryGetValue("key_artifact_type", out var keyType) && 
+                    keyType == "FOREGROUND_SERVICE")
+                {
+                    return true;
+                }
+                
+                // decisiveArtifact에서 직접 확인
+                if (c.decisiveArtifact.HasValue)
+                {
+                    var keyArtifact = _allParsedEvents!.FirstOrDefault(e => e.EventId == c.decisiveArtifact.Value);
+                    return keyArtifact?.EventType == "FOREGROUND_SERVICE";
+                }
+                
+                return false;
+            })
+            .ToList();
+        
         _output.WriteLine($"FOREGROUND_SERVICE가 keyArtifact인 케이스: {foregroundServiceCases.Count}개\n");
         
         if (foregroundServiceCases.Count == 0)
         {
             _output.WriteLine("⚠️ FOREGROUND_SERVICE가 keyArtifact로 사용된 케이스가 없습니다.");
-            _output.WriteLine("   부록 3에 따르면 예비 실험 3차에서 1건이 발견되었다고 하는데,");
+            _output.WriteLine("   부록 3에 따르면 예비 실험 2차(10:11:31) 또는 예비 실험 3차에서 1건이 발견되었다고 하는데,");
             _output.WriteLine("   현재 분석 결과에서는 발견되지 않았습니다.");
-            _output.WriteLine("   데이터 경로나 분석 설정을 확인해야 할 수 있습니다.\n");
+            _output.WriteLine("   이는 다른 아티팩트(DATABASE_INSERT, VIBRATION_EVENT 등)가 keyArtifact로 사용되었을 가능성이 있습니다.\n");
             return;
         }
         
@@ -206,6 +344,29 @@ public sealed class GetPreciseCaptureTimeValidationTests : IAsyncLifetime
             }
             
             var preciseArtifactType = preciseArtifact?.EventType ?? "NONE";
+            
+            // 디버깅 정보 출력 (모든 케이스에 대해)
+            _output.WriteLine($"\n📋 케이스 분석: {GetExperimentNumber(capture)} - {capture.PackageName}");
+            _output.WriteLine($"  FOREGROUND_SERVICE 타임스탬프: {foregroundTimestamp:HH:mm:ss.fff}");
+            _output.WriteLine($"  CaptureTime (정밀 타임스탬프): {preciseTimestamp:HH:mm:ss.fff}");
+            _output.WriteLine($"  타임스탬프 차이: {difference.TotalMilliseconds:F0}ms");
+            _output.WriteLine($"  SourceEventIds에 포함된 아티팩트: {string.Join(", ", sourceArtifactTypes)}");
+            _output.WriteLine($"  FOREGROUND_SERVICE를 제외한 아티팩트: {allArtifacts.Count}개");
+            if (allArtifacts.Count > 0)
+            {
+                _output.WriteLine($"    - {string.Join(", ", allArtifacts.Select(e => $"{e.EventType} ({e.Timestamp:HH:mm:ss.fff})"))}");
+            }
+            if (preciseArtifact != null)
+            {
+                var artifactDiff = Math.Abs((preciseArtifact.Timestamp - preciseTimestamp).TotalMilliseconds);
+                _output.WriteLine($"  추정된 정밀 아티팩트: {preciseArtifact.EventType} ({preciseArtifact.Timestamp:HH:mm:ss.fff})");
+                _output.WriteLine($"  CaptureTime과의 차이: {artifactDiff:F2}ms");
+            }
+            else
+            {
+                _output.WriteLine($"  추정된 정밀 아티팩트: 없음 (NONE)");
+            }
+            _output.WriteLine("");
             
             // 디버깅 정보 출력 (문제 진단용)
             if (preciseArtifactType == "NONE" && allArtifacts.Count == 0)

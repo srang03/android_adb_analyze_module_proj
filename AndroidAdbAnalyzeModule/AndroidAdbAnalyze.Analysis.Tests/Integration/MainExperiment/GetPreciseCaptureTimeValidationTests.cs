@@ -465,9 +465,14 @@ public sealed class GetPreciseCaptureTimeValidationTests : IAsyncLifetime
     }
     
     /// <summary>
-    /// AnalysisOptions 생성 (ArtifactWeights 공용 상수 사용)
+    /// AnalysisOptions 생성 (ArtifactFrequencyValidationTests와 동일한 설정 사용)
     /// </summary>
     /// <remarks>
+    /// ArtifactFrequencyValidationTests.cs와 동일한 설정을 사용하여 일관성 보장
+    /// - DeduplicationSimilarityThreshold: GroundTruthDeduplicationSimilarityThreshold (0.8) 사용
+    /// - SameCameraUsageTimeThreshold: 세션 탐지 임계값
+    /// - CaptureDeduplicationWindow: 500ms (CameraCaptureEvent 중복 제거)
+    /// 
     /// StartTime과 EndTime은 파싱 단계에서만 사용되며, AnalysisOptions에는 없습니다.
     /// MinOverlapRatio는 CameraSessionDetector 내부 상수로 정의되어 있습니다.
     /// </remarks>
@@ -476,7 +481,7 @@ public sealed class GetPreciseCaptureTimeValidationTests : IAsyncLifetime
         return new AnalysisOptions
         {
             EventCorrelationWindow = TimeSpan.FromSeconds(ArtifactWeights.EventCorrelationWindowSeconds),
-            DeduplicationSimilarityThreshold = ArtifactWeights.DeduplicationSimilarityThreshold,
+            DeduplicationSimilarityThreshold = ArtifactWeights.GroundTruthDeduplicationSimilarityThreshold,  // Ground Truth와 동일한 설정 사용 (0.8)
             SameCameraUsageTimeThreshold = TimeSpan.FromSeconds(ArtifactWeights.SameCameraUsageTimeThreshold),
             CaptureDeduplicationWindow = TimeSpan.FromMilliseconds(ArtifactWeights.CaptureDeduplicationWindowMs)
         };

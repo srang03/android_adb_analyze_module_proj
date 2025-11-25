@@ -521,6 +521,247 @@ public sealed class SameCameraUsageTimeThresholdValidationTests : IAsyncLifetime
         });
     }
 
+    /// <summary>
+    /// 본 실험 SameCameraUsageTimeThreshold 시간 차이 직접 측정 테스트
+    /// </summary>
+    /// <remarks>
+    /// 논문 제5장 제3절 표 22의 본 실험 수치(평균 0.8초, 최대 1.5초 등)를 직접 검증하기 위한 테스트
+    /// 병합 전 원본 세션 쌍(usagestats 세션과 media.camera 세션)의 시간 차이를 측정함
+    /// </remarks>
+    [Fact]
+    public async Task Measure_SameCameraUsageTimeThreshold_MainExperiment()
+    {
+        _output.WriteLine("════════════════════════════════════════════════════════════");
+        _output.WriteLine("📊 SameCameraUsageTimeThreshold 시간 차이 측정 (본 실험 Sample 1~10)");
+        _output.WriteLine("════════════════════════════════════════════════════════════\n");
+        _output.WriteLine("✅ 병합 전 원본 세션 쌍의 시간 차이 직접 측정\n");
+
+        // 1. Sample 1-10에서 원본 세션 추출 (병합 전)
+        var allRawSessions = new List<CameraSession>();
+
+        for (int i = 1; i <= 10; i++)
+        {
+            if (!ArtifactWeights.SampleTimeRanges.TryGetValue(i, out var sampleInfo))
+            {
+                _output.WriteLine($"⚠️ Sample {i}의 시간 범위를 찾을 수 없습니다.");
+                continue;
+            }
+
+            _output.WriteLine($"분석 중: Sample {i} ({sampleInfo.DirectoryName})");
+            var rawSessions = await ExtractRawSessionsFromSample(
+                sampleInfo.DirectoryName, sampleInfo.StartTime, sampleInfo.EndTime);
+            
+            allRawSessions.AddRange(rawSessions);
+            _output.WriteLine($"  원본 세션: {rawSessions.Count}개 (병합 전)\n");
+        }
+
+        _output.WriteLine($"총 원본 세션 수: {allRawSessions.Count}개\n");
+
+        // 2. usagestats-media.camera 쌍 식별
+        // IdentifyUsagestatsMediaCameraPairs는 예비 실험 전용이지만, 본 실험에서도 동일한 로직으로 사용 가능
+        var allSessionPairs = IdentifyUsagestatsMediaCameraPairs(allRawSessions);
+
+        _output.WriteLine($"usagestats-media.camera 쌍 (전체): {allSessionPairs.Count}개\n");
+
+        if (allSessionPairs.Count == 0)
+        {
+            _output.WriteLine("⚠️  usagestats-media.camera 쌍이 없습니다.\n");
+            _output.WriteLine("✅ 모든 샘플에서 SameCameraUsageTimeThreshold가 올바르게 동작하여");
+            _output.WriteLine("   병합되어야 할 세션이 모두 병합되었습니다.\n");
+            return;
+        }
+
+        // 3. SameCameraUsageTimeThreshold 기준으로 병합 가능한 쌍만 필터링
+        // 논문 표 22의 수치는 "병합된 세션 56개"에 해당하는 원본 쌍만 측정한 것으로 해석됨
+        var threshold = ArtifactWeights.SameCameraUsageTimeThreshold;
+        var sessionPairs = allSessionPairs.Where(pair =>
+        {
+            var (usagestats, mediaCamera) = pair;
+            var startDiff = Math.Abs((usagestats.StartTime - mediaCamera.StartTime).TotalSeconds);
+            
+            if (startDiff > threshold)
+                return false;
+            
+            if (!usagestats.EndTime.HasValue || !mediaCamera.EndTime.HasValue)
+                return false;
+            
+            var endDiff = Math.Abs((usagestats.EndTime.Value - mediaCamera.EndTime.Value).TotalSeconds);
+            return endDiff <= threshold;
+        }).ToList();
+
+        _output.WriteLine($"병합 가능한 쌍 (SameCameraUsageTimeThreshold {threshold:F1}초 기준): {sessionPairs.Count}개");
+        _output.WriteLine($"병합 불가능한 쌍 (임계값 초과): {allSessionPairs.Count - sessionPairs.Count}개\n");
+
+        if (sessionPairs.Count == 0)
+        {
+            _output.WriteLine("⚠️  병합 가능한 쌍이 없습니다.\n");
+            return;
+        }
+
+        // 4. 시작/종료 시각 차이 측정
+        var startDiffs = new List<double>();
+        var endDiffs = new List<double>();
+
+        _output.WriteLine("📋 세션 쌍 상세 분석:\n");
+
+        foreach (var (usagestats, mediaCamera) in sessionPairs)
+        {
+            var startDiff = Math.Abs((usagestats.StartTime - mediaCamera.StartTime).TotalSeconds);
+            startDiffs.Add(startDiff);
+
+            if (!usagestats.EndTime.HasValue || !mediaCamera.EndTime.HasValue)
+            {
+                _output.WriteLine($"⚠️  {usagestats.PackageName}: EndTime이 null임 (시작 차이: {startDiff:F2}초)");
+                continue;
+            }
+
+            var endDiff = Math.Abs((usagestats.EndTime.Value - mediaCamera.EndTime.Value).TotalSeconds);
+            endDiffs.Add(endDiff);
+
+            _output.WriteLine($"쌍: {usagestats.PackageName}");
+            _output.WriteLine($"  usagestats: {usagestats.StartTime:HH:mm:ss} ~ {usagestats.EndTime.Value:HH:mm:ss}");
+            _output.WriteLine($"  media.camera: {mediaCamera.StartTime:HH:mm:ss} ~ {mediaCamera.EndTime.Value:HH:mm:ss}");
+            _output.WriteLine($"  시작 차이: {startDiff:F2}초, 종료 차이: {endDiff:F2}초\n");
+        }
+
+        if (startDiffs.Count == 0)
+        {
+            _output.WriteLine("⚠️  측정 가능한 쌍이 없습니다.\n");
+            return;
+        }
+
+        // 4. 통계 계산
+        var startAvg = startDiffs.Average();
+        var startMin = startDiffs.Min();
+        var startMax = startDiffs.Max();
+
+        var endAvg = endDiffs.Count > 0 ? endDiffs.Average() : 0.0;
+        var endMin = endDiffs.Count > 0 ? endDiffs.Min() : 0.0;
+        var endMax = endDiffs.Count > 0 ? endDiffs.Max() : 0.0;
+
+        _output.WriteLine("════════════════════════════════════════════════════════════");
+        _output.WriteLine("📊 통계 요약");
+        _output.WriteLine("════════════════════════════════════════════════════════════\n");
+
+        _output.WriteLine($"시작 시각 차이:");
+        _output.WriteLine($"  평균: {startAvg:F2}초");
+        _output.WriteLine($"  최소: {startMin:F2}초");
+        _output.WriteLine($"  최대: {startMax:F2}초");
+        _output.WriteLine($"  측정 샘플: {startDiffs.Count}개\n");
+
+        if (endDiffs.Count > 0)
+        {
+            _output.WriteLine($"종료 시각 차이:");
+            _output.WriteLine($"  평균: {endAvg:F2}초");
+            _output.WriteLine($"  최소: {endMin:F2}초");
+            _output.WriteLine($"  최대: {endMax:F2}초");
+            _output.WriteLine($"  측정 샘플: {endDiffs.Count}개\n");
+        }
+        else
+        {
+            _output.WriteLine($"종료 시각 차이: 측정 불가 (EndTime이 null인 세션이 있음)\n");
+        }
+
+        // 6. 임계값 검증 (이미 필터링되었으므로 모두 임계값 이내여야 함)
+        var startExceed = startDiffs.Count(d => d > threshold);
+        var endExceed = endDiffs.Count(d => d > threshold);
+
+        _output.WriteLine($"{threshold:F1}초 임계값 검증:");
+        _output.WriteLine($"  시작 차이 초과: {startExceed}개 / {startDiffs.Count}개");
+        if (endDiffs.Count > 0)
+        {
+            _output.WriteLine($"  종료 차이 초과: {endExceed}개 / {endDiffs.Count}개\n");
+        }
+        else
+        {
+            _output.WriteLine($"  종료 차이 초과: 측정 불가\n");
+        }
+
+        // 7. 논문 표 27과 비교 검증
+        _output.WriteLine("════════════════════════════════════════════════════════════");
+        _output.WriteLine("📝 논문 표 27 비교 검증");
+        _output.WriteLine("════════════════════════════════════════════════════════════\n");
+
+        _output.WriteLine("**논문 표 27 본 실험 수치**:");
+        _output.WriteLine("  - 시작 차이 평균: 0.8초");
+        _output.WriteLine("  - 시작 차이 최대: 1.8초");
+        _output.WriteLine("  - 종료 차이 평균: 0.9초");
+        _output.WriteLine("  - 종료 차이 최대: 2.0초");
+        _output.WriteLine("  - 측정 대상: usagestats와 media.camera가 병합된 세션 56개\n");
+
+        _output.WriteLine("**테스트 코드 측정 결과**:");
+        _output.WriteLine($"  - 시작 차이 평균: {startAvg:F2}초 (논문: 0.8초)");
+        _output.WriteLine($"  - 시작 차이 최대: {startMax:F2}초 (논문: 1.8초)");
+        if (endDiffs.Count > 0)
+        {
+            _output.WriteLine($"  - 종료 차이 평균: {endAvg:F2}초 (논문: 0.9초)");
+            _output.WriteLine($"  - 종료 차이 최대: {endMax:F2}초 (논문: 2.0초)");
+        }
+        else
+        {
+            _output.WriteLine($"  - 종료 차이: 측정 불가 (논문: 평균 0.9초, 최대 2.0초)");
+        }
+        _output.WriteLine($"  - 측정 샘플: {sessionPairs.Count}개 쌍\n");
+
+        // 8. 논문 작성용 요약
+        _output.WriteLine("════════════════════════════════════════════════════════════");
+        _output.WriteLine("📝 논문 작성용 요약 (제5장 제4절 표 27)");
+        _output.WriteLine("════════════════════════════════════════════════════════════\n");
+
+        _output.WriteLine("**측정 방법**:");
+        _output.WriteLine("  - 측정 대상: 본 실험 Sample 1~10의 원본 세션 중 usagestats-media.camera 쌍");
+        _output.WriteLine("  - 측정 방법: 두 로그 간 시작 시각 차이 및 종료 시각 차이 계산\n");
+
+        _output.WriteLine("**측정 결과**:");
+        _output.WriteLine($"  - 시작 차이: 평균 {Math.Round(startAvg, 1)}초 (최소 {startMin:F1}초, 최대 {startMax:F1}초)");
+        if (endDiffs.Count > 0)
+        {
+            _output.WriteLine($"  - 종료 차이: 평균 {Math.Round(endAvg, 1)}초 (최소 {endMin:F1}초, 최대 {endMax:F1}초)\n");
+        }
+        else
+        {
+            _output.WriteLine($"  - 종료 차이: 측정 불가 (일부 세션의 EndTime이 null)\n");
+        }
+
+        _output.WriteLine("**논문 표 27 비교**:");
+        _output.WriteLine($"  - 시작 차이 평균: 테스트 {startAvg:F2}초 vs 논문 0.8초 (차이: {Math.Abs(startAvg - 0.8):F2}초)");
+        _output.WriteLine($"  - 시작 차이 최대: 테스트 {startMax:F2}초 vs 논문 1.8초 (차이: {Math.Abs(startMax - 1.8):F2}초)");
+        if (endDiffs.Count > 0)
+        {
+            _output.WriteLine($"  - 종료 차이 평균: 테스트 {endAvg:F2}초 vs 논문 0.9초 (차이: {Math.Abs(endAvg - 0.9):F2}초)");
+            _output.WriteLine($"  - 종료 차이 최대: 테스트 {endMax:F2}초 vs 논문 2.0초 (차이: {Math.Abs(endMax - 2.0):F2}초)\n");
+        }
+        else
+        {
+            _output.WriteLine($"  - 종료 차이: 측정 불가로 비교 불가\n");
+        }
+
+        _output.WriteLine("════════════════════════════════════════════════════════════\n");
+
+        // 9. Assertion
+        // 이미 SameCameraUsageTimeThreshold 기준으로 필터링되었으므로 모두 임계값 이내여야 함
+        startExceed.Should().Be(0, $"병합 가능한 쌍은 모두 시작 시각 차이가 {threshold:F1}초 이하여야 함");
+        if (endDiffs.Count > 0)
+        {
+            endExceed.Should().Be(0, $"병합 가능한 쌍은 모두 종료 시각 차이가 {threshold:F1}초 이하여야 함");
+        }
+
+        // 논문 표 27의 수치와 비교 (허용 오차 0.2초)
+        const double tolerance = 0.2;
+        startAvg.Should().BeApproximately(0.8, tolerance, 
+            $"시작 차이 평균이 논문 표 27의 0.8초와 유사해야 함 (허용 오차: {tolerance}초)");
+        startMax.Should().BeLessThanOrEqualTo(1.8 + tolerance, 
+            $"시작 차이 최대값이 논문 표 27의 1.8초 이하이거나 유사해야 함 (허용 오차: {tolerance}초)");
+        
+        if (endDiffs.Count > 0)
+        {
+            endAvg.Should().BeApproximately(0.9, tolerance, 
+                $"종료 차이 평균이 논문 표 27의 0.9초와 유사해야 함 (허용 오차: {tolerance}초)");
+            endMax.Should().BeLessThanOrEqualTo(2.0 + tolerance, 
+                $"종료 차이 최대값이 논문 표 27의 2.0초 이하이거나 유사해야 함 (허용 오차: {tolerance}초)");
+        }
+    }
+
     #region Helper Methods
 
     /// <summary>

@@ -1,6 +1,23 @@
+using AndroidAdbAnalyze.Analysis.Configuration;
 using AndroidAdbAnalyze.Analysis.Extensions;
+using AndroidAdbAnalyze.Analysis.Interfaces;
+using AndroidAdbAnalyze.Analysis.Models.Configuration;
+using AndroidAdbAnalyze.Analysis.Models.Options;
+using AndroidAdbAnalyze.Analysis.Services.Captures;
+using AndroidAdbAnalyze.Analysis.Services.Confidence;
+using AndroidAdbAnalyze.Analysis.Services.Context;
+using AndroidAdbAnalyze.Analysis.Services.Deduplication;
+using AndroidAdbAnalyze.Analysis.Services.Deduplication.Strategies;
+using AndroidAdbAnalyze.Analysis.Services.DetectionStrategies;
+using AndroidAdbAnalyze.Analysis.Services.Orchestration;
+using AndroidAdbAnalyze.Analysis.Services.Reports;
+using AndroidAdbAnalyze.Analysis.Services.Sessions;
+using AndroidAdbAnalyze.Analysis.Services.Sessions.Sources;
+using AndroidAdbAnalyze.Analysis.Services.Transmission;
+using AndroidAdbAnalyze.Analysis.Services.Visualization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace AndroidAdbAnalyze.Console.Executor.Tests;
@@ -329,9 +346,6 @@ public class EndToEndTests
         // 출력 디렉토리 생성
         Directory.CreateDirectory(outputDir);
         
-        // Sample10GroundTruthTests와 동일한 방식으로 Analysis.Tests 프로젝트 참조
-        var analysisTestsDir = Path.Combine(solutionDir, @"AndroidAdbAnalyzeModule\AndroidAdbAnalyze.Analysis.Tests");
-        
         // Logger 설정
         using var loggerFactory = LoggerFactory.Create(builder =>
         {
@@ -339,28 +353,8 @@ public class EndToEndTests
             builder.SetMinimumLevel(LogLevel.Information);
         });
         
-        // Analysis.Extensions를 사용하여 DI 컨테이너 설정 (Sample10GroundTruthTests와 동일한 방식)
-        var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
-        
-        services.AddLogging(builder =>
-        {
-            builder.SetMinimumLevel(LogLevel.Information);
-            builder.AddConsole();
-        });
-        
-        // AnalysisOptions 등록
-        services.AddSingleton(new AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions 
-        { 
-            DeduplicationSimilarityThreshold = 0.8,
-            EventCorrelationWindow = TimeSpan.FromSeconds(30),
-            MaxSessionGap = TimeSpan.FromMinutes(5)
-        });
-        
-        // Analysis 서비스 등록 (Extensions 사용)
-        services.AddAndroidAdbAnalysis();
-        
-        var serviceProvider = services.BuildServiceProvider();
-        var orchestrator = serviceProvider.GetRequiredService<AndroidAdbAnalyze.Analysis.Interfaces.IAnalysisOrchestrator>();
+        // Orchestrator 및 ServiceProvider 생성 (YAML 설정 사용 - Sample10GroundTruthTests와 동일한 방식)
+        var (orchestrator, serviceProvider) = CreateOrchestratorWithYamlConfig(solutionDir, loggerFactory);
         
         // Act
         // Step 1: 로그 파싱
@@ -389,30 +383,30 @@ public class EndToEndTests
                 continue;
             }
             
-            var configLoader = new AndroidAdbAnalyze.Parser.Configuration.Loaders.YamlConfigurationLoader(
-                configPath,
-                loggerFactory.CreateLogger<AndroidAdbAnalyze.Parser.Configuration.Loaders.YamlConfigurationLoader>());
-            
-            var logConfig = await configLoader.LoadAsync(configPath);
+            var configLoader = new AndroidAdbAnalyze.Parser.Configuration.Loaders.YamlConfigurationLoader(configPath);
+            var logConfig = configLoader.Load(configPath);
             
             var parser = new AndroidAdbAnalyze.Parser.Parsing.AdbLogParser(
                 logConfig,
-                loggerFactory.CreateLogger<AndroidAdbAnalyze.Parser.Parsing.AdbLogParser>());
+                Microsoft.Extensions.Logging.Abstractions.NullLogger<AndroidAdbAnalyze.Parser.Parsing.AdbLogParser>.Instance);
             
             var parsingOptions = new AndroidAdbAnalyze.Parser.Core.Models.LogParsingOptions
             {
+                MaxFileSizeMB = 50,
                 DeviceInfo = new AndroidAdbAnalyze.Parser.Core.Models.DeviceInfo
                 {
                     AndroidVersion = "15",
                     TimeZone = "Asia/Seoul",
                     Manufacturer = "Samsung",
-                    Model = "SM-S928N",
-                    CurrentTime = new DateTime(2025, 10, 18, 0, 13, 59)
+                    Model = "SM-G991N",
+                    CurrentTime = DateTime.Now
                 },
-                ConvertToUtc = false
+                ConvertToUtc = false,
+                StartTime = new DateTime(2025, 10, 17, 23, 56, 0),
+                EndTime = new DateTime(2025, 10, 18, 0, 13, 59)
             };
             
-            var parsingResult = await parser.ParseAsync(logFilePath, parsingOptions, CancellationToken.None);
+            var parsingResult = await parser.ParseAsync(logFilePath, parsingOptions);
             
             if (parsingResult.Success)
             {
@@ -429,12 +423,7 @@ public class EndToEndTests
         System.Console.WriteLine($"\n총 파싱된 이벤트: {allEvents.Count:N0}개\n");
         
         // Step 2: 분석 실행
-        var analysisOptions = new AndroidAdbAnalyze.Analysis.Models.Options.AnalysisOptions
-        {
-            EventCorrelationWindow = TimeSpan.FromSeconds(30),
-            MaxSessionGap = TimeSpan.FromMinutes(5),
-            DeduplicationSimilarityThreshold = 0.8
-        };
+        var analysisOptions = CreateAnalysisOptions();
         
         var analysisResult = await orchestrator.AnalyzeAsync(
             allEvents,
@@ -444,8 +433,8 @@ public class EndToEndTests
         Assert.True(analysisResult.Success, "분석 실패");
         
         // Step 3: HTML 보고서 생성
-        var timelineBuilder = serviceProvider.GetRequiredService<AndroidAdbAnalyze.Analysis.Interfaces.ITimelineBuilder>();
-        var reportGenerator = serviceProvider.GetRequiredService<AndroidAdbAnalyze.Analysis.Interfaces.IReportGenerator>();
+        var timelineBuilder = serviceProvider.GetRequiredService<ITimelineBuilder>();
+        var reportGenerator = serviceProvider.GetRequiredService<IReportGenerator>();
         
         var htmlReport = reportGenerator.GenerateReport(analysisResult);
         
@@ -479,6 +468,151 @@ public class EndToEndTests
         }
         
         System.Console.WriteLine("====================================================\n");
+    }
+    
+    /// <summary>
+    /// YAML 설정을 사용하여 Orchestrator 및 ServiceProvider 생성 (Sample10GroundTruthTests와 동일한 방식)
+    /// </summary>
+    private static (IAnalysisOrchestrator Orchestrator, IServiceProvider ServiceProvider) CreateOrchestratorWithYamlConfig(string solutionDir, ILoggerFactory loggerFactory)
+    {
+        // YAML 설정 파일 경로
+        var configPath = Path.Combine(
+            solutionDir,
+            "AndroidAdbAnalyzeModule", "AndroidAdbAnalyze.Analysis", "Configs",
+            "artifact-detection-config.example.yaml");
+        
+        if (!File.Exists(configPath))
+        {
+            throw new FileNotFoundException(
+                $"YAML 설정 파일을 찾을 수 없습니다: {configPath}");
+        }
+        
+        // DI 컨테이너 설정
+        var services = new ServiceCollection();
+        
+        // Logging 인프라 추가
+        services.AddLogging(builder =>
+        {
+            builder.SetMinimumLevel(LogLevel.Information);
+            builder.AddConsole();
+        });
+        
+        // AnalysisOptions 등록 (EventDeduplicator 의존성용, 최소 옵션만 설정)
+        services.AddSingleton(new AnalysisOptions { DeduplicationSimilarityThreshold = 0.8 });
+        
+        // YAML 설정 로드
+        var logger = loggerFactory.CreateLogger<EndToEndTests>();
+        var config = YamlConfigurationLoader.LoadFromFile(configPath, logger);
+        
+        // Configuration을 DI에 등록
+        services.AddSingleton(config);
+        
+        // AndroidAdbAnalysis 서비스 등록 (Configuration 주입)
+        RegisterServicesWithYamlConfig(services);
+        
+        // ServiceProvider 빌드
+        var serviceProvider = services.BuildServiceProvider();
+        
+        var orchestrator = serviceProvider.GetRequiredService<IAnalysisOrchestrator>();
+        
+        return (orchestrator, serviceProvider);
+    }
+    
+    /// <summary>
+    /// YAML 설정을 사용하여 서비스 등록 (Sample10GroundTruthTests와 동일한 방식)
+    /// </summary>
+    private static void RegisterServicesWithYamlConfig(IServiceCollection services)
+    {
+        // ===== Core Services =====
+        
+        // Session Context Provider
+        services.AddSingleton<ISessionContextProvider, SessionContextProvider>();
+        
+        // Capture Detection Strategies (Configuration 주입)
+        services.AddSingleton<ICaptureDetectionStrategy>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<TelegramStrategy>>();
+            var calculator = sp.GetRequiredService<IConfidenceCalculator>();
+            var config = sp.GetRequiredService<ArtifactDetectionConfig>();
+            return new TelegramStrategy(logger, calculator, config);
+        });
+        
+        services.AddSingleton<ICaptureDetectionStrategy>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<KakaoTalkStrategy>>();
+            var calculator = sp.GetRequiredService<IConfidenceCalculator>();
+            var config = sp.GetRequiredService<ArtifactDetectionConfig>();
+            return new KakaoTalkStrategy(logger, calculator, config);
+        });
+        
+        services.AddSingleton<ICaptureDetectionStrategy>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<BasePatternStrategy>>();
+            var calculator = sp.GetRequiredService<IConfidenceCalculator>();
+            var config = sp.GetRequiredService<ArtifactDetectionConfig>();
+            return new BasePatternStrategy(logger, calculator, config);
+        });
+        
+        // Capture Detector
+        services.AddSingleton<ICaptureDetector, CameraCaptureDetector>();
+        
+        // Confidence Calculator (Configuration 주입)
+        services.AddSingleton<IConfidenceCalculator>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<ConfidenceCalculator>>();
+            var config = sp.GetRequiredService<ArtifactDetectionConfig>();
+            return new ConfidenceCalculator(logger, config);
+        });
+        
+        // Session Sources
+        services.AddSingleton<ISessionSource, UsagestatsSessionSource>();
+        services.AddSingleton<ISessionSource, MediaCameraSessionSource>();
+        
+        // Session Detector
+        services.AddSingleton<ISessionDetector, CameraSessionDetector>();
+        
+        // ===== Deduplication Services =====
+        
+        services.AddSingleton<IEventDeduplicator>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<EventDeduplicator>>();
+            var options = sp.GetRequiredService<AnalysisOptions>();
+            return new EventDeduplicator(logger, options);
+        });
+        
+        services.AddSingleton<IDeduplicationStrategy, TimeBasedDeduplicationStrategy>();
+        services.AddSingleton<IDeduplicationStrategy, CameraEventDeduplicationStrategy>();
+        
+        // ===== Transmission Detection Services =====
+        
+        services.AddSingleton<ITransmissionDetector, WifiTransmissionDetector>();
+        
+        // ===== Reporting Services =====
+        
+        services.AddSingleton<IReportGenerator, HtmlReportGenerator>();
+        services.AddSingleton<ITimelineBuilder, TimelineBuilder>();
+        
+        // ===== Orchestration =====
+        
+        services.AddSingleton<IAnalysisOrchestrator, AnalysisOrchestrator>();
+    }
+    
+    /// <summary>
+    /// 분석 옵션 생성 (Sample10GroundTruthTests와 동일한 설정)
+    /// </summary>
+    /// <remarks>
+    /// Ground Truth 테스트와 동일한 옵션을 사용하여 일관성 있는 결과를 보장합니다.
+    /// </remarks>
+    private static AnalysisOptions CreateAnalysisOptions()
+    {
+        return new AnalysisOptions
+        {
+            MinConfidenceThreshold = 0.3,
+            EventCorrelationWindow = TimeSpan.FromSeconds(30),
+            MaxSessionGap = TimeSpan.FromMinutes(5),
+            EnableIncompleteSessionHandling = true,
+            DeduplicationSimilarityThreshold = 0.8
+        };
     }
     
     /// <summary>

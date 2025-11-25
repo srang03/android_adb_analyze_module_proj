@@ -209,7 +209,7 @@ public sealed class KakaoTalkStrategyTests
                 new Dictionary<string, object> 
                 { 
                     ["hapticType"] = 50061,
-                    ["status"] = "cancelled_superseded",
+                    ["status"] = "finished",  // Pattern 1: status=finished로 변경하여 2개 모두 탐지되도록 수정
                     ["usage"] = "TOUCH"
                 })
         };
@@ -679,16 +679,28 @@ public sealed class KakaoTalkStrategyTests
     [Fact]
     public void DetectCaptures_VibrationEvent_StatusCancelledSuperseded_DetectsCapture()
     {
-        // Arrange: status=cancelled_superseded (실제 샘플 5에서 발생)
+        // Arrange: Pattern 2 검증 테스트
+        // status=cancelled_superseded인 경우, 0.2초 이내에 hapticType=50072, status=finished가 있어야 탐지됨
         var baseTime = new DateTime(2025, 10, 7, 23, 16, 39);
         var events = new List<NormalizedLogEvent>
         {
+            // Pattern 2: hapticType=50061, status=cancelled_superseded
             CreateEvent(LogEventTypes.VIBRATION_EVENT, baseTime.AddMilliseconds(12), 
                 "com.kakao.talk",
                 new Dictionary<string, object> 
                 { 
                     ["hapticType"] = 50061,
-                    ["status"] = "cancelled_superseded", // ✅ 다른 status
+                    ["status"] = "cancelled_superseded",
+                    ["usage"] = "TOUCH"
+                }),
+            
+            // Pattern 2 후속 이벤트: 0.1초 후 hapticType=50072, status=finished (0.2초 이내)
+            CreateEvent(LogEventTypes.VIBRATION_EVENT, baseTime.AddMilliseconds(112), 
+                "com.kakao.talk",
+                new Dictionary<string, object> 
+                { 
+                    ["hapticType"] = 50072,
+                    ["status"] = "finished",
                     ["usage"] = "TOUCH"
                 })
         };
@@ -698,8 +710,8 @@ public sealed class KakaoTalkStrategyTests
         var captures = _strategy.DetectCaptures(context, _defaultOptions);
 
         // Assert
-        captures.Should().HaveCount(1, "status와 무관하게 hapticType=50061이면 탐지");
-        captures[0].CaptureTime.Should().Be(baseTime.AddMilliseconds(12));
+        captures.Should().HaveCount(1, "Pattern 2 검증 통과: cancelled_superseded (50061) + 후속 finished (50072) → 탐지");
+        captures[0].CaptureTime.Should().Be(baseTime.AddMilliseconds(12), "Pattern 2의 경우 첫 번째 이벤트(50061)의 시각을 촬영 시각으로 사용");
     }
 
     [Fact]

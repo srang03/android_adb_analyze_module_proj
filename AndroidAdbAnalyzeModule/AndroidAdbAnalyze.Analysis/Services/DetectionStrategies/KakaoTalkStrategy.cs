@@ -109,7 +109,7 @@ public sealed class KakaoTalkStrategy : BaseCaptureDetectionStrategy
         // 1️⃣ 주 검증 수단: VIBRATION_EVENT (hapticType=50061)
         var vibrationEvents = context.AllEvents
             .Where(e => _keyArtifactTypes.Contains(e.EventType))
-            .Where(e => ValidateVibrationEventAsShutter(e))
+            .Where(e => ValidateVibrationEventAsShutter(e, context))
             .OrderBy(e => e.Timestamp)
             .ToList();
 
@@ -178,7 +178,9 @@ public sealed class KakaoTalkStrategy : BaseCaptureDetectionStrategy
         var metadata = new Dictionary<string, string>
         {
             ["detection_strategy"] = GetType().Name,
-            ["key_artifact_type"] = "VIBRATION_EVENT (hapticType=50061)"
+            ["key_artifact_type"] = keyArtifact.EventType == LogEventTypes.FOREGROUND_SERVICE 
+                ? "FOREGROUND_SERVICE" 
+                : "VIBRATION_EVENT (hapticType=50061)"
         };
 
         foreach (var attr in keyArtifact.Attributes)
@@ -191,7 +193,7 @@ public sealed class KakaoTalkStrategy : BaseCaptureDetectionStrategy
         {
             CaptureId = Guid.NewGuid(),
             ParentSessionId = session.SessionId,
-            CaptureTime = keyArtifact.Timestamp,
+            CaptureTime = GetPreciseCaptureTime(keyArtifact, allArtifacts),
             PackageName = session.PackageName,
             FilePath = null, // KakaoTalk은 파일 경로 정보 없음 (임시 파일 사용)
             FileUri = fileUri,
@@ -211,8 +213,18 @@ public sealed class KakaoTalkStrategy : BaseCaptureDetectionStrategy
     /// <remarks>
     /// KakaoTalk이 기본 카메라를 호출할 때 발생하는 촬영 버튼 진동 이벤트를 감지합니다.
     /// hapticType=50061: 촬영 버튼 터치 (실제 촬영)
+    /// 
+    /// Pattern 1 (기본):
+    ///   hapticType=50061, status=finished
+    /// 
+    /// Pattern 2 (보완):
+    ///   hapticType=50061, status=cancelled_superseded (0.2초 이내)
+    ///   → 바로 이어서 hapticType=50072, status=finished
+    ///   
+    /// Pattern 2는 Android 시스템이 촬영 버튼 진동을 취소하고
+    /// 즉시 일반 UI 진동으로 교체하는 경우를 처리합니다.
     /// </remarks>
-    private bool ValidateVibrationEventAsShutter(NormalizedLogEvent artifact)
+    private bool ValidateVibrationEventAsShutter(NormalizedLogEvent artifact, SessionContext context)
     {
         if (!artifact.Attributes.TryGetValue("hapticType", out var hapticTypeObj))
         {
@@ -247,8 +259,77 @@ public sealed class KakaoTalkStrategy : BaseCaptureDetectionStrategy
             return false;
         }
 
+        // Pattern 1: status=finished (기존 로직)
+        if (artifact.Attributes.TryGetValue("status", out var statusObj))
+        {
+            var status = statusObj?.ToString() ?? string.Empty;
+            if (status.Equals("finished", StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogDebug(
+                    "[KakaoTalkStrategy] ✅ VIBRATION_EVENT 승인 (Pattern 1): hapticType=50061, status=finished, Time={Time:HH:mm:ss.fff}",
+                    artifact.Timestamp);
+                return true;
+            }
+
+            // Pattern 2: status=cancelled_superseded + 바로 뒤 50072 finished
+            if (status.Equals("cancelled_superseded", StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogInformation(
+                    "[KakaoTalkStrategy] Pattern 2 검증 시작: hapticType=50061, status=cancelled_superseded, Time={Time:HH:mm:ss.fff}",
+                    artifact.Timestamp);
+                
+                // 0.2초 이내에 hapticType=50072, status=finished가 있는지 확인
+                var candidateEvents = context.AllEvents
+                    .Where(e => e.EventType == LogEventTypes.VIBRATION_EVENT)
+                    .Where(e => e.Timestamp > artifact.Timestamp)
+                    .Where(e => (e.Timestamp - artifact.Timestamp).TotalSeconds <= 0.2)
+                    .ToList();
+                
+                _logger.LogInformation(
+                    "[KakaoTalkStrategy] Pattern 2 후보 이벤트: {Count}개 (0.2초 이내)",
+                    candidateEvents.Count);
+                
+                foreach (var candidate in candidateEvents)
+                {
+                    var candidateHapticType = candidate.Attributes.TryGetValue("hapticType", out var cht) ? cht?.ToString() : "없음";
+                    var candidateStatus = candidate.Attributes.TryGetValue("status", out var cs) ? cs?.ToString() : "없음";
+                    _logger.LogInformation(
+                        "[KakaoTalkStrategy] 후보: Time={Time:HH:mm:ss.fff}, hapticType={HapticType}, status={Status}",
+                        candidate.Timestamp, candidateHapticType, candidateStatus);
+                }
+                
+                var followUpVibration = candidateEvents
+                    .Where(e => e.Attributes.TryGetValue("hapticType", out var ht) && 
+                               (ht is int htInt && htInt == 50072 || 
+                                int.TryParse(ht?.ToString(), out var htParsed) && htParsed == 50072))
+                    .Where(e => e.Attributes.TryGetValue("status", out var s) && 
+                               s?.ToString()?.Equals("finished", StringComparison.OrdinalIgnoreCase) == true)
+                    .FirstOrDefault();
+
+                if (followUpVibration != null)
+                {
+                    _logger.LogInformation(
+                        "[KakaoTalkStrategy] ✅ VIBRATION_EVENT 승인 (Pattern 2): hapticType=50061 cancelled → 50072 finished, Time={Time:HH:mm:ss.fff}",
+                        artifact.Timestamp);
+                    return true;
+                }
+
+                _logger.LogWarning(
+                    "[KakaoTalkStrategy] ❌ VIBRATION_EVENT 제외: status=cancelled_superseded이지만 후속 50072 없음, Time={Time:HH:mm:ss.fff}",
+                    artifact.Timestamp);
+                return false;
+            }
+
+            // 기타 status는 제외
+            _logger.LogTrace(
+                "[KakaoTalkStrategy] VIBRATION_EVENT 제외: status={Status} (미지원), Time={Time:HH:mm:ss.fff}",
+                status, artifact.Timestamp);
+            return false;
+        }
+
+        // status 속성이 없으면 hapticType만으로 승인 (하위 호환성)
         _logger.LogDebug(
-            "[KakaoTalkStrategy] ✅ VIBRATION_EVENT 승인: hapticType={HapticType} (촬영 버튼), Time={Time:HH:mm:ss.fff}",
+            "[KakaoTalkStrategy] ✅ VIBRATION_EVENT 승인: hapticType={HapticType} (촬영 버튼, status 없음), Time={Time:HH:mm:ss.fff}",
             _validation.HapticTypeCameraShutter, artifact.Timestamp);
         return true;
     }
