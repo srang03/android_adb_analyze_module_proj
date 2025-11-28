@@ -252,7 +252,7 @@ public static class LogEventTypes
     /// <summary>
     /// 카메라 Activity Refresh Rate 변경 이벤트 (무음 카메라 탐지용)
     /// <para>📄 로그: activity.txt</para>
-    /// <para>⚙️ YAML: adb_activity_config.yaml (camera_activity_refresh_pattern)</para>
+    /// <para>⚙️ Multiline Parser: ActivityRefreshRateParser (2-line pattern)</para>
     /// <para>🎯 논문: 촬영 탐지용 - 보조 아티팩트 (13/13, 총점 3점, 가중치 0.15, D/E/R: 1+1+1)</para>
     /// <para>📱 적용 앱: 모든 앱 (일반 UI 갱신 시에도 발생)</para>
     /// </summary>

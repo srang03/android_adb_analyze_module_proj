@@ -149,9 +149,8 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("            <h2 class=\"section-title\">📊 Executive Summary</h2>");
         html.AppendLine("            <div class=\"executive-summary\">");
         
-        var avgConfidence = result.CaptureEvents.Any() 
-            ? result.CaptureEvents.Average(c => c.CaptureDetectionScore) * 100
-            : 0;
+        // 평균 신뢰도 계산: 각 점수를 100%로 제한한 후 평균 계산 (GetConfidenceBar와 동일한 로직)
+        var avgConfidence = ConfidenceCalculatorHelper.CalculateAverageConfidencePercent(result.CaptureEvents);
 
         html.AppendLine($"                <p><strong>분석 개요:</strong> 본 보고서는 Android ADB 시스템 로그를 분석하여 카메라 사용 이력 및 촬영 활동을 식별한 결과를 포함합니다. " +
                        $"총 <strong>{result.Statistics.TotalSourceEvents:N0}개</strong>의 로그 이벤트를 처리하여 " +
@@ -276,24 +275,11 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("            <h2 class=\"section-title\">⏱️ 타임라인 분석</h2>");
         html.AppendLine("            <p>시간순으로 정렬된 카메라 세션 및 촬영 이벤트를 시각화합니다.</p>");
         
-        // 타이틀 및 날짜 (스크롤 영역 밖)
-        html.AppendLine("            <div class=\"timeline-header\">");
-        html.AppendLine("                <h3 class=\"timeline-title\">시간순 이벤트 타임라인 (세션 기간 + 촬영 시점)</h3>");
-        html.AppendLine($"                <p class=\"timeline-date\">📅 {dateRangeText}</p>");
-        html.AppendLine("            </div>");
-        
-        // 조작 안내
-        html.AppendLine("            <div class=\"chart-controls\">");
-        html.AppendLine("                <span class=\"scroll-hint\">💡 좌우 스크롤 | Ctrl+휠로 줌 | 드래그로 이동</span>");
-        html.AppendLine("                <button class=\"btn-reset-zoom\" onclick=\"resetTimelineZoom()\">🔄 줌 초기화</button>");
-        html.AppendLine("            </div>");
-        
         // 메인 래퍼 (Flexbox: 왼쪽 고정 + 오른쪽 스크롤)
         html.AppendLine("            <div class=\"chart-main-wrapper\">");
         
-        // 왼쪽 고정 영역 (Y축 + 범례)
+        // 왼쪽 고정 영역 (Y축만, 범례 제거)
         html.AppendLine("                <div class=\"timeline-y-axis-fixed\">");
-        html.AppendLine("                    <div class=\"y-axis-title\">이벤트 타입</div>");
         html.AppendLine("                    <div class=\"y-axis-labels\">");
         html.AppendLine("                        <div class=\"y-label-item\">Session</div>");
         html.AppendLine("                        <div class=\"y-label-item\">Capture</div>");
@@ -301,9 +287,6 @@ public sealed class HtmlReportGenerator : IReportGenerator
         {
             html.AppendLine("                        <div class=\"y-label-item\">Transmission</div>");
         }
-        html.AppendLine("                    </div>");
-        html.AppendLine("                    <div class=\"timeline-legend-left\" id=\"timelineLegendLeft\">");
-        html.AppendLine("                        <!-- JavaScript로 범례 생성 -->");
         html.AppendLine("                    </div>");
         html.AppendLine("                </div>");
         
@@ -459,10 +442,10 @@ public sealed class HtmlReportGenerator : IReportGenerator
         var maxTime = allTimes.Any() ? allTimes.Max() : DateTime.Now;
         var timeRange = maxTime - minTime;
         
-        // x축 1시간 단위로 고정 + 날짜 포함
-        string timeUnit = "hour";  // 1시간 단위 고정
+        // x축 10분 단위로 고정 + 날짜 포함
+        string timeUnit = "minute";  // 분 단위
         string displayFormat = "MM/dd HH:mm";  // 날짜 포함 (월/일 시:분)
-        int stepSize = 1;  // 1시간 간격
+        int stepSize = 10;  // 10분 간격
         
         // 날짜 범위 계산 (차트 설명에 사용)
         var dateRangeText = minTime.Date == maxTime.Date
@@ -483,10 +466,10 @@ public sealed class HtmlReportGenerator : IReportGenerator
         var transmissions = items.Where(i => i.EventType == Constants.TimelineEventTypes.TRANSMISSION).ToList();
         var hasTransmission = transmissions.Any();
         
-        // UX 최적화: 적절한 크기 설정
-        var barThickness = hasTransmission ? 60 : 80;  // 세션 막대 두께
-        var highConfidenceRadius = 5;    // 높은 확신 촬영 점 크기 (8 → 5)
-        var mediumConfidenceRadius = 4;  // 중간 확신 촬영 점 크기 (6 → 4)
+        // UX 최적화: 세션을 큰 네모 박스 형태로 표시 (직관성 향상)
+        var barThickness = hasTransmission ? 100 : 120;  // 세션 막대 두께 (크게)
+        var highConfidenceRadius = 6;    // 높은 확신 촬영 점 크기 (크게)
+        var mediumConfidenceRadius = 5;  // 중간 확신 촬영 점 크기 (크게)
         // 낮은 확신 촬영 제거 (요구사항 3)
         
         // 세션 데이터 - Session 레이어에 배치 (범례에서 제외)
@@ -505,19 +488,22 @@ public sealed class HtmlReportGenerator : IReportGenerator
                 var endTime = session.EndTime ?? session.StartTime.AddMinutes(5); // 종료 시간 없으면 5분 추정
                 var isIncomplete = session.Metadata.TryGetValue("IsIncomplete", out var incomplete) && incomplete == "True";
                 
-                // UX 최적화: 밝고 선명한 색상 (완전 불투명)
-                var opacity = "0.85";  // 약간의 투명도로 겹침 시각화
-                // 파란색(완전) + 주황색(불완전) - 높은 대비
+                // UX 최적화: 진하고 선명한 색상 (더 진하게)
+                var opacity = "0.95";  // 거의 불투명하게 (더 진하게)
+                // 진한 파란색(완전) + 진한 주황색(불완전) - 높은 대비
                 var color = isIncomplete 
-                    ? "230, 126, 34"   // 불완전: 밝은 주황색 #e67e22
-                    : "52, 152, 219";  // 완전: 밝은 파란색 #3498db
+                    ? "211, 84, 0"     // 불완전: 진한 주황색 #d35400
+                    : "41, 128, 185";  // 완전: 진한 파란색 #2980b9
+                var borderColor = isIncomplete
+                    ? "192, 57, 43"    // 불완전: 더 진한 주황색 테두리
+                    : "25, 118, 210";  // 완전: 더 진한 파란색 테두리
                 
                 html.AppendLine($"                            {{");
                 html.AppendLine($"                                x: [new Date('{startTime:yyyy-MM-ddTHH:mm:ss}'), new Date('{endTime:yyyy-MM-ddTHH:mm:ss}')],");
                 html.AppendLine($"                                y: 'Session',");  // Timeline → Session 분리
                 html.AppendLine($"                                backgroundColor: 'rgba({color}, {opacity})',");
-                html.AppendLine($"                                borderColor: 'rgba({color}, 1)',");
-                html.AppendLine($"                                borderWidth: 2,");
+                html.AppendLine($"                                borderColor: 'rgba({borderColor}, 1)',");
+                html.AppendLine($"                                borderWidth: 3,");  // 테두리 두께 증가 (2 → 3)
                 html.AppendLine($"                                label: '{session.Label} (점수: {session.Score:F2})'");
                 html.Append($"                            }}");
                 if (i < sessions.Count - 1)
@@ -643,7 +629,7 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("                            time: {");
         html.AppendLine($"                                unit: '{timeUnit}',");
         html.AppendLine($"                                stepSize: {stepSize},");
-        html.AppendLine($"                                displayFormats: {{ hour: '{displayFormat}' }},");
+        html.AppendLine($"                                displayFormats: {{ minute: '{displayFormat}', hour: '{displayFormat}' }},");
         html.AppendLine("                                tooltipFormat: 'yyyy년 M월 d일 HH:mm:ss'");
         html.AppendLine("                            },");
         html.AppendLine("                            grid: {");
@@ -658,8 +644,8 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("                                maxRotation: 45,");
         html.AppendLine("                                minRotation: 45,");  // 45도 고정 회전 (날짜 포함으로 길어짐)
         html.AppendLine("                                autoSkipPadding: 20,");
-        html.AppendLine("                                font: { size: 11 },");
-        html.AppendLine("                                color: '#555'");
+        html.AppendLine("                                font: { size: 16, weight: 'bold' },");  // 날짜/시간 크기 증가 (11 → 16, 굵게)
+        html.AppendLine("                                color: '#333'");  // 더 진한 색상
         html.AppendLine("                            }");
         html.AppendLine("                        },");
         html.AppendLine("                        y: {");
@@ -718,9 +704,6 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("                    }");
         html.AppendLine("                }");
         html.AppendLine("            });");
-        html.AppendLine("            ");
-        html.AppendLine("            // HTML 범례 생성");
-        html.AppendLine("            createHtmlLegend();");
         html.AppendLine("        }");
         html.AppendLine("        ");
         html.AppendLine("        function createHtmlLegend() {");
@@ -815,7 +798,8 @@ public sealed class HtmlReportGenerator : IReportGenerator
 
     private static string GetConfidenceBar(double score)
     {
-        var percent = Math.Min((int)(score * 100), 100); // 최대 100%로 제한
+        // ConfidenceCalculatorHelper와 동일한 로직 사용
+        var percent = ConfidenceCalculatorHelper.ToPercent(score);
         var cssClass = score >= 0.8 ? "confidence-high" : score >= 0.5 ? "confidence-medium" : "confidence-low";
         
         return $@"<div class=""confidence-bar-container"">

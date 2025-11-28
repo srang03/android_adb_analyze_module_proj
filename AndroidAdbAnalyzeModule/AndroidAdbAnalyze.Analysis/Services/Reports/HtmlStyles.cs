@@ -402,8 +402,8 @@ internal static class HtmlStyles
         
         /* 개별 Y축 레이블 */
         .y-label-item {
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 18px;  // 크기 증가 (12px → 18px)
+            font-weight: 700;  // 더 굵게 (600 → 700)
             color: #34495e;
             text-align: right;
             padding: 8px 10px 8px 5px;
