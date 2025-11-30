@@ -23,7 +23,7 @@ public sealed class PipelineService : IPipelineService
     private readonly ILogCollector _logCollector;
     private readonly IAdbCommandExecutor _adbExecutor;
     private readonly IAnalysisOrchestrator _analysisOrchestrator;
-    private readonly AnalysisConfiguration _analysisConfig;
+    private readonly AnalysisOptions _analysisOptions;
     private readonly ILogger<PipelineService> _logger;
     private readonly ILoggerFactory _loggerFactory;
 
@@ -32,7 +32,7 @@ public sealed class PipelineService : IPipelineService
         ILogCollector logCollector,
         IAdbCommandExecutor adbExecutor,
         IAnalysisOrchestrator analysisOrchestrator,
-        IOptions<AnalysisConfiguration> analysisConfig,
+        AnalysisOptions analysisOptions,
         ILogger<PipelineService> logger,
         ILoggerFactory loggerFactory)
     {
@@ -40,7 +40,7 @@ public sealed class PipelineService : IPipelineService
         _logCollector = logCollector ?? throw new ArgumentNullException(nameof(logCollector));
         _adbExecutor = adbExecutor ?? throw new ArgumentNullException(nameof(adbExecutor));
         _analysisOrchestrator = analysisOrchestrator ?? throw new ArgumentNullException(nameof(analysisOrchestrator));
-        _analysisConfig = analysisConfig?.Value ?? throw new ArgumentNullException(nameof(analysisConfig));
+        _analysisOptions = analysisOptions ?? throw new ArgumentNullException(nameof(analysisOptions));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
     }
@@ -184,17 +184,10 @@ public sealed class PipelineService : IPipelineService
             progress?.Report("로그 분석 중...");
             _logger.LogInformation("[Step 4/4] 로그 분석 시작...");
             
-            var analysisOptions = new AnalysisOptions
-            {
-                MinConfidenceThreshold = _analysisConfig.MinConfidenceThreshold,
-                EventCorrelationWindow = TimeSpan.FromSeconds(_analysisConfig.EventCorrelationWindowSeconds),
-                MaxSessionGap = TimeSpan.FromMinutes(_analysisConfig.MaxSessionGapMinutes),
-                DeduplicationSimilarityThreshold = _analysisConfig.DeduplicationSimilarityThreshold
-            };
-            
+            // DI에서 주입받은 AnalysisOptions 사용 (YAML 설정 및 appsettings.json 반영)
             var analysisResult = await _analysisOrchestrator.AnalyzeAsync(
                 allEvents,
-                analysisOptions,
+                _analysisOptions,
                 cancellationToken: cancellationToken);
             
             _logger.LogInformation(
