@@ -33,15 +33,17 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Integration\NewFolder\**" />
+    <EmbeddedResource Remove="Integration\NewFolder\**" />
+    <None Remove="Integration\NewFolder\**" />
+  </ItemGroup>
 
   <!-- appsettings.json 복사 -->
   <ItemGroup>
     <None Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Integration\NewFolder\" />
   </ItemGroup>
 
 </Project>
