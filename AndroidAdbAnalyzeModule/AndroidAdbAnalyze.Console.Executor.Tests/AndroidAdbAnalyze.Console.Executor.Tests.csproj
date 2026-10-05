@@ -38,6 +38,10 @@
       <Link>Configs\Analysis\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\AndroidAdbAnalyze.Parser.Tests\TestData\vibrator_manager.txt">
+      <Link>TestData\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

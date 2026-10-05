@@ -75,6 +75,7 @@ public sealed class PipelineService : IPipelineService
             _logger.LogInformation("디바이스 연결 확인: {Serial} ({Type})", 
                 device.Serial, device.ConnectionType);
             
+            var deviceTimeStopwatch = Stopwatch.StartNew();
             var deviceInfo = await _deviceManager.ExtractDeviceInfoAsync(device, cancellationToken);
             
             _logger.LogInformation(
@@ -102,6 +103,11 @@ public sealed class PipelineService : IPipelineService
             progress?.Report("로그 파싱 중...");
             _logger.LogInformation("[Step 3/4] 로그 파싱 시작...");
             
+            // 연도 없는 타임스탬프는 DeviceInfo.CurrentTime보다 미래면 전년도로 추론되므로,
+            // 디바이스 시각 조회 이후 로그 수집 중에 기록된 이벤트가 전년도로 밀리지 않도록
+            // 기준 시각을 로그 수집 완료 시점으로 보정
+            var parsingDeviceInfo = WithCurrentTime(deviceInfo, deviceInfo.CurrentTime + deviceTimeStopwatch.Elapsed);
+            
             var parsingStopwatch = Stopwatch.StartNew();
             var parsingResults = new Dictionary<string, ParsingResult>();
             var allEvents = new List<NormalizedLogEvent>();
@@ -112,7 +118,7 @@ public sealed class PipelineService : IPipelineService
             {
                 var logName = logResult.LogDefinition.Name;
                 var logFilePath = logResult.FilePath!;
-                var parserConfigPath = logResult.LogDefinition.ParserConfig;
+                var parserConfigPath = ResolveParserConfigPath(logResult.LogDefinition.ParserConfig);
                 
                 _logger.LogDebug("파싱 중: {LogName} - {FilePath} (Config: {ConfigPath})", 
                     logName, logFilePath, parserConfigPath);
@@ -130,11 +136,12 @@ public sealed class PipelineService : IPipelineService
                         logConfig, 
                         _loggerFactory.CreateLogger<AdbLogParser>());
                     
+                    // ConvertToUtc = true이면 이벤트 타임스탬프가 UTC이므로 시간 범위도 UTC로 변환하여 전달
                     var parsingOptions = new LogParsingOptions
                     {
-                        DeviceInfo = deviceInfo,
-                        StartTime = startTime,
-                        EndTime = endTime,
+                        DeviceInfo = parsingDeviceInfo,
+                        StartTime = ToUtcTimeRangeBound(startTime, deviceInfo),
+                        EndTime = ToUtcTimeRangeBound(endTime, deviceInfo),
                         ConvertToUtc = true
                     };
                     
@@ -208,6 +215,7 @@ public sealed class PipelineService : IPipelineService
                 CompleteSessions = analysisResult.Statistics.CompleteSessions,
                 IncompleteSessions = analysisResult.Statistics.IncompleteSessions,
                 TotalCaptureEvents = analysisResult.Statistics.TotalCaptureEvents,
+                TotalRebootEvents = analysisResult.Statistics.TotalRebootEvents,
                 DeduplicatedEvents = analysisResult.Statistics.DeduplicatedEvents,
                 ProcessingTime = analysisResult.Statistics.ProcessingTime,
                 ParsingTime = parsingStopwatch.Elapsed,
@@ -221,6 +229,7 @@ public sealed class PipelineService : IPipelineService
                 Success = analysisResult.Success,
                 Sessions = analysisResult.Sessions,
                 CaptureEvents = analysisResult.CaptureEvents,
+                RebootEvents = analysisResult.RebootEvents,
                 SourceEvents = analysisResult.SourceEvents,
                 DeduplicationDetails = analysisResult.DeduplicationDetails,
                 DeviceInfo = analysisResult.DeviceInfo,
@@ -264,6 +273,65 @@ public sealed class PipelineService : IPipelineService
                 Exception = ex
             };
         }
+    }
+
+    private static DeviceInfo WithCurrentTime(DeviceInfo deviceInfo, DateTime currentTime)
+    {
+        return new DeviceInfo
+        {
+            TimeZone = deviceInfo.TimeZone,
+            CurrentTime = currentTime,
+            AndroidVersion = deviceInfo.AndroidVersion,
+            Manufacturer = deviceInfo.Manufacturer,
+            Model = deviceInfo.Model
+        };
+    }
+
+    /// <summary>
+    /// Parser 설정 파일 경로를 해석합니다.
+    /// 현재 작업 디렉토리 기준으로 존재하지 않는 상대 경로는 실행 파일 디렉토리(AppContext.BaseDirectory) 기준으로 찾습니다.
+    /// </summary>
+    private static string ResolveParserConfigPath(string configPath)
+    {
+        if (Path.IsPathRooted(configPath) || File.Exists(configPath))
+            return configPath;
+
+        var basePath = Path.Combine(AppContext.BaseDirectory, configPath);
+        return File.Exists(basePath) ? basePath : configPath;
+    }
+
+    /// <summary>
+    /// 명령줄에서 입력된 시간 범위 경계를 UTC로 변환합니다.
+    /// 시간대가 지정되지 않은 값은 디바이스 현지 시각으로 간주합니다.
+    /// </summary>
+    private static DateTime? ToUtcTimeRangeBound(DateTime? time, DeviceInfo deviceInfo)
+    {
+        if (!time.HasValue)
+            return null;
+
+        var value = time.Value;
+        switch (value.Kind)
+        {
+            case DateTimeKind.Utc:
+                return value;
+            case DateTimeKind.Local:
+                return value.ToUniversalTime();
+        }
+
+        TimeZoneInfo deviceTimeZone;
+        try
+        {
+            deviceTimeZone = TimeZoneInfo.FindSystemTimeZoneById(deviceInfo.TimeZone);
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            // TimestampNormalizer와 동일한 Fallback
+            deviceTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Korea Standard Time");
+        }
+
+        return deviceTimeZone.IsInvalidTime(value)
+            ? value
+            : TimeZoneInfo.ConvertTimeToUtc(value, deviceTimeZone);
     }
 }
 

@@ -136,7 +136,7 @@ public sealed class AdbLogParser : ILogParser
         // 파일 크기 검증
         var fileInfo = new FileInfo(logFilePath);
         var fileSizeBytes = fileInfo.Length;
-        var maxSizeBytes = (long)(options.MaxFileSizeMB * 1024 * 1024);
+        var maxSizeBytes = (long)options.MaxFileSizeMB * 1024 * 1024;
         if (fileSizeBytes > maxSizeBytes)
         {
             throw new LogFileTooLargeException(logFilePath, fileSizeBytes, maxSizeBytes);
@@ -513,7 +513,7 @@ public sealed class AdbLogParser : ILogParser
                     SourceSection = entry.SectionId,
                     SourceFileName = sourceFilePath,
                     PackageName = ExtractPackageName(entry.Fields),
-                    Attributes = entry.Fields,
+                    Attributes = WithInferredYearTimestamp(entry, normalizer),
                     RawLine = entry.RawLine,
                     DeviceInfo = options.DeviceInfo
                 };
@@ -589,6 +589,35 @@ public sealed class AdbLogParser : ILogParser
             EventTypeCounts = eventTypeCounts,
             SectionLineCounts = sectionLineCounts
         };
+    }
+
+    /// <summary>
+    /// 연도 없는 포맷으로 파싱된 "timestamp" 필드를 추론한 연도로 교체합니다.
+    /// </summary>
+    /// <remarks>
+    /// RegexLineParser는 연도 없는 포맷을 파싱할 때 실행 시점의 연도로 채우므로,
+    /// 이벤트 Timestamp와 같은 연도를 갖도록 Attributes의 원본 타임스탬프도 보정합니다.
+    /// </remarks>
+    private static IReadOnlyDictionary<string, object> WithInferredYearTimestamp(
+        ParsedLogEntry entry,
+        TimestampNormalizer normalizer)
+    {
+        if (entry.Fields.TryGetValue("timestamp", out var value) && value is DateTime parsedTime)
+        {
+            var completedTime = normalizer.ApplyInferredYear(parsedTime, entry.TimestampFormat);
+            if (completedTime != parsedTime)
+            {
+                var fields = new Dictionary<string, object>(entry.Fields.Count);
+                foreach (var field in entry.Fields)
+                {
+                    fields[field.Key] = field.Value;
+                }
+                fields["timestamp"] = completedTime;
+                return fields;
+            }
+        }
+
+        return entry.Fields;
     }
 
     /// <summary>

@@ -16,6 +16,12 @@ public sealed class ParsedLogEntry
     public DateTime? Timestamp { get; init; }
 
     /// <summary>
+    /// <see cref="Timestamp"/>을 파싱할 때 사용한 포맷 (예: "MM-dd HH:mm:ss.fff").
+    /// 연도가 없는 포맷이면 정규화 단계에서 연도를 추론합니다. 알 수 없으면 null입니다.
+    /// </summary>
+    public string? TimestampFormat { get; init; }
+
+    /// <summary>
     /// 파싱된 필드 (예: piid, uid, pid, package 등)
     /// </summary>
     public IReadOnlyDictionary<string, object> Fields { get; init; } =

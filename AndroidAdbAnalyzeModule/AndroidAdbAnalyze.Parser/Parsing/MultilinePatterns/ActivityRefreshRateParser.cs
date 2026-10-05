@@ -2,6 +2,7 @@ using AndroidAdbAnalyze.Parser.Core.Interfaces;
 using AndroidAdbAnalyze.Parser.Core.Models;
 using AndroidAdbAnalyze.Parser.Parsing.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace AndroidAdbAnalyze.Parser.Parsing.MultilinePatterns;
@@ -104,7 +105,7 @@ public sealed class ActivityRefreshRateParser : IMultilinePatternParser
             {
                 ["timestamp"] = timestampStr, // NormalizeEvents에서 DeviceInfo 기준으로 파싱
                 ["mode"] = mode,
-                ["refreshRate"] = double.Parse(refreshRate),
+                ["refreshRate"] = double.Parse(refreshRate, CultureInfo.InvariantCulture),
                 ["package"] = package,
                 ["activity"] = activity,
                 ["windowId"] = windowId

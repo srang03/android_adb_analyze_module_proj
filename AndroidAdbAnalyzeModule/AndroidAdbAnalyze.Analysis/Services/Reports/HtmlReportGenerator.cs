@@ -621,7 +621,30 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("                                    }");
         html.AppendLine("                                }");
         html.AppendLine("                            }");
-        html.AppendLine("                        }");
+        html.AppendLine("                        },");
+        html.AppendLine("                        zoom: {");
+        html.AppendLine("                            zoom: {");
+        html.AppendLine("                                wheel: {");
+        html.AppendLine("                                    enabled: true,");
+        html.AppendLine("                                    modifierKey: 'ctrl'");  // Ctrl+휠로 줌
+        html.AppendLine("                                },");
+        html.AppendLine("                                pinch: {");
+        html.AppendLine("                                    enabled: true");  // 터치 핀치 줌
+        html.AppendLine("                                },");
+        html.AppendLine("                                mode: 'x',");  // X축만 줌 (시간 범위)
+        html.AppendLine("                                scaleMode: 'x'");  // X축 스케일만 변경
+        html.AppendLine("                            },");
+        html.AppendLine("                            pan: {");
+        html.AppendLine("                                enabled: true,");
+        html.AppendLine("                                mode: 'x',");  // X축만 팬
+        html.AppendLine("                                scaleMode: 'x',");  // X축 스케일만 변경
+        html.AppendLine("                                modifierKey: 'shift'");  // Shift+드래그로 팬
+        html.AppendLine("                            },");
+        html.AppendLine("                            limits: {");
+        html.AppendLine("                                x: { minRange: 60 * 60 * 1000 },");  // 최소 1시간 범위
+        html.AppendLine("                                y: { min: 0, max: 10 }");  // Y축 고정 (확대 방지)
+        html.AppendLine("                            }");
+        html.AppendLine("                        }");  // 확대/축소 (chartjs-plugin-zoom)
         html.AppendLine("                    },");
         html.AppendLine("                    scales: {");
         html.AppendLine("                        x: {");
@@ -674,31 +697,6 @@ public sealed class HtmlReportGenerator : IReportGenerator
         html.AppendLine("                            },");
         html.AppendLine("                            ticks: {");
         html.AppendLine("                                display: false");  // HTML에서 표시
-        html.AppendLine("                            }");
-        html.AppendLine("                        }");
-        html.AppendLine("                    },");
-        html.AppendLine("                    plugins: {");
-        html.AppendLine("                        zoom: {");
-        html.AppendLine("                            zoom: {");
-        html.AppendLine("                                wheel: {");
-        html.AppendLine("                                    enabled: true,");
-        html.AppendLine("                                    modifierKey: 'ctrl'");  // Ctrl+휠로 줌
-        html.AppendLine("                                },");
-        html.AppendLine("                                pinch: {");
-        html.AppendLine("                                    enabled: true");  // 터치 핀치 줌
-        html.AppendLine("                                },");
-        html.AppendLine("                                mode: 'x',");  // X축만 줌 (시간 범위)
-        html.AppendLine("                                scaleMode: 'x'");  // X축 스케일만 변경
-        html.AppendLine("                            },");
-        html.AppendLine("                            pan: {");
-        html.AppendLine("                                enabled: true,");
-        html.AppendLine("                                mode: 'x',");  // X축만 팬
-        html.AppendLine("                                scaleMode: 'x',");  // X축 스케일만 변경
-        html.AppendLine("                                modifierKey: 'shift'");  // Shift+드래그로 팬
-        html.AppendLine("                            },");
-        html.AppendLine("                            limits: {");
-        html.AppendLine("                                x: { minRange: 60 * 60 * 1000 },");  // 최소 1시간 범위
-        html.AppendLine("                                y: { min: 0, max: 10 }");  // Y축 고정 (확대 방지)
         html.AppendLine("                            }");
         html.AppendLine("                        }");
         html.AppendLine("                    }");

@@ -47,6 +47,7 @@ public sealed class ResultOutputService : IResultOutputService
     public async Task<OutputSummary> SaveResultsAsync(
         PipelineResult result,
         string? baseOutputDirectory = null,
+        bool? generateHtmlReport = null,
         CancellationToken cancellationToken = default)
     {
         if (result == null)
@@ -85,7 +86,7 @@ public sealed class ResultOutputService : IResultOutputService
             
             // 4. HTML 보고서 생성 (이미 구현된 IReportGenerator 사용)
             string? htmlPath = null;
-            if (_config.GenerateHtmlReport && result.AnalysisResult != null)
+            if ((generateHtmlReport ?? _config.GenerateHtmlReport) && result.AnalysisResult != null)
             {
                 htmlPath = await GenerateHtmlReportAsync(result.AnalysisResult, outputDir, cancellationToken);
                 if (htmlPath != null)

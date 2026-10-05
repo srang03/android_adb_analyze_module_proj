@@ -119,7 +119,8 @@ public sealed class AnalysisOrchestrator : IAnalysisOrchestrator
                     EndEventId = session.EndEventId,
                     IncompleteReason = session.IncompleteReason,
                     SessionCompletenessScore = session.SessionCompletenessScore,
-                    SourceEventIds = session.SourceEventIds
+                    SourceEventIds = session.SourceEventIds,
+                    CameraDeviceIds = session.CameraDeviceIds
                 };
                 updatedSessions.Add(updatedSession);
                 
@@ -164,7 +165,8 @@ public sealed class AnalysisOrchestrator : IAnalysisOrchestrator
                         EndEventId = session.EndEventId,
                         IncompleteReason = session.IncompleteReason,
                         SessionCompletenessScore = session.SessionCompletenessScore,
-                        SourceEventIds = session.SourceEventIds
+                        SourceEventIds = session.SourceEventIds,
+                        CameraDeviceIds = session.CameraDeviceIds
                     };
                 }).ToList();
             }

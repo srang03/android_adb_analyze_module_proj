@@ -143,13 +143,7 @@ public sealed class TimestampNormalizer
     /// </summary>
     private DateTime NormalizeDateTime(DateTime parsedTime, string? format)
     {
-        var normalizedTime = parsedTime;
-
-        // 연도 정보가 없는 포맷인 경우 연도 보완
-        if (format != null && !format.Contains("yyyy"))
-        {
-            normalizedTime = AddYearInformation(parsedTime);
-        }
+        var normalizedTime = ApplyInferredYear(parsedTime, format);
 
         // UTC 변환
         if (_convertToUtc)
@@ -161,25 +155,47 @@ public sealed class TimestampNormalizer
     }
 
     /// <summary>
-    /// 연도 정보가 없는 <see cref="DateTime"/>에 연도를 추가합니다.
-    /// 우선순위: 1) StartTime/EndTime 범위 기반, 2) StartTime 기준, 3) DeviceInfo.CurrentTime 기준
+    /// 연도 정보가 없는 포맷으로 파싱된 타임스탬프(디바이스 현지 시각)에 추론한 연도를 적용합니다.
+    /// 연도가 있는 포맷이거나 포맷을 알 수 없으면 그대로 반환합니다. UTC 변환은 하지 않습니다.
     /// </summary>
+    /// <param name="parsedTime">파싱된 타임스탬프</param>
+    /// <param name="format">파싱에 사용한 포맷</param>
+    public DateTime ApplyInferredYear(DateTime parsedTime, string? format)
+    {
+        return format != null && !format.Contains("yyyy")
+            ? AddYearInformation(parsedTime)
+            : parsedTime;
+    }
+
+    /// <summary>
+    /// 연도 정보가 없는 <see cref="DateTime"/>에 연도를 추가합니다.
+    /// 우선순위: 1) StartTime/EndTime 범위 기반, 2) DeviceInfo.CurrentTime 기준
+    /// </summary>
+    /// <remarks>
+    /// StartTime만 있는 경우는 하한값만 알 수 있어 연도 추론 근거가 되지 못하므로 DeviceInfo.CurrentTime 기준으로 추론합니다.
+    /// (StartTime을 상한처럼 사용하면 StartTime 이후의 이벤트가 모두 전년도로 밀려 필터링되는 문제가 있었음)
+    /// </remarks>
     private DateTime AddYearInformation(DateTime parsedTime)
     {
         // 우선순위 1: StartTime과 EndTime이 모두 있으면 시간 범위 기반 추정
         if (_startTime.HasValue && _endTime.HasValue)
         {
-            return InferYearFromTimeRange(parsedTime, _startTime.Value, _endTime.Value);
+            return InferYearFromTimeRange(parsedTime, ToDeviceLocal(_startTime.Value), ToDeviceLocal(_endTime.Value));
         }
 
-        // 우선순위 2: StartTime만 있으면 StartTime 기준 추정
-        if (_startTime.HasValue)
-        {
-            return InferYearFromReferenceTime(parsedTime, _startTime.Value);
-        }
+        // 우선순위 2: DeviceInfo.CurrentTime 기준 추정
+        return InferYearFromDeviceTime(parsedTime, ToDeviceLocal(_deviceInfo.CurrentTime));
+    }
 
-        // 우선순위 3: 기존 로직 (DeviceInfo.CurrentTime 기준)
-        return InferYearFromDeviceTime(parsedTime, _deviceInfo.CurrentTime);
+    /// <summary>
+    /// 연도 추론의 기준 시각을 디바이스 현지 시각으로 맞춥니다.
+    /// 파싱된 타임스탬프는 디바이스 현지 시각이므로 UTC/Local 기준 시각은 디바이스 시간대로 변환합니다.
+    /// </summary>
+    private DateTime ToDeviceLocal(DateTime time)
+    {
+        return time.Kind == DateTimeKind.Unspecified
+            ? time
+            : DateTime.SpecifyKind(TimeZoneInfo.ConvertTime(time, _deviceTimeZone), DateTimeKind.Unspecified);
     }
 
     /// <summary>
@@ -194,35 +210,13 @@ public sealed class TimestampNormalizer
         // 같은 연도 범위인 경우
         if (startYear == endYear)
         {
-            return new DateTime(
-                startYear,
-                parsedTime.Month,
-                parsedTime.Day,
-                parsedTime.Hour,
-                parsedTime.Minute,
-                parsedTime.Second,
-                parsedTime.Millisecond);
+            return WithYear(parsedTime, startYear);
         }
 
         // 연도가 다른 경우 (연말-연초 경계)
         // 두 후보 연도를 생성
-        var candidateStart = new DateTime(
-            startYear,
-            parsedTime.Month,
-            parsedTime.Day,
-            parsedTime.Hour,
-            parsedTime.Minute,
-            parsedTime.Second,
-            parsedTime.Millisecond);
-
-        var candidateEnd = new DateTime(
-            endYear,
-            parsedTime.Month,
-            parsedTime.Day,
-            parsedTime.Hour,
-            parsedTime.Minute,
-            parsedTime.Second,
-            parsedTime.Millisecond);
+        var candidateStart = WithYear(parsedTime, startYear);
+        var candidateEnd = WithYear(parsedTime, endYear);
 
         // 시간 범위 내에 있는 후보 선택
         if (candidateStart >= startTime && candidateStart <= endTime)
@@ -239,42 +233,12 @@ public sealed class TimestampNormalizer
     }
 
     /// <summary>
-    /// 참조 시간(referenceTime)을 기준으로 연도를 추정합니다.
-    /// 타임스탬프가 참조 시간보다 미래면 전년도로 보정합니다.
-    /// </summary>
-    private DateTime InferYearFromReferenceTime(DateTime parsedTime, DateTime referenceTime)
-    {
-        var candidateTime = new DateTime(
-            referenceTime.Year,
-            parsedTime.Month,
-            parsedTime.Day,
-            parsedTime.Hour,
-            parsedTime.Minute,
-            parsedTime.Second,
-            parsedTime.Millisecond);
-
-        if (candidateTime > referenceTime)
-        {
-            candidateTime = candidateTime.AddYears(-1);
-        }
-
-        return candidateTime;
-    }
-
-    /// <summary>
-    /// 디바이스의 현재 시간을 기준으로 연도를 추정합니다 (기존 로직).
+    /// 디바이스의 현재 시간을 기준으로 연도를 추정합니다.
     /// 타임스탬프가 디바이스 현재 시간보다 미래면 전년도로 보정합니다.
     /// </summary>
-    private DateTime InferYearFromDeviceTime(DateTime parsedTime, DateTime deviceCurrentTime)
+    private static DateTime InferYearFromDeviceTime(DateTime parsedTime, DateTime deviceCurrentTime)
     {
-        var candidateTime = new DateTime(
-            deviceCurrentTime.Year,
-            parsedTime.Month,
-            parsedTime.Day,
-            parsedTime.Hour,
-            parsedTime.Minute,
-            parsedTime.Second,
-            parsedTime.Millisecond);
+        var candidateTime = WithYear(parsedTime, deviceCurrentTime.Year);
 
         if (candidateTime > deviceCurrentTime)
         {
@@ -282,6 +246,18 @@ public sealed class TimestampNormalizer
         }
 
         return candidateTime;
+    }
+
+    private static DateTime WithYear(DateTime time, int year)
+    {
+        return new DateTime(
+            year,
+            time.Month,
+            time.Day,
+            time.Hour,
+            time.Minute,
+            time.Second,
+            time.Millisecond);
     }
 
     /// <summary>
@@ -322,7 +298,7 @@ public sealed class TimestampNormalizer
         // 이미 Timestamp가 있으면 정규화
         if (entry.Timestamp.HasValue)
         {
-            return NormalizeDateTime(entry.Timestamp.Value, null);
+            return NormalizeDateTime(entry.Timestamp.Value, entry.TimestampFormat);
         }
 
         // Fields에서 timestamp 추출 시도

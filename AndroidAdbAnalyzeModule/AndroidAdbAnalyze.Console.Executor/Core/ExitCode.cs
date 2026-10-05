@@ -46,6 +46,11 @@ public enum ExitCode
     LogCollectionFailed = 7,
     
     /// <summary>
+    /// 사용자 취소 (Ctrl+C)
+    /// </summary>
+    Cancelled = 130,
+    
+    /// <summary>
     /// 알 수 없는 오류
     /// </summary>
     UnknownError = 99

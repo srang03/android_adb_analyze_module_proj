@@ -172,8 +172,10 @@ public sealed class DeviceManager : IDeviceManager
     private async Task<DateTime> GetDeviceCurrentTimeAsync(CancellationToken cancellationToken)
     {
         // Android date 명령: "+%Y-%m-%d %H:%M:%S" 형식으로 출력
+        // adb shell은 인자를 공백으로 이어 디바이스 셸에 전달하므로, 공백이 있는 포맷은 디바이스 셸용 작은따옴표로 감싸서
+        // 하나의 인자로 전달해야 함 (따옴표 없이 전달하면 date가 "%H:%M:%S"를 별도 인자로 받아 실패함)
         var result = await _adbExecutor.ExecuteAsync(
-            "shell date +\"%Y-%m-%d %H:%M:%S\"",
+            "shell \"date '+%Y-%m-%d %H:%M:%S'\"",
             cancellationToken: cancellationToken);
         
         if (result.Success)

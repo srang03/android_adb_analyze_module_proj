@@ -6,6 +6,8 @@ using AndroidAdbAnalyze.Console.Executor.Services.Output;
 using AndroidAdbAnalyze.Console.Executor.Services.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace AndroidAdbAnalyze.Console.Executor.Commands;
 
@@ -75,6 +77,12 @@ public static class AnalyzeCommand
             
             var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
             
+            // --verbose: 상세 로그(Debug) 출력
+            if (verbose && serviceProvider.GetService<LoggingLevelSwitch>() is { } levelSwitch)
+            {
+                levelSwitch.MinimumLevel = LogEventLevel.Debug;
+            }
+            
             try
             {
                 logger.LogInformation("=== analyze 명령 시작 ===");
@@ -113,7 +121,8 @@ public static class AnalyzeCommand
                         var outputSummary = await outputService.SaveResultsAsync(
                             result, 
                             outputDir, 
-                            context.GetCancellationToken());
+                            generateHtmlReport: noHtml ? false : null,
+                            cancellationToken: context.GetCancellationToken());
                         
                         // ========================================
                         // 콘솔 출력
@@ -166,7 +175,21 @@ public static class AnalyzeCommand
                     System.Console.Error.WriteLine($"=== 분석 실패 ===");
                     System.Console.Error.WriteLine($"오류: {result.ErrorMessage}");
                     
-                    context.ExitCode = (int)ExitCode.AnalysisFailed;
+                    // 디바이스 미연결, 다중 디바이스, 필수 로그 수집 실패 등은 PipelineResult.Exception으로 전달되므로
+                    // 예외에 정의된 종료 코드와 해결 방법을 그대로 사용
+                    if (result.Exception is AndroidAdbAnalyzeException domainException)
+                    {
+                        if (!string.IsNullOrEmpty(domainException.UserFriendlyHelp))
+                        {
+                            System.Console.Error.WriteLine(domainException.UserFriendlyHelp);
+                        }
+                        
+                        context.ExitCode = (int)domainException.ExitCode;
+                    }
+                    else
+                    {
+                        context.ExitCode = (int)ExitCode.AnalysisFailed;
+                    }
                 }
             }
             catch (AndroidAdbAnalyzeException ex)
@@ -187,7 +210,7 @@ public static class AnalyzeCommand
             {
                 logger.LogWarning("사용자가 작업을 취소했습니다");
                 System.Console.WriteLine("\n작업이 취소되었습니다.");
-                context.ExitCode = (int)ExitCode.Success;
+                context.ExitCode = (int)ExitCode.Cancelled;
             }
             catch (Exception ex)
             {

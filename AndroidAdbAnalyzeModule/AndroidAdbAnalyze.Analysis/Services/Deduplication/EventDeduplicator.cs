@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using AndroidAdbAnalyze.Analysis.Interfaces;
 using AndroidAdbAnalyze.Analysis.Models.Deduplication;
 using AndroidAdbAnalyze.Analysis.Models.Options;
@@ -20,7 +21,8 @@ public sealed class EventDeduplicator : IEventDeduplicator
 {
     private readonly ILogger<EventDeduplicator> _logger;
     private readonly AnalysisOptions _options;
-    private readonly Dictionary<string, IDeduplicationStrategy> _strategies;
+    // Singleton으로 등록되어 동시에 호출될 수 있으므로 지연 생성 캐시는 스레드 안전해야 함
+    private readonly ConcurrentDictionary<string, IDeduplicationStrategy> _strategies;
     private readonly IDeduplicationStrategy _defaultStrategy;
 
     /// <summary>
@@ -125,7 +127,7 @@ public sealed class EventDeduplicator : IEventDeduplicator
         var cameraThreshold = TimeThresholds[LogEventTypes.CAMERA_CONNECT];
         var cameraStrategy = new CameraEventDeduplicationStrategy(cameraThreshold);
         
-        _strategies = new Dictionary<string, IDeduplicationStrategy>
+        _strategies = new ConcurrentDictionary<string, IDeduplicationStrategy>
         {
             [LogEventTypes.CAMERA_CONNECT] = cameraStrategy,
             [LogEventTypes.CAMERA_DISCONNECT] = cameraStrategy
@@ -233,11 +235,11 @@ public sealed class EventDeduplicator : IEventDeduplicator
         if (TimeThresholds.TryGetValue(eventType, out var threshold))
         {
             // 새 전략 생성하고 캐시 (속성 유사도 임계값 전달)
-            var newStrategy = new TimeBasedDeduplicationStrategy(
-                threshold, 
-                _options.DeduplicationSimilarityThreshold);
-            _strategies[eventType] = newStrategy;
-            return newStrategy;
+            return _strategies.GetOrAdd(
+                eventType,
+                _ => new TimeBasedDeduplicationStrategy(
+                    threshold,
+                    _options.DeduplicationSimilarityThreshold));
         }
         
         // 3. 기본 전략 반환

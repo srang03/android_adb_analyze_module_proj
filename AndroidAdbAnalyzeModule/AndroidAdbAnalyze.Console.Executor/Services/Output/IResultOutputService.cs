@@ -20,11 +20,13 @@ public interface IResultOutputService
     /// </summary>
     /// <param name="result">파이프라인 실행 결과</param>
     /// <param name="baseOutputDirectory">기본 출력 디렉토리 (null이면 ./logs)</param>
+    /// <param name="generateHtmlReport">HTML 보고서 생성 여부 (null이면 OutputConfiguration.GenerateHtmlReport 사용)</param>
     /// <param name="cancellationToken">취소 토큰</param>
     /// <returns>저장 결과 요약</returns>
     Task<OutputSummary> SaveResultsAsync(
         PipelineResult result,
         string? baseOutputDirectory = null,
+        bool? generateHtmlReport = null,
         CancellationToken cancellationToken = default);
 }
 

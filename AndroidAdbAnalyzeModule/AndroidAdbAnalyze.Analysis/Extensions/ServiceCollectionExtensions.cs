@@ -13,6 +13,7 @@ using AndroidAdbAnalyze.Analysis.Services.DetectionStrategies;
 using AndroidAdbAnalyze.Analysis.Services.Transmission;
 using AndroidAdbAnalyze.Analysis.Services.Visualization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace AndroidAdbAnalyze.Analysis.Extensions;
@@ -32,6 +33,12 @@ public static class ServiceCollectionExtensions
     /// <returns>DI 컨테이너 (Fluent API)</returns>
     public static IServiceCollection AddAndroidAdbAnalysis(this IServiceCollection services)
     {
+        // ===== Options =====
+        
+        // EventDeduplicator가 AnalysisOptions를 주입받으므로, 호출자가 등록하지 않은 경우 기본값 등록
+        // (호출자가 먼저 등록한 AnalysisOptions가 있으면 그대로 사용)
+        services.TryAddSingleton(new AnalysisOptions());
+        
         // ===== Core Services =====
         
         // Session Context Provider (usagestats 베이스)

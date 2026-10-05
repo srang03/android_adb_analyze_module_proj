@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace AndroidAdbAnalyze.Console.Executor;
 
@@ -27,6 +29,9 @@ public class Program
         {
             Log.Information("=== AndroidAdbAnalyze Console Executor 시작 ===");
 
+            // 최소 로그 레벨 (analyze --verbose 옵션에서 Debug로 변경)
+            var levelSwitch = new LoggingLevelSwitch(LogEventLevel.Information);
+
             // Host Builder 생성
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
@@ -39,7 +44,7 @@ public class Program
                 })
                 .UseSerilog((context, services, loggerConfig) => loggerConfig
                     .Enrich.FromLogContext()
-                    .MinimumLevel.Information()
+                    .MinimumLevel.ControlledBy(levelSwitch)
                     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
                     .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
                     .WriteTo.Console(
@@ -50,6 +55,7 @@ public class Program
                         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"))
                 .ConfigureServices((context, services) =>
                 {
+                    services.AddSingleton(levelSwitch);
                     services.AddAndroidAdbExecutor(context.Configuration);
                 })
                 .Build();

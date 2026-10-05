@@ -140,6 +140,3 @@ sample*_session*.txt
 # Phase reports
 PHASE_*_REPORT.md
 **/PHASE_*.md
-
-# Temporary test data
-**/TestConstants/

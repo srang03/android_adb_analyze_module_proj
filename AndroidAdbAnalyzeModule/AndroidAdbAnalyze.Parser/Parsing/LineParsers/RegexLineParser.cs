@@ -114,9 +114,14 @@ public sealed class RegexLineParser : ILineParser
 
             // 타임스탬프 추출 (있는 경우)
             DateTime? timestamp = null;
+            string? timestampFormat = null;
             if (fields.TryGetValue("timestamp", out var tsValue) && tsValue is DateTime dt)
             {
                 timestamp = dt;
+                // 연도 없는 포맷(예: "MM-dd HH:mm:ss.fff")은 정규화 단계에서 연도를 추론해야 하므로 포맷을 전달
+                timestampFormat = _patternConfig.Fields.TryGetValue("timestamp", out var tsDefinition)
+                    ? tsDefinition.Format
+                    : null;
             }
 
             // EventType 동적 치환 지원: {fieldName} 패턴을 필드 값으로 치환
@@ -140,6 +145,7 @@ public sealed class RegexLineParser : ILineParser
             {
                 EventType = eventType,
                 Timestamp = timestamp,
+                TimestampFormat = timestampFormat,
                 Fields = fields,
                 RawLine = line,
                 LineNumber = context.LineNumber,
@@ -162,7 +168,7 @@ public sealed class RegexLineParser : ILineParser
     {
         try
         {
-            return type.ToLower() switch
+            return type.ToLowerInvariant() switch
             {
                 "string" => value,
                 "int" => int.Parse(value, CultureInfo.InvariantCulture),

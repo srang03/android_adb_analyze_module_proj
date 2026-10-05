@@ -3,6 +3,7 @@ using AndroidAdbAnalyze.Parser.Core.Interfaces;
 using AndroidAdbAnalyze.Parser.Core.Models;
 using AndroidAdbAnalyze.Parser.Parsing.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace AndroidAdbAnalyze.Parser.Parsing.MultilinePatterns;
@@ -181,7 +182,7 @@ public sealed class SilentCameraCaptureParser : IMultilinePatternParser
             {
                 ["timestamp"] = captureTimestamp,
                 ["mode"] = mode,
-                ["refreshRate"] = double.Parse(refreshRate),
+                ["refreshRate"] = double.Parse(refreshRate, CultureInfo.InvariantCulture),
                 ["package"] = package,
                 ["activity"] = activity,
                 ["windowId"] = windowId,

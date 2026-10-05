@@ -320,7 +320,7 @@ public sealed class ConfigurationValidator
 
                 // 필드 타입 검증
                 var validTypes = new[] { "string", "int", "long", "double", "datetime", "hex", "bool" };
-                if (!validTypes.Contains(field.Value.Type.ToLower()))
+                if (!validTypes.Contains(field.Value.Type.ToLowerInvariant()))
                 {
                     errors.Add($"Parser '{parserId}', Pattern '{pattern.Id}', Field '{field.Key}': Invalid type '{field.Value.Type}'. Must be one of: {string.Join(", ", validTypes)}");
                 }

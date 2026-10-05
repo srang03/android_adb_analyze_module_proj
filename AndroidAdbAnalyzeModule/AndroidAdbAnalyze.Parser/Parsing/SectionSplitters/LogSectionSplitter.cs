@@ -167,7 +167,7 @@ public sealed class LogSectionSplitter : ISectionSplitter
         if (string.IsNullOrEmpty(line))
             return false;
 
-        return markerType.ToLower() switch
+        return markerType.ToLowerInvariant() switch
         {
             "text" => line.Contains(marker, StringComparison.Ordinal),
             "regex" => Regex.IsMatch(line, marker, RegexOptions.None, TimeSpan.FromSeconds(1)),

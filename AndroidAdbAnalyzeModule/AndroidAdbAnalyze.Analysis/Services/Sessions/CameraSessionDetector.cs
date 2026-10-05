@@ -1051,10 +1051,10 @@ public sealed class CameraSessionDetector : ISessionDetector
         var minimum = TimeSpan.FromMinutes(5);
         
         // 최소값과 설정값 사이로 제한
+        // 설정값이 최소값(5분)보다 작으면 설정값을 우선 (Math.Clamp는 min > max일 때 ArgumentException 발생)
         var result = TimeSpan.FromMinutes(
-            Math.Clamp(
-                calculated.TotalMinutes,
-                minimum.TotalMinutes,
+            Math.Min(
+                Math.Max(calculated.TotalMinutes, minimum.TotalMinutes),
                 configuredMax.TotalMinutes
             )
         );
